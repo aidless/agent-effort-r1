@@ -1,0 +1,14 @@
+{
+ "A_chat_think_on": {
+  "mean_s": 7.46,
+  "mean_tok": 974,
+  "json_ok": 6,
+  "n": 6
+ },
+ "B_generate_think_off": {
+  "mean_s": 0.58,
+  "mean_tok": 74,
+  "json_ok": 6,
+  "n": 6
+ }
+}

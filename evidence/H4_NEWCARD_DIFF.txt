@@ -1,0 +1,40 @@
+leaf fields compared: 119  equal: 117  differing: 2
+  [PROVENANCE ] /source_result                                             old='results/h4_real_llm_gx_qwen3_8b.json' new='results/h4_real_llm_gx_qwen3_8b_newcard.json'
+  [PROVENANCE ] /source_sha256                                             old='a0643029750c7baed3c9a8d6ca060cd18882c9f1e94b9d40deb0e2f61922a87f' new='c66e4801394265ef4e3b077990e0fe4e7959553b92985aeb6f9b111463b8dc50'
+
+equal CITABLE fields (116), the load-bearing ones:
+  /actions_per_episode/_units                                actions per episode (mean)
+  /identifiability_max_ci_width                              0.3
+  /logistic_lr_all_levels/df                                 1
+  /logistic_lr_all_levels/levels[0]                          L0_minimal
+  /logistic_lr_all_levels/levels[1]                          L1_low
+  /logistic_lr_all_levels/levels[2]                          L2_mid
+  /logistic_lr_all_levels/levels[3]                          L3_high
+  /logistic_lr_all_levels/levels[4]                          L4_max
+  /logistic_lr_all_levels/loglik_linear                      -129.2416300692248
+  /logistic_lr_all_levels/loglik_quadratic                   -95.65304168157027
+  /logistic_lr_all_levels/lr_chi2                            67.17717677530908
+  /logistic_lr_all_levels/monotone_model_implied             p increases in every axis; a decrease is out of range
+  /logistic_lr_all_levels/n                                  240
+  /logistic_lr_all_levels/p_value                            2.48170563743639e-16
+  /logistic_lr_all_levels/quadratic_coef_std_log2_budget     -1.7306829397589165
+  /logistic_lr_excluding_structurally_floored_level/df       1
+  /logistic_lr_excluding_structurally_floored_level/levels[0] L1_low
+  /logistic_lr_excluding_structurally_floored_level/levels[1] L2_mid
+  /logistic_lr_excluding_structurally_floored_level/levels[2] L3_high
+  /logistic_lr_excluding_structurally_floored_level/levels[3] L4_max
+  /logistic_lr_excluding_structurally_floored_level/loglik_linear -79.5623085402277
+  /logistic_lr_excluding_structurally_floored_level/loglik_quadratic -79.46704188979228
+  /logistic_lr_excluding_structurally_floored_level/lr_chi2  0.19053330087083964
+  /logistic_lr_excluding_structurally_floored_level/monotone_model_implied p increases in every axis; a decrease is out of range
+  /logistic_lr_excluding_structurally_floored_level/n        192
+  /logistic_lr_excluding_structurally_floored_level/p_value  0.66247312605178
+  /logistic_lr_excluding_structurally_floored_level/quadratic_coef_std_log2_budget 0.11683499635994746
+  /non_monotonicity_verdict/reading                          the quadratic term's significance comes from the structurally floored level (no policy can pass there); once excluded the quadratic is NOT significant, so the supported statement is a monotone DECLINE above the low budget, not an interior optimum
+  /non_monotonicity_verdict/with_floored_level_quadratic_significant True
+  /non_monotonicity_verdict/without_floored_level_quadratic_significant False
+
+REPLICATION on citable fields: HOLDS (all equal)
+INJECTION CONTROL: perturbing iso_curve.L1_low.success by +0.05 is flagged on 1 citable field(s) -> CAUGHT
+
+VERDICT: replication holds AND the comparator can see a break

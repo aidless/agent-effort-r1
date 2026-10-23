@@ -1,0 +1,3 @@
+First work (within our retrieval scope) to place reasoning tokens, trajectory steps, local tool calls, network search calls and visual probes under a single effort budget and solve the joint allocation frontier.
+First work to report that the optimal effort composition rotates across the budget rather than scaling uniformly, with a measured cost model spanning five orders of magnitude.
+First work to give the cost-side boundary of the source report's claim that reasoning-effort control transfers faithfully to long-horizon agentic trajectories.

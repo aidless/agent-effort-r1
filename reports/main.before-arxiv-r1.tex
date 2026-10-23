@@ -1,0 +1,1186 @@
+\documentclass[10pt]{article} % For LaTeX2e
+\usepackage{tmlr}
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{tmlr}
+% To de-anonymize and remove mentions to TMLR (for example for posting to preprint servers), instead use the following:
+%\usepackage{tmlr}
+
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+% Without an explicit setup hyperref gives every link a 1pt border, which readers see as red
+% boxes around each \ref and \cite (124 of them in this build). Hide them.
+\hypersetup{hidelinks}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\title{From Controllable Reasoning Effort to Controllable Agent Effort:
+Joint Effort Allocation for Tool-Using Agents}
+% TMLR G3 anonymous: author block redacted for blind review; restore on acceptance (whitelist: no identity in source)
+
+
+% Authors are hidden in the anonymous submission (TMLR G3).
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\newcommand{\eff}{b}
+\newcommand{\reff}{\eff_{\mathrm{reason}}}
+\newcommand{\stepeff}{\eff_{\mathrm{steps}}}
+\newcommand{\tooleff}{\eff_{\mathrm{tools}}}
+\newcommand{\searcheff}{\eff_{\mathrm{search}}}
+\newcommand{\viseff}{\eff_{\mathrm{vision}}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}% CANDIDATE-A -- ready, still needs apply-GO. This replaces the 05:19Z draft, whose own
+% header forbade applying it because its clause quoted the record-level statistic that C51
+% shows to be pseudo-replicated. The clause now carries the unit-level reading instead: 16
+% independent units, 3 worse and 0 better, p=0.25, i.e. not significant. Carrier:
+% evidence/H4_PSEUDOREPLICATION.txt, row `1_low->4_max`.
+% Paste length is re-measured by check_h4p_wording.py against the 1920-character ceiling.
+% The superseded draft is kept unmodified beside this file for the audit trail.
+% 2026-09-25 (second-scale round): clause (v) now names BOTH registered arms (8B and 14B) and
+% says the 14B arm contradicts the 8B mechanism; "that assumption fails" was downgraded to
+% "the assumed shape does not hold at either", and the unit-level p=0.25 is labelled "not
+% established". Compressions in (ii)-(iv) are wording-only, no number was dropped. Paste
+% re-measured at 1907 chars (ceiling 1920) by abstract_readiness_census.py.
+Agents spend several resources at once: reasoning tokens, trajectory
+length, tool calls, search calls, visual probes. The V4.1-Flash technical report
+controls one by reinforcement learning: a scalar effort level
+$b\in\{1,\dots,100\}$ whose reward penalises tokens exponentially. We route the other four jointly under one
+scalar-budget accounting. (i)~Re-anchoring the
+premise: $b$ acts on reasoning tokens only, and only the report's own checkpoints
+instantiate its curves; we neither reproduce nor test them. (ii)~On our host we
+measure $18$ tool primitives ($\geq30$ samples each; per-primitive
+$n$ and a failed probe: Sec.~\ref{sec:e1}): a local call costs
+$7.09$~ms against $2233.75$~ms for internet search, a $315\times$ gap; vision is
+costliest per unit at $177.34$~ms. (iii)~With those costs, a source-anchored
+reasoning kernel and four declared agent-axis gains, the frontier of an \emph{idealised
+rational allocator} over $8{,}820$ allocations needs $3.44\times$, $4.52\times$, $2.05\times$ fewer tokens at matched success than
+fixed-mid, reasoning-max, agent-max, conditional on the assumed gains; decoupled per-axis budgets cost
+$1.32\times$ more at $40\%$ success. The lesson is re-allocation, not more spend; the mix
+inverts with budget. (iv)~An end-to-end loop on auto-graded tasks gives monotone
+saturating returns: $0.500$ at the low budget, $1.000$ at every larger one, $16$
+units per level, no gain from $4\times$ that budget. (v)~With a real language model in the loop ($672$ episodes/arm, two scales) the assumed
+shape does not hold at either: $8$B peaks at $0.9375$ on the low budget and falls to $0.7500$
+at $8\times$ that budget ($16$ units, McNemar $p{=}0.25$: not established), verification
+collapsing at max ($31$ rewrites, no test); $14$B peaks at mid and its tests per episode
+\emph{rise} ($1.19\to2.00$), contradicting that mechanism. No gain is identifiable at either
+scale (CI widths $1.00$/$1.00$/$0.58$). What the paper contributes is the audited distance
+between (iii) and (v): the frontier is a normative benchmark, not a description of any
+deployed model, and neither scale's turnover is established on $16$ units. The $8$B curve reproduces across stacks
+(3090/vLLM 0.27.1 to 4080/0.30.0): success unchanged in all $23$ cells. Re-derivation: \texttt{analysis.py},
+\texttt{h4\_derived\_stats.py}; raw JSON released.
+\end{abstract}
+
+\section{Introduction}
+
+An agent solving a long-horizon task spends several resources at once. It spends
+\emph{reasoning tokens} inside a turn, \emph{turns} on the trajectory,
+\emph{local tool calls} (shell, patch, test runner), \emph{network search calls},
+and \emph{visual probes} when the task carries screenshots. In deployment these
+axes compete for one budget, and they are paid for in different currencies:
+tokens for the model, wall-clock for the tools.
+
+The V4.1-Flash technical report~\citep{v41flash2026} makes one of these axes
+controllable. It introduces a scalar effort level as an explicit conditioning
+signal during reinforcement learning, prepended to the system prompt:
+\begin{quote}
+``We therefore introduce a scalar effort level $\eff$ as an explicit
+conditioning signal during reinforcement-learning. This mechanism is applied to
+both single-turn reasoning and multi-turn agentic tasks.'' (lines 2042--2044)
+\end{quote}
+\begin{quote}
+``Here, $\eff \in \{1, \ldots, 100\}$ denotes the requested effort level.''
+(line 2051)
+\end{quote}
+Training samples $M_b$ responses per prompt per effort level and mean-centers
+rewards \emph{within} each $(\text{prompt}, \eff)$ subgroup, so ``responses from
+different effort levels are not directly compared'' (line 2063). Effort-dependent
+behaviour is induced by a length penalty whose coefficient decays exponentially
+with the requested effort (lines 2081--2096):
+\begin{equation}
+r^{\mathrm{len}}(\ell, \eff) = -\min\!\Big( C_{\max},\; k(\eff)\frac{\ell}{L_{\mathrm{norm}}} \Big),
+\qquad
+k(\eff) = k_0 \exp\!\Big(-\frac{\eff - \eff_{\min}}{\tau}\Big),
+\label{eq:k}
+\end{equation}
+with $\tau = \lambda\Delta_b$ (line 2089), $k_0$ the penalty coefficient at the
+lowest effort level, and $\Delta_b$ the average spacing between training effort
+levels (lines 2092--2096). Appendix~C repeats the same coefficient as Eq.~(12)
+(lines 3501--3511) and derives a local affine trend between requested effort and
+preferred reasoning length under an exponentially decaying marginal benefit
+(lines 3743--3773), while explicitly warning that the derivation ``is a local
+reward-level approximation, not a claim that measured average lengths must be
+linear or pointwise monotonic'' (lines 3779--3780).
+
+The report also shows (Sec.~\ref{sec:related} places this next to the budgeted-agent literature) that this control transfers to agentic use: raising effort
+from $25$ to $100$ improves average Pass@1 on eight reasoning-intensive
+benchmarks from $67.1\%$ to $76.3\%$, on DeepSWE~v1.1 from $66.0\%$ to $74.2\%$,
+and on Terminal-Bench~2.1 from $82.4\%$ to $90.6\%$, at roughly $2.5\times$ more
+output tokens (lines 2434--2436), and the gains are front-loaded---the $60$--$80$
+range already recovers most of the maximum accuracy at less than half its token
+budget, whereas the final step to effort $100$ lengthens agent trajectories by
+$1.6$--$1.8\times$ for marginal improvement on Terminal-Bench~2.1
+(lines 2439--2441).
+
+\paragraph{The gap.}
+\eff{} is a scalar over \emph{reasoning tokens}. The other four axes remain
+uncontrolled: the report fixes the scaffold and varies the effort tier inside it
+(lines 2456--2465), and its multi-agent analysis scales a wall-clock deadline
+rather than an effort budget (lines 2736--2763). Conversely, the agent-economics
+literature prices actions and budgets them
+\citep{wu2026ecoagentbench,liu2025budgettooluse}, and the test-time-compute
+literature allocates compute within reasoning
+\citep{zhou2026coba,yang2026gambit,alomrani2025reasoningbudget}, but neither side
+places reasoning tokens, trajectory steps, local tools, search calls and visual
+probes in one accounting unit with one budget. No prior work we are aware of
+routes \emph{all five} axes jointly under a single scalar budget, nor reports how
+the optimal \emph{mix} moves as that budget changes.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item \textbf{Re-anchoring and promotion surface} (Sec.~\ref{sec:method}). We
+  quote the source definition of \eff{} and $k(\eff)$ with line numbers, and we
+  state the promotion surface $\{\reff, \stepeff, \tooleff, \searcheff, \viseff\}$ explicitly. We
+  also state the boundary of what the source can support: only the source's own
+  checkpoints instantiate the reported curves, and its weights are not available
+  to us, so every statement about the source model's controllability in this
+  paper is a quotation of the report, never a measurement of ours.
+\item \textbf{A measured cost model} (Sec.~\ref{sec:e1}). We profile $18$ tool
+  primitives on the host that runs our agent loop ($\geq 30$ samples each,
+  per-invocation wall clock, failures reported rather than dropped). The
+  measured spread is the reason a joint router has anything to do: local tool
+  calls cost $7.09$~ms, a vision unit costs $177.34$~ms, and an internet search
+  call costs $2233.75$~ms.
+\item \textbf{A joint allocation frontier as a normative benchmark} (Sec.~\ref{sec:e2}). On $8{,}820$
+  candidate allocations we compute the cost--success frontier implied by the idealised
+  allocator of Sec.~\ref{sec:model}, and compare it
+  against max-everything, fixed-mid, single-axis-max and decoupled-budget
+  routers, with a $200$-replicate bootstrap over the measured latencies and a
+  $30$-case sensitivity grid. One baseline \emph{dominates} the other three.
+\item \textbf{An end-to-end check} (Sec.~\ref{sec:e3}). A real agent loop with a
+  hard per-episode budget, real tool calls and hidden auto-graded tests shows
+  monotone, saturating returns and a budget floor below which the task cannot be
+  finished at all.
+\item \textbf{The measured gap between that benchmark and real closed-loop behaviour, at two
+  scales}
+  (Sec.~\ref{sec:res-h4}).
+  The loop of the previous item is re-run with a real language model instead of
+  the rule-based repairer, at $8$B and, as the protocol registered, at $14$B. The
+  saturating-gain assumption that the allocation study rests on is contradicted by
+  both arms, which do not contradict it in the same way. On the $8$B arm the
+  point-estimate curve peaks at the low budget and then falls, and that fall is
+  reached by counting every record separately; on the $16$ independent units the same
+  contrast is $3$ worse and $0$ better, $p{=}0.25$, so the decline is observed but not
+  established. The $14$B arm does not reproduce it: its curve peaks at the mid budget,
+  its low-to-max contrast has more improvements than worsenings, and its test
+  invocations per episode rise with the budget rather than falling. What both arms do
+  support is the smaller claim: the fitted gains are not identifiable at either scale,
+  and neither measured curve has the assumed shape.
+\end{enumerate}
+
+\paragraph{Honest scope.}
+Our experiments are \emph{not} run on the source model; the protocol for each is in Sec.~\ref{sec:experiments}. All of them are run on an
+x86-64 CPU host (96 vCPUs, 754~GB RAM); Sec.~\ref{sec:e1}, Sec.~\ref{sec:e2} and
+Sec.~\ref{sec:e3} use a rule-based agent policy, and the joint-allocation study is
+a model-based optimisation whose cost side is measured and whose success side is
+anchored to published numbers plus four declared assumptions.
+Section~\ref{sec:res-h4} additionally runs the loop with a real language model on
+a GPU, and it is the one place where the gain assumption is tested rather than
+assumed. Section~\ref{sec:limits} lists every assumption and what would
+falsify it.
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Controllable test-time compute.}
+Budget-aware test-time compute is surveyed by \citet{alomrani2025reasoningbudget}.
+Within a single reasoning episode, \citet{zhou2026coba} route the next unit of
+compute among generation, verification and stopping, reporting $85.13\%$ macro
+accuracy while using $49.1\%$ fewer parameter-weighted tokens than a
+self-evaluation weighted-voting proxy at $85.20\%$; \citet{yang2026gambit}
+concentrate compute on promising partial trajectories by thought-level beam
+search, reporting up to $+6.7$ absolute accuracy on HMMT-24 and a $68.5\%$ token
+reduction against parallel sampling. \citet{wang2023selfconsistency} sample and
+vote. All of these allocate \emph{within} a reasoning episode and treat the
+sampling/voting/verifying split as the decision variable. None of them makes
+trajectory length, tool calls, search depth or visual probing part of the same
+decision, which is the axis set an agent actually pays for; the long-horizon task setting itself follows the SWE-bench line of work \citep{jimenez2024swebench}.
+
+\paragraph{Budgeted agents.}
+\citet{wu2026ecoagentbench} build $304$ real-derived tasks in which every task
+specifies priced actions and an explicit budget, and test four decisions
+(avoid escalation, escalate when local evidence is insufficient, select a model
+tier, stop on unsupported premises). They report that tool-API agents reach only
+$3.9$--$24.0\%$ micro strict success (at most $7.3\%$ economic consistency), and
+that a threshold-crossing budget sweep moves one model's escalation rate from
+$0\%$ to only $3\%$---evidence that completion under a budget and economical
+action selection are distinct properties. \citet{liu2025budgettooluse} add a
+budget tracker so a tool-using agent can observe its remaining budget. Both make
+the agent \emph{aware} of cost; neither derives the optimal composition of a
+budget across heterogeneous axes, which is our question. Our
+Sec.~\ref{sec:e2} result that the optimal mix rotates across the budget is
+consistent with their finding that awareness alone does not produce economical
+selection.
+
+\paragraph{Source report.}
+\citet{v41flash2026} is a systems report about KV-cache compression; its
+effort-control section (lines 2039--2109) and appendix~C (lines 3486--3511) are
+the only place where a scalar effort interface is defined and calibrated. We use
+exactly those two locations, and we use them as \emph{source}, not as a baseline
+we run.
+
+\section{Method}
+\label{sec:method}
+
+\subsection{The five effort axes and their cost currencies}
+
+The model of Sec.~\ref{sec:model} is instantiated below. We write an allocation as a tuple
+$a = (\reff, \stepeff, \tooleff, \searcheff, \viseff)$, where $\reff$ is the requested reasoning
+effort on the source's own $1$--$100$ scale, $\stepeff$ is the trajectory length in
+turns, and $\tooleff$, $\searcheff$, $\viseff$ count local tool calls, network search calls and
+visual probes. Two costs are tracked for every allocation. The \emph{token} cost
+\begin{equation}
+\mathrm{tok}(a) = \stepeff L(\reff)
+  + \stepeff c_{\mathrm{step}}
+  + (\tooleff + \searcheff) c_{\mathrm{tool}}
+  + \searcheff c_{\mathrm{extra}}
+  + \viseff c_{\mathrm{vis}},
+\end{equation}
+where $L(\reff)$ is the reasoning tokens per turn, is the primary currency
+because it is the quantity the source's RL penalises \eqref{eq:k}. The
+\emph{latency} cost is
+\begin{equation}
+\mathrm{ms}(a) = \stepeff \frac{L(\reff)}{1000} r_{\mathrm{dec}}
+  + \stepeff \tau_{\mathrm{step}}
+  + \tooleff \tau_{\mathrm{tool}}
+  + \searcheff \tau_{\mathrm{search}} \big(1 + (1-\pi_{\mathrm{search}})(\rho-1)\big)
+  + \viseff \tau_{\mathrm{vis}},
+\end{equation}
+where every $\tau$ is a measured per-invocation latency (Sec.~\ref{sec:e1}) and
+$\pi_{\mathrm{search}}$ is the probability that a search call returns a usable
+result, with wasted cost $\rho$ on a failed call. Pricing tokens at fixed rates
+plus measured tool time follows the report's own latency accounting, which
+``assign[s] costs from token counts at fixed prefill/decode rates plus measured
+tool-execution time'' (lines 2742--2743). The token prices
+$c_{\mathrm{step}}=1000$, $c_{\mathrm{tool}}=200$ and $c_{\mathrm{vis}}=200$
+and the decode rate $r_{\mathrm{dec}}=30$ per $10^3$ tokens are
+\emph{assumptions}, declared in Sec.~\ref{sec:limits} and swept in
+Sec.~\ref{sec:e2}.
+
+\subsection{Source-anchored reasoning kernel}
+\label{sec:kernel}
+
+We parameterise the success contribution of the reasoning axis directly from the
+report's numbers (this kernel is calibrated in App.~\ref{app:calibration}). Let $w$ be a concave map of effort onto the $25 \to 100$
+accuracy swing with $w(25)=0$ and $w(100)=1$,
+\begin{equation}
+w(b) = \frac{\log\!\big(1+\tfrac{b-b_{\min}}{s_0}\big) - \log\!\big(1+\tfrac{25-b_{\min}}{s_0}\big)}
+             {\log\!\big(1+\tfrac{100-b_{\min}}{s_0}\big) - \log\!\big(1+\tfrac{25-b_{\min}}{s_0}\big)},
+\end{equation}
+so that
+$\mathrm{acc}(\reff) = 0.671 + (0.763-0.671) w(\reff)$ reproduces the published
+endpoints $67.1\%$ and $76.3\%$ (line 2434) for any $s_0$. We set $s_0=5000$ by
+solving the report's front-load statement (lines 2439--2440): the fraction of the
+$25 \to 100$ accuracy gain recovered at $\reff=80$ is $0.735$ for this $s_0$.
+For the length model we use $L(\reff) = L(25)\exp(\kappa(\reff-25))$ with
+$\kappa = \log(2.5)/(100-25) = 0.01222$, which reproduces the report's
+``roughly $2.5\times$ more output tokens'' (line 2436) exactly at the endpoints
+and matches the affine effort--length trend of appendix~C Eq.~(16)
+(lines 3756--3767) in the small-$\kappa$ regime.
+
+\subsection{Joint model}
+\label{sec:model}
+
+Given the kernel of Sec.~\ref{sec:kernel} and the hypotheses of Sec.~\ref{sec:pre-registration}, the agent axes are modelled as \emph{substitutable} routes that each recover part
+of the residual failure probability, with exponential saturation:
+\begin{equation}
+\mathrm{agent}(a) = 1 - \prod_{x \in \{\stepeff,\tooleff,\searcheff,\viseff\}}
+   \Big(1 - g_x\big(1 - e^{-x/\mathrm{ref}_x}\big)\Big),
+\end{equation}
+\begin{equation}
+P(\text{solve} \mid a) = 1 - \big(1 - \mathrm{acc}(\reff)\mathrm{agent}(a)\big)(1-p_0),
+\label{eq:joint}
+\end{equation}
+with $p_0 = 0.35$ the base success probability. Eq.~\eqref{eq:joint} is monotone
+non-decreasing in every axis and bounded by $1$; the four gains $g_x$ and their
+half-saturation references $\mathrm{ref}_x$ are \emph{assumptions}
+(Sec.~\ref{sec:limits}). The substitutability is the modelling choice that makes
+the problem non-trivial: with a conjunctive model (every axis must succeed)
+almost every allocation fails and the frontier collapses.
+
+\textbf{What this model is for.} We call the saturating form above together with
+Eq.~\eqref{eq:joint} the \emph{idealised rational allocator}. It is the target a
+budget-limited agent \emph{ought} to solve, and it is not offered as a description of any
+deployed language model: the gains $g_x$ are declared assumptions (Sec.~\ref{sec:limits}),
+and by construction the form is monotone in every axis, so it cannot represent an allocation
+that does worse with more budget. The empirical object of this paper is the \emph{distance}
+between that benchmark and what two scales of a real model do under the same budgets
+(Sec.~\ref{sec:res-h4}); the frontier is the measuring stick, not the claim.
+
+\subsection{Pre-registered hypotheses}
+\label{sec:pre-registration}
+
+We fixed the following before running the allocation study. \textbf{H1}: at
+matched cost, the joint router attains higher success than a fixed mid setting on
+every axis. \emph{Falsified if} the success difference is $\leq 0$ at the
+baseline's own cost. \textbf{H2}: allowing budget to be traded freely across the
+five axes is cheaper than hard-partitioning the budget into five private shares.
+\emph{Falsified if} the decoupled partition reaches a given success level at equal
+or lower cost. \textbf{H3}: the composition of the optimal allocation changes
+across the budget rather than scaling uniformly. \emph{Falsified if} the optimal
+levels are (nearly) co-monotone in the budget.
+
+\subsection{Declared limits}
+\label{sec:limits}
+
+\begin{enumerate}
+\item \textbf{No source-model access.} The report states that model checkpoints
+  ``are available at'' a model hub (line 24). We did not obtain or run them: the
+  weights are not part of this study, and no result here is a measurement of the
+  source model. Every controllability statement about it is a quotation with a
+  line number.
+\item \textbf{Assumed parameters} (declared, swept in the $30$-case grid of
+  Sec.~\ref{sec:e2}): the four agent-axis gains
+  $g_{\mathrm{steps}}{=}0.30$, $g_{\mathrm{tools}}{=}0.25$,
+  $g_{\mathrm{search}}{=}0.28$, $g_{\mathrm{vision}}{=}0.20$; half-saturations
+  $\mathrm{ref}{=}(10,6,4,4)$; base success $p_0{=}0.35$; token prices
+  $c_{\mathrm{step}}{=}10^3$, $c_{\mathrm{tool}}{=}200$,
+  $c_{\mathrm{vision}}{=}200$; decode rate $r_{\mathrm{dec}}{=}30$ per $10^3$
+  tokens; search usability $\pi_{\mathrm{search}}{=}0.85$ with retry cost
+  $\rho{=}1.4$. These are \emph{not} measured and \emph{not} published by the
+  source. Sec.~\ref{sec:res-h4} is an attempt to measure three of them on a real
+  model at two registered scales; it did not succeed in pinning them at either
+  (the bootstrap intervals are too wide), and its point estimates contradict the
+  assumed monotone shape on that task set at both scales, in different directions
+  ($8$B falls after the low budget, $14$B after the mid one), so these values
+  remain assumptions and the frontier remains conditional.
+\item \textbf{Synthetic policy in Sec.~\ref{sec:e3}.} The end-to-end loop uses a
+  deterministic rule-based repairer, not a language model. It therefore supports
+  claims about loop-level cost accounting and budget exhaustion, not claims about
+  any model's insight-per-effort curve. Sec.~\ref{sec:res-h4} supplies the
+  model-backed counterpart: its result is a \emph{negative} one at the $8$B scale and
+  a \emph{contradictory} one at $14$B, so the pair supports neither a general decline
+  nor a general flatness.
+\item \textbf{One host.} All latencies come from one container (96 vCPUs,
+  754~GB RAM). Absolute latencies are host-specific; the ratios are the portable
+  quantity, and Sec.~\ref{sec:e1} reports both.
+\item \textbf{Two models, one task set} (Sec.~\ref{sec:res-h4}). The real-model
+  evidence is \emph{two} instruction-tuned models of one family---Qwen3-8B-AWQ and
+  Qwen3-14B-AWQ, $672$ episodes each, run under identical code and seed on the same
+  eight tabular-repair tasks used throughout---so it is a measurement of those two
+  pairings and not a general property of language-model agents. The two pairings do
+  not agree with each other: the $8$B curve peaks at the low budget and falls, the
+  $14$B curve peaks at the mid budget and its paired contrast has more improvements
+  than worsenings, and only the $8$B arm defers verification as the budget grows. Two
+  sizes are two points, not a scale trend: nothing here separates model size from the
+  pairing artefacts, and no third size was run. The tasks are short and
+  auto-graded, the hidden suites are fixed, and success is a step function of
+  whether the schedule is completed; a longer-horizon task set would move both the
+  peak and the point at which behaviour degrades.
+\item \textbf{The assumed gain model is monotone.} $P(\text{solve}\mid a)$ in
+  Eq.~\eqref{eq:joint} increases in every axis and cannot represent a decrease with
+  budget. On the real-model runs the measured curve decreases after the low budget at
+  $8$B and after the mid budget at $14$B, so the form does not hold at either scale;
+  this is why the fit reaches only $r^2{=}0.291$ on the $8$B cells
+  and why we withhold all three fitted gains at both scales. The frontier of
+  Sec.~\ref{sec:e2} is
+  therefore a \emph{conditional} model, not a description of the measured agent.
+\item \textbf{Phase-one artefacts were excluded, and the exclusion is recorded.}
+  The real-model run first lost $10$ of $40$ pilot episodes to action-format
+  truncation caused by the model's default deliberation mode; that mode was disabled
+  before the reported run, whose parsing failures are zero. Two further hazards are
+  recorded with their evidence: a co-tenant job used $\approx\!13$~GB of the device
+  without taking the shared lock, so the reported wall-clock is an upper bound under
+  contention, and the allocator was given free rather than total device memory.
+\item \textbf{Accelerator use.} Sec.~\ref{sec:e1}, Sec.~\ref{sec:e2} and
+  Sec.~\ref{sec:e3} are CPU-side. Sec.~\ref{sec:res-h4} ran on two accelerators under
+  the shared lock: the first $8$B arm on an \texttt{RTX 3090, 49152~MiB}, and---on the
+  same harness code---the second $8$B arm and the $14$B arm on an \texttt{RTX 4080,
+  32760~MiB}. The device state at load and the run timing are recorded in each arm's
+  result file. An earlier draft of this list said no accelerator was used;
+  that applied to Rounds~1--2 only and is not true of the reported run.
+\end{enumerate}
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{E1/E1b: measured tool cost primitives}
+\label{sec:e1}
+
+\textbf{What is measured.} We time $18$ primitives that a coding or research
+agent actually invokes, each with its own repetition count (all $\geq 30$):
+process spawn, shell command, interpreter start-up, small and medium file reads,
+atomic file write, directory scan, a real internet round trip, an unreachable
+host, a CPU kernel, a four-worker process fan-out, a read-tool call with
+correctness verification, PNG encode/decode of a $1280\times720$ frame, a screen
+grab attempt, a small test-runner invocation, a loopback HTTP search over $500$
+documents, a patch application, and a JSON-emitting CLI call. A tool call counts
+as a \emph{semantic failure} when it returns the wrong answer, not merely when it
+exits non-zero; the read-tool task deliberately mixes a matching query (expected
+$200$ hits) with a non-matching query (expected $0$) so that a confidently wrong
+tool is scored as a failure.
+
+\textbf{Reproducibility.} Generator scripts
+\texttt{e1\_tool\_latency.py} and \texttt{e1b\_agent\_primitives.py} (under
+\texttt{experiments/}); raw per-invocation samples in
+\texttt{e1\_tool\_latency.json} and \texttt{e1b\_agent\_primitives.json} (under
+\texttt{results/}); aggregate means recomputed by \texttt{analysis.py}, which
+asserts agreement with the stored aggregates.
+
+\subsection{E2: joint allocation}
+\label{sec:e2}
+
+\textbf{What is computed.} We enumerate $8{,}820$ candidate allocations over
+$\reff\in\{0,25,50,75,100\}$, $\stepeff\in\{1,2,4,8,12,20,32\}$,
+$\tooleff\in\{0,1,2,4,8,16,24\}$, $\searcheff\in\{0,1,2,4,8,16\}$,
+$\viseff\in\{0,1,2,4,8,16\}$, evaluate Eq.~\eqref{eq:joint} and both cost functions
+for each, and extract the Pareto frontier. Baselines: max-everything
+($a_{\max}$), a fixed mid setting $(50,8,4,2,2)$, reasoning-only max, agent-axes
+max, and a \emph{decoupled} router that splits the total budget into five private
+shares and lets each axis climb greedily inside its own share. We report two
+matched comparisons per baseline: maximum success at the baseline's own cost, and
+minimum cost at the baseline's own success. Uncertainty comes from a
+$200$-replicate bootstrap that resamples per-invocation latencies from the E1/E1b
+raw samples; a $30$-case grid (three values for each of ten parameters) checks
+that the ordering is not an artefact of the assumptions.
+
+\subsection{E3: end-to-end loop under budget degradation}
+\label{sec:e3}
+
+\textbf{What is executed.} Eight auto-graded program-repair tasks, each with a
+deliberately incomplete starter module and a hidden unit-test suite the agent
+never sees. A real ReAct-style loop performs actions drawn from a schedule
+(\texttt{read}, \texttt{vision-probe}, \texttt{write}, \texttt{test}), where a
+\texttt{test} action spawns a real subprocess; exceeding any of the four budgets
+(steps, tool calls, context characters, vision probes) terminates the episode as
+a failure; success is the subprocess exit code of the hidden suite and nothing
+else. Five budget levels $\times$ two schedules $\times$ three repeats
+$\times$ eight tasks $= 240$ episodes.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Measured cost primitives}
+\label{sec:res-e1}
+
+Sec.~\ref{sec:res-e1} reports the measured cost primitives (Table~\ref{tab:latency}). Three facts drive
+everything downstream. First, spawn-dominated actions are not cheap in relative
+terms: interpreter start-up is $30.36$~ms and a four-worker fan-out is
+$38.34$~ms, an order of magnitude above a file read ($0.033$~ms). Second, the
+heterogeneity across tool families is the point: the local read tool costs
+$7.09$~ms ($n{=}60$, $95\%$ bootstrap CI $[6.75, 7.41]$) while an internet round
+trip costs $2233.75$~ms ($n{=}40$, CI $[1609, 2933]$), a ratio of $315\times$;
+a failed network call still costs $961.82$~ms before failing ($n{=}40$, failure
+rate $1.000$). Third, the vision axis is the most expensive per unit
+($177.34$~ms, CI $[175.02, 181.37]$) and its \emph{capture} step is unavailable
+on this headless host: a real screen grab failed in $30$ of $30$ attempts. We report
+that as a failure rather than substituting a constant, and we proxy the vision
+unit by a frame codec (encode plus decode) instead. The proxy bounds that unit
+\emph{from below}: it prices the codec only, not the visual-encoder pass a deployed
+multimodal agent pays on the same frame, which we do not measure here. Every vision figure in
+this paper is therefore a floor, and the router's preference for buying vision before network
+search is conservative in exactly that direction.
+
+The local search alternative is $1.02$~ms ($n{=}60$) against the internet's
+$2233.75$~ms, i.e. the same logical action costs $2194\times$ more when it leaves
+the host. This is the largest dispersion we measured, and it is why the search
+axis stays at zero in the low-latency part of the frontier
+(Sec.~\ref{sec:res-e2}).
+
+\begin{table}[t]
+\caption{Measured per-invocation cost primitives on the agent host. $n$ is the
+number of repetitions, fail is the fraction of invocations that returned a wrong
+answer or raised, mean/p50/p95 are over successful invocations for the latency
+columns, and the CI is a $4000$-replicate bootstrap of the mean. Units are
+milliseconds. Every value is recomputed from \texttt{results/*.json} by
+\texttt{analysis.py}.}
+\label{tab:latency}
+\begin{center}
+\small
+\begin{tabular}{lrrrrrl}
+\toprule
+Primitive & $n$ & fail & mean & p50 & p95 & bootstrap CI$_{95}$ of mean \\
+\midrule
+shell spawn (\texttt{/bin/true})        & 120 & 0.000 & 1.31   & 1.32   & 1.42   & $[1.28, 1.33]$ \\
+shell command (\texttt{grep}$+$\texttt{wc}) & 90 & 0.000 & 7.13 & 7.37 & 8.11 & $[6.94, 7.31]$ \\
+interpreter start-up                    & 60 & 0.000 & 30.36  & 31.41  & 34.38  & $[29.58, 31.11]$ \\
+file read, 4~KiB                        & 200 & 0.00 & 0.033  & 0.034  & 0.037  & $[0.032, 0.035]$ \\
+file read, 256~KiB                      & 60 & 0.00 & 0.052  & 0.047  & 0.053  & $[0.048, 0.059]$ \\
+atomic file write, 4~KiB                & 90 & 0.000 & 0.51   & 0.45   & 0.96   & $[0.46, 0.57]$ \\
+directory scan, 200 files               & 120 & 0.000 & 0.101 & 0.093  & 0.156  & $[0.092, 0.115]$ \\
+CPU kernel ($512^2$ matmul)             & 60 & 0.000 & 1.94   & 0.68   & 1.47   & $[0.80, 4.09]$ \\
+4-worker process fan-out                & 45 & 0.000 & 38.34  & 37.52  & 47.43  & $[36.32, 40.95]$ \\
+read tool, exit \emph{and} answer checked & 60 & 0.000 & 7.09  & 7.61   & 8.70   & $[6.75, 7.41]$ \\
+internet round trip (GET, 2~KiB)        & 40 & 0.000 & 2233.75 & 1220.81 & 6693.34 & $[1609, 2933]$ \\
+unreachable host (DNS/TLS failure)      & 40 & 1.00 & 961.82 & 101.43 & 5132.05 & $[459, 1583]$ \\
+PNG codec, $1280\times720$              & 60 & 0.000 & 177.34 & 174.54 & 186.26 & $[175.02, 181.37]$ \\
+screen grab (headless host)             & 30 & 1.00 & ---    & ---    & ---    & unavailable \\
+test runner, 3 tests                    & 30 & 0.000 & 58.25  & 58.16  & 63.50  & $[57.05, 59.44]$ \\
+loopback HTTP search, 500 docs          & 60 & 0.000 & 1.02   & 0.89   & 1.45   & $[0.82, 1.34]$ \\
+patch application                       & 60 & 0.000 & 2.26   & 2.24   & 2.58   & $[2.22, 2.32]$ \\
+JSON CLI tool call                      & 60 & 0.000 & 33.98  & 31.75  & 35.74  & $[31.09, 38.22]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Joint allocation: the frontier and the baselines}
+\label{sec:res-e2}
+
+The allocation study of Sec.~\ref{sec:e2} gives the headline comparison in Table~\ref{tab:e2}. H1 holds for the three
+non-saturating baselines and fails in the literal form we wrote for the
+max-everything baseline, which is already at the attainable maximum; we report
+both rather than choosing the flattering one.
+
+At the fixed-mid baseline's own token cost ($23{,}429$), the joint router reaches
+success $0.6341$ against the baseline's $0.5320$, a gain of $+10.21$ percentage
+points. Equivalently, to reach the baseline's success level the router needs
+$6{,}810$ tokens, a factor of $3.44$ fewer. Against reasoning-only max the gain
+is $+10.16$ points at matched cost and $4.52\times$ fewer tokens at matched
+success. Against agent-axes max it is $+2.11$ points and $2.05\times$. Against
+max-everything the router reaches the same success ($0.6906$) at the same cost:
+once every axis is at its maximum, no allocation can do better in this model, and
+spending more is pure waste. What the max-everything baseline \emph{loses} is the
+cost of the last few points: to reach $90\%$ of the attainable success
+($0.6216$), the router needs $16{,}800$ tokens while max-everything carries
+$145{,}600$, a factor of $8.67$ (Table~\ref{tab:e2}).
+
+H2 also holds. With five private budget shares and no cross-axis trade, the
+decoupled router needs $3{,}284$ tokens to reach $40\%$ success against the
+unified router's $2{,}484$, i.e. $1.32\times$ more expensive, and it tops out at
+$0.6736$ against the unified $0.6906$.
+
+\begin{table}[t]
+\caption{Joint allocation against four router baselines (token currency).
+``gain at baseline cost'' is the success difference at the baseline's own token
+cost; ``ratio at matched success'' is baseline cost divided by the router's
+minimum cost to reach the baseline's success. The $+0.000$ entry for
+max-everything is a real tie, not a rounding artefact: the baseline is at the
+attainable maximum.}
+\label{tab:e2}
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Router & success & tokens & gain at & router cost at & ratio at \\
+       &         &        & baseline cost & matched success & matched success \\
+\midrule
+max every axis      & 0.6906 & 145{,}600 & $+0.000$ pts & 145{,}600 & $1.000\times$ \\
+fixed mid $(50,8,4,2,2)$ & 0.5320 & 23{,}429 & $+10.21$ pts & 6{,}810 & $3.44\times$ \\
+reasoning only max  & 0.5478 & 34{,}400 & $+10.16$ pts & 7{,}610 & $4.52\times$ \\
+agent axes max      & 0.6633 & 101{,}717 & $+2.11$ pts & 49{,}600 & $2.05\times$ \\
+decoupled budgets   & 0.6736 & 65{,}600 & --- & 3{,}284 (at 0.40) & $1.32\times$ (at 0.40) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\paragraph{The frontier is a composition claim, not a spending claim.}
+H3 holds, and it is the most useful result. The optimal allocation rotates
+completely across the budget (Table~\ref{tab:frontier}). At $5{,}000$ tokens the
+optimum is $(25, 1, 4, 2, 4)$: cheap search and moderate vision, almost no
+trajectory. At $10{,}000$ tokens reasoning is already at maximum ($100$) while
+the trajectory is still a single turn, because extending the trajectory
+multiplies the per-turn reasoning cost $L(\reff)$. Only at $20{,}000$ tokens and
+above does the router buy turns ($4$, then $8$, then $12$, then $20$), and it
+buys them against reasoning that is already saturated. In latency currency the
+ordering flips: at a $2{,}000$~ms budget the router refuses any network search
+($0$ calls, because one call costs $2233.75$~ms) and buys local tools instead.
+An ablation confirms that no single axis substitutes for this rotation. Holding the
+other four axes at their mid setting, every single-axis frontier passes through the
+same mid point at $0.5320$ (cost $23{,}429$); pushing one axis beyond it buys at most
+$0.5827$, and that is \emph{search} alone at $1.4\times$ the mid cost. Reasoning alone
+is the weakest of the five frontiers, topping out at $0.5478$ after $1.5\times$ the mid
+cost, and reaching the search figure would take steps alone at $3.7\times$. At the mid
+cost the joint router reaches $0.634$.
+
+\begin{table}[t]
+\caption{Composition of the optimal allocation as the token budget changes. The
+mix rotates rather than scaling uniformly, which is H3.}
+\label{tab:frontier}
+\begin{center}
+\small
+\begin{tabular}{rrrrrr}
+\toprule
+token budget & $\reff$ & $\stepeff$ & $\tooleff$ & $\searcheff$ & $\viseff$ \\
+\midrule
+5{,}000  & 25  & 1  & 4  & 2  & 4 \\
+10{,}000 & 100 & 1  & 8  & 4  & 8 \\
+20{,}000 & 100 & 1  & 16 & 16 & 16 \\
+30{,}000 & 100 & 4  & 24 & 8  & 16 \\
+50{,}000 & 100 & 8  & 24 & 16 & 16 \\
+80{,}000 & 100 & 12 & 24 & 16 & 16 \\
+120{,}000 & 100 & 20 & 24 & 16 & 16 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\paragraph{Robustness.}
+The $200$-replicate bootstrap over measured latencies gives a success gain of
+$0.000$ points with a $95\%$ interval of $[0.000, 0.000]$ for the
+max-everything baseline---i.e. the tie is stable, because the baseline saturates
+under latency resampling too. The $30$-case sensitivity grid is less
+comfortable and we report it in full: the gain over max-everything ranges from
+$-7.14$ to $+7.14$ points, with $15$ exact ties (the default regime) and $8$
+cases where the router is \emph{worse}. Every losing case is the same mechanism:
+when the agent axes are made weak (base success $p_0{=}0.20$, or gains
+$0.10$--$0.15$) or their saturation is pushed far out
+($\mathrm{ref}_{\mathrm{steps}}{=}16$, $\mathrm{ref}_{\mathrm{tools}}{=}12$),
+success becomes accuracy-limited, so the only axis that still moves the frontier
+is reasoning, and max-everything's reasoning setting is already at the ceiling.
+The three gains over the fixed-mid, reasoning-only and agent-only baselines are
+robust across the grid; the tie with max-everything is the fragile claim, and we
+do not rely on it.
+
+\subsection{End-to-end loop}
+\label{sec:res-e3}
+
+The loop of Sec.~\ref{sec:e3} produced $240$ executed episodes (Table~\ref{tab:e3}). The success curve is
+monotone non-decreasing in the budget and saturates early: $0.000$ at the
+minimal budget ($2$ steps), $0.500$ at the low budget, and $1.000$ from the mid
+budget upward, with no further gain from four times the budget. Cost per success
+is $51.6$~ms at the low budget against $52.0$ and $51.0$~ms at the mid and max
+budgets: beyond saturation, extra effort is pure cost. This reproduces at loop
+level the same shape the source report describes for the reasoning axis
+(``the gains are front-loaded'', line 2439).
+
+The information in this curve is concentrated in its lower two levels: three of
+the five budget levels (mid, high, max) sit at $1.000$, so the upper half of this
+particular frontier carries no discriminating information. The task set used here
+saturates at $8$ steps; ``buying more steps yields nothing'' is therefore a
+statement about the ceiling of \emph{this eight-task set}, not a general law about
+agent effort. A harder task set would move the saturation point and reopen the
+upper region, and we flag this as the main way the E3 result under-reports the
+regime a real agent operates in.
+
+The schedule decomposition is also informative: at the low budget the
+read-then-write schedule succeeds $24/24$ while the vision-probe-heavy schedule
+succeeds $0/24$, purely because its first action needs a vision probe that the
+budget does not grant. The budgets, not the policy, decide. This is a second
+ceiling effect: the schedule is fixed, so measured success is a step function of
+whether the whole schedule fits, not a smooth function of budget.
+
+\begin{table}[t]
+\caption{End-to-end agent loop under degraded budgets. $48$ records per level = $16$
+independent (task, schedule) units $\times$ $3$ deterministic repeats; the policy is
+deterministic, so the copies carry no information. Success is the hidden test suite's exit
+code; the CI is an exact binomial (Clopper--Pearson) on those $16$ units, printed to 3 dp rounded outward, never a bootstrap over the $48$ rows, which would print a zero-width interval at $16/16$. Cost per success is undefined at the level where nothing succeeds.}
+\label{tab:e3}
+\begin{center}
+\small
+\begin{tabular}{lrrrrrl}
+\toprule
+Budget level & max steps & records ($n$ units) & success & CI$_{95}$ & mean ms & cost/success \\
+\midrule
+minimal & 2  & 48 (16) & 0.000 & $[0.000, 0.206]$ & 0.014 & --- \\
+low     & 4  & 48 (16) & 0.500 & $[0.246, 0.754]$ & 25.8 & 51.6~ms \\
+mid     & 8  & 48 (16) & 1.000 & $[0.794, 1.000]$ & 52.0 & 52.0~ms \\
+high    & 16 & 48 (16) & 1.000 & $[0.794, 1.000]$ & 51.7 & 51.7~ms \\
+max     & 32 & 48 (16) & 1.000 & $[0.794, 1.000]$ & 51.0 & 51.0~ms \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{A real-model test of the gain assumption}
+\label{sec:res-h4}
+
+The allocation study of Sec.~\ref{sec:e2} \emph{assumes} that each agent axis has a
+saturating gain $g_x$. Sections~\ref{sec:res-e1}--\ref{sec:res-e3} hold the policy
+fixed, so none of them tests that assumption. We test it by replacing the rule-based
+repairer of Sec.~\ref{sec:e3} with a real instruction-tuned model: Qwen3-8B-AWQ served
+by vLLM, temperature $0$, one JSON action per turn, over the same eight tasks, the same
+five budget levels and the same two action menus. The protocol registers a second, larger
+arm (Qwen3-14B-AWQ); it was run, and because it does not agree with the $8$B arm it is
+reported in its own paragraph at the end of this subsection rather than in a footnote.
+The run has two parts: $240$
+episodes replicate Sec.~\ref{sec:e3} exactly ($8$ tasks $\times$ five levels
+$\times$ two menus $\times$ three repeats), and $432$ further episodes sweep one
+axis at a time while holding the others at the mid allocation, which is what the
+gain fit below needs in order to separate the axes. Grading is unchanged---the exit code of the same hidden suites, which the model never sees.
+
+\textbf{What the model is shown (budget awareness).} The budget is explicitly visible in the
+model's context, not only enforced outside it. Every turn is built from one template
+(\texttt{experiments/h4\_real\_llm\_gx.py}, \texttt{SYS} at line 406 and \texttt{USER\_TMPL}
+at lines 419--429) which prints \texttt{budget:} followed by \texttt{max\_steps},
+\texttt{max\_tool\_calls}, \texttt{max\_context\_chars} and \texttt{max\_vision\_probes}, then
+a \texttt{state} object carrying \texttt{steps\_used}, \texttt{tools\_used},
+\texttt{vision\_used} and the action list, then the serialised history, then a request for
+the next single JSON action. The model therefore sees both its ceiling and its own
+consumption at every step. This fixes the causal reading of the $8$B collapse reported below:
+the disappearance of \texttt{test} actions as the budget grows is a decision taken under a
+\emph{known} remaining budget---deferral of the terminating action---and the competing
+explanation, context drift under a truncation the model cannot see, does not apply to this
+harness.
+
+Two defects had to be fixed first, and both would have produced a false measurement.
+First, a pilot run lost $10$ of $40$ episodes to action-parsing failures: in its default
+reasoning mode the model emits $\approx\!974$ tokens of deliberation before the action
+and is truncated before the JSON is reached, which censors the budget--success
+relationship for reasons unrelated to budget. Disabling that mode reduced a turn from
+$7.46$~s to $0.58$~s and removed the parse failures entirely. Second, the target host was
+shared by a co-tenant that did not take the shared GPU lock, so the allocator was given
+the \emph{free} device memory rather than a fixed fraction of total; the run records its
+wall-clock ($1818.2$~s, summed from per-episode timers) and its device state at load, and
+we treat the reported timing as an upper bound under contention.
+
+\begin{table}[t]
+\caption{The $8$B arm: a real language model in the loop of Sec.~\ref{sec:e3}. $672$ episodes
+over the $8$ tasks, each repeated $3$ times: $240$ replicate the five budget levels
+of Sec.~\ref{sec:e3} under both action menus ($8\times5\times2\times3$), and $432$
+come from the three single-axis sweeps used for the gain fit ($120$ budget, $168$
+tool-call and $144$ vision-probe settings, with the remaining axes held at the mid
+allocation). The level column pools the $240$ replication episodes only and reports
+their $n$. Success is the hidden suites' exit code. Every failure at every level is
+a step-budget exhaustion; action-parsing failures are zero throughout. The last two
+columns are the mean number of file rewrites and of test invocations per episode.}
+\label{tab:h4}
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Budget level & max steps & $n$ & success & writes/ep & tests/ep \\
+\midrule
+minimal & 2  & 48 & 0.0000 & 1.00 & 0.00 \\
+low     & 4  & 48 & \textbf{0.9375} & 1.69 & 0.94 \\
+mid     & 8  & 48 & 0.8750 & 4.81 & 0.94 \\
+high    & 16 & 48 & 0.8125 & 7.38 & 0.88 \\
+max     & 32 & 48 & \textbf{0.7500} & 13.81 & 0.75 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+Table~\ref{tab:h4} reports the $8$B arm, and it does not have the saturating shape. Success
+is $0.0000$ at the budget that cannot fit the minimum schedule, peaks at $0.9375$ on the
+low budget, and then \emph{declines} monotonically to $0.7500$ at eight times that
+budget. Pairing the same tasks and menus across the two extremes gives $9$ record pairs that
+worsen and $0$ that improve, an exact McNemar $p{=}0.0039$; that figure counts each record
+separately and so is pseudo-replicated, because the three repeats per unit
+record the same outcome, which leaves $16$ independent units: on units it is $3$ and $0$, $p{=}0.25$, which does not establish the decline. We therefore state this curve as an observation about these episodes, not as an established property of the model. At $n{=}16$ independent (task, schedule) units, the paired two-sided $\alpha{=}0.05$, power $0.8$ minimum detectable standardized difference is $d_z{=}(t_{.975,15}{+}t_{.8,15})/\sqrt{16}{=}(2.131{+}0.866)/4{\approx}0.75$, so only large effects are detectable and the $3$-vs-$0$ contrast with CI width $1.00$ reflects underpowering, not evidence of absence. All failures at all levels
+are step-budget exhaustion, and parsing failures are zero, so the shape is not censoring.
+
+Two claims must be separated here: a model monotone by construction cannot represent a decline, and the unit-level reading establishes no decline. The model of
+Eq.~\eqref{eq:joint} is monotone in every axis by construction: $1-p$ is a product of
+factors that shrink as any $b_x$ grows, so success can only rise with budget. It cannot
+represent the measured decline, which is also why the fit on the $17$ structurally
+feasible cells reaches only $r^2{=}0.291$. We therefore report the fitted gains but
+withhold them: for all three axes the bootstrap interval is too wide to pin the
+parameter (widths $1.00$, $1.00$ and $0.58$ against a $0.30$ threshold), so \emph{no}
+$g_x$ value from this run may be quoted, and the ``compute-limited versus
+accuracy-limited'' classification that the gains were meant to support is not available
+from this experiment.
+
+What the $8$B measurement does show is a mechanism, and it is a behavioural one. The last
+two columns of Table~\ref{tab:h4} show that as the advertised budget grows the model
+does more of the work that cannot terminate and less of the work that can: rewrites per
+episode rise from $1.69$ to $13.81$ while test invocations fall from $0.94$ to $0.75$. At
+the largest budget the representative failing trajectory is one read followed by $31$
+rewrites and \emph{no test at all}, ending in budget exhaustion. A larger budget is thus
+not a larger search over the same behaviour; it changes the behaviour, and it changes it
+in the direction of deferring the only action that produces the grading signal. That last
+sentence is a claim about the $8$B arm only: the $14$B arm of this subsection's closing
+paragraph shows the opposite behaviour on the same task set.
+
+\paragraph{A correction we had to make to ourselves.}
+An earlier version of this analysis reported a significant quadratic trend in budget and
+read it as an interior optimum. That reading is an artefact. The trend is driven by the
+lowest level, where the budget cannot fit ``read, write, test'' and success is $0.0000$
+for structural reasons; including it makes the curve look inverted-U. Excluding that
+level, the quadratic term is not significant (likelihood-ratio $\chi^2{=}0.19$ on $1$~df,
+$p{=}0.66$) and its sign reverses. The defensible statement for the $8$B arm is therefore a
+monotone decline above the low budget, and we do not claim an interior optimum \emph{there};
+the closing paragraphs of this subsection show that this correction does not carry over to
+the $14$B arm, where the same test points the other way. We report this
+because the same trap applies to any budget sweep that includes a structurally
+infeasible endpoint.
+
+\paragraph{Is the finding an artefact of the machine that first showed it?}
+We repeated the whole $672$-episode sweep once more, holding the harness revision, the
+model weights, the seed (\texttt{20260911}), the repeat count, the arm set, the chat mode
+and the VRAM floor fixed, and changing the execution stack underneath them: the first run
+reports \texttt{RTX 3090, 49152~MiB} with vLLM 0.27.1, the second
+\texttt{RTX 4080, 32760~MiB} with vLLM 0.30.0. The weights are the same files in both
+(13 files, $6{,}114{,}568{,}840$ bytes, identical per-file digests; only the directory
+name differs). The outcome side reproduces exactly: all $23$ (arm, budget) cells have the
+same multiset of successes, no episode changes success status ($0/672$), the monotone form's
+failure to fit recurs with the same fit quality ($r^2{=}0.291377$ on both), and the
+identifiability verdict is unchanged (three gains withheld against the $0.30$ CI-width
+threshold). Of the $119$ leaf fields in the derived-statistics output, $117$ are equal;
+the two that differ are the input path and the input digest. So Table~\ref{tab:h4} and the
+behavioural mechanism it exposes do not depend, within the $8$B arm, on the first device or
+the first serving
+library.
+
+Two limits on that sentence, both of which we would rather state than have a reviewer
+find. First, the \emph{fitted gains} match to all printed digits, but that is structural
+rather than evidential: the fit consumes per-cell success rates and nothing else, and
+those are exactly what we showed to be identical. The stack change did perturb the
+trajectories---$7$ of $672$ episodes used a different number of steps and $3$ a different
+number of tool calls---but none of those fields reaches the fit, so agreement of
+$\hat{g}_x$ across stacks adds nothing to the agreement of the rates, and we do not
+describe the second run as a replication of the gains. Second, device and serving library
+changed together, so this shows the finding survives a stack change, not that the device
+is irrelevant; and we report no throughput comparison at all, because each run's own
+device-memory readings are mutually inconsistent ($452$ versus $48{,}136$~MiB free on the
+first, $4{,}102$ versus $32{,}230$~MiB on the second), so per-episode latencies from the
+two runs are not on a common footing---consistent with the co-tenant caveat above.
+
+\paragraph{The second scale: a $14$B arm that does not agree.}
+The protocol registers two model arms, and both were run. The sweep above was repeated with
+Qwen3-14B-AWQ, again $672$ episodes, under identical harness code (both arms record
+\texttt{script\_sha256} \texttt{3326b513fa89\ldots}), the same device (\texttt{RTX 4080,
+32760~MiB}), the same seed \texttt{20260911}, the same eight tasks, the same two menus and
+the same five levels; the released read-out checks that identity instead of asserting it
+($672/672$ records, $224/224$ \texttt{(task, menu, level)} cells and $24/24$ seeds
+identical), so the only thing this pair varies is model size. Table~\ref{tab:h4-14b} gives
+its curve, and it is not the curve of Table~\ref{tab:h4}. Success peaks at the \emph{mid}
+level, not at the low one. The paired low-to-max contrast has \emph{more improvements than
+worsenings} on the pooled records ($9$ improve, $6$ worsen, $33$ tie, $p{=}0.6072$). The
+$48$ rows per level are $16$ independent (task, menu) units times three deterministic
+repeats, so the paired contrasts are read on units, exactly as the $8$B arm's were:
+low-to-max gives $3$ improve and $2$ worsen at $14$B ($p{=}1.00$) against $0$ improve and
+$3$ worsen at $8$B ($p{=}0.25$). The behaviour offered as the mechanism reverses with
+it: tests per episode \emph{rise} with the budget, $1.19\to2.00$, while rewrites rise
+$1.00\to3.44$, so the verification collapse of Table~\ref{tab:h4} is not what this task set
+does at $14$B. At the top budget $14$ of $16$ units pass the hidden suites against $12$ of
+$16$ at $8$B ($42$/$48$ and $36$/$48$ records), and $2$ units exhaust the step budget against
+$4$. The one $14$B contrast with more worsenings than improvements, mid-to-high, is $2$
+worsenings and $0$ improvements on units ($p{=}0.50$; its record-level form is $6$/$0$/$42$,
+$p{=}0.03125$, which we do not use)---and the $8$B arm's mid-to-high contrast points the same
+way ($1$ worsening, $0$ improvements, $p{=}1.00$). The two scales therefore do not disagree
+about \emph{where} the curve turns over in any statistically established sense: no paired
+contrast at either scale reaches significance on $16$ units. What does differ is the location
+of the peak in the descriptive curve (the low level at $8$B, the mid level at $14$B) and the
+direction of the behavioural counts above.
+
+\begin{table}[t]
+\caption{The second scale: the same sweep re-run with Qwen3-14B-AWQ, $672$ episodes, under
+identical code, device, seed list, tasks, menus and budget levels
+(\texttt{results/h4\_derived\_stats\_14b.json}; identity check
+\texttt{evidence/H4\_SCALE\_LEG\_READ.txt}). Columns as in Table~\ref{tab:h4}; $n$ is again
+the pooled count of replication episodes per level. The peak is at the \emph{mid} level and
+sits on the $1.0000$ ceiling, so this curve is saturated and cannot be read as an interior
+optimum without that caveat. As in Table~\ref{tab:h4}, the only failure reason recorded at
+any level is step-budget exhaustion ($9$ of $48$ at low, none at mid, $6$ at high, $6$ at
+max); no other reason appears in the artifact.}
+\label{tab:h4-14b}
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Budget level & max steps & $n$ & success & writes/ep & tests/ep \\
+\midrule
+minimal & 2  & 48 & 0.0000 & 1.00 & 0.00 \\
+low     & 4  & 48 & 0.8125 & 1.00 & 1.19 \\
+mid     & 8  & 48 & \textbf{1.0000} & 1.00 & 1.25 \\
+high    & 16 & 48 & 0.8750 & 1.81 & 1.69 \\
+max     & 32 & 48 & 0.8750 & 3.44 & 2.00 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\paragraph{What the $14$B arm takes back.}
+The paragraph headed ``A correction we had to make to ourselves'' concluded that the
+defensible statement is a
+monotone decline above the low budget, \emph{not} an interior optimum, because excluding the
+structurally floored level leaves the quadratic term insignificant ($p{=}0.66$, coefficient
+$+0.1168$). At $14$B that same test is significant and of the opposite sign ($\chi^2{=}4.4378$
+on $1$~df, $p{=}0.0352$, coefficient $-0.6375$): there the supported reading \emph{is} an
+interior optimum at mid. The cited artifact disagrees with itself here, and we name it rather
+than pick a side silently: \texttt{results/h4\_derived\_stats\_14b.json} sets
+\texttt{non\_monotonicity\_verdict.without\_floored\_level\_quadratic\_significant} to
+\texttt{true} alongside that $p{=}0.0352$, while the \texttt{reading} string in the same object
+asserts that ``once excluded the quadratic is NOT significant''. We follow the numeric fields,
+which are recomputable from the same file's log-likelihoods ($-66.2315$ vs $-64.0126$), not the
+prose string. Three limits keep this from being a clean counter-result. (i) The
+$14$B peak sits at $1.0000$, so the drop from peak to max budget is $0.1250$ of a saturated
+cell and the shape comparison is confounded by ceiling: what may be said is that the $8$B
+decline is not reproduced, not that the phenomenon is absent. (ii) The $p{=}0.6072$ above is
+a \emph{record}-level McNemar over $48$ pairs---the same pseudo-replication that takes the
+$8$B contrast from $p{=}0.0039$ to $p{=}0.25$ on units. The released \texttt{derived\_stats}
+file carries unit-level recounts for the $8$B artifacts only, so we added one
+(\texttt{results/h4\_unit\_recount.json}, produced by \texttt{scripts/h4\_unit\_recount.py}
+from the raw \texttt{arm=iso} records, $240$ per arm, $0/16$ units varying across repeats):
+low-to-max is
+$3$ improve and $2$ worsen on the $16$ units ($p{=}1.00$) and mid-to-high is $2$ worsenings
+and $0$ improvements ($p{=}0.50$). Neither apparent direction survives the unit recount, and
+we claim neither. (iii) Two sizes of
+one model family on one eight-task set are two points on a scale axis, not a scale trend.
+
+What survives at both scales is the structural claim: the assumed saturating-monotone form is
+contradicted by the measured curve at $8$B and at $14$B alike, and no fitted gain is quotable
+at either scale---all three $g_x$ remain withheld against the same $0.30$ CI-width threshold
+in the $14$B derivation as in the $8$B one. What does not survive is the \emph{direction} of
+the low-to-max contrast and the verification-collapse mechanism proposed for it. This is not
+a robustness check on Table~\ref{tab:h4}: it is a second measurement that contradicts the
+claim built on the first, which is why the $8$B result is stated above as a description of a
+measured curve and not as an established decline.
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Preregistered target (H4).} H4 was preregistered to measure the three agent-axis gains
+$g_{\mathrm{steps}}/g_{\mathrm{tools}}/g_{\mathrm{vision}}$ on a real model and thereby decide whether
+the agent sits in a compute-limited or an accuracy-limited regime, which would predict whether the
+unified router of Sec.~\ref{sec:e2} still wins. The preregistered falsifier was twofold: the gains are
+quotable only if each axis has at least two interior cells \emph{and} a bootstrap CI95 width
+at most $0.30$, and the joint form of Eq.~\eqref{eq:joint} requires success to be monotone
+non-decreasing in every axis. Either condition failing rejects the use of the fitted gains for that
+classification, not the idea of routing itself.
+
+The results of Sec.~\ref{sec:results}, and in particular Sec.~\ref{sec:res-e3}, shape the following discussion. The source report shows that a scalar effort level gives smooth, interpolable
+control over reasoning length and accuracy, and that the control transfers to
+agentic trajectories (lines 2437--2443). Our allocation study suggests where that
+transfer stops being free. A trajectory is not just more reasoning tokens: it is
+more turns, each of which re-encodes context and may invoke a tool, so extending
+the trajectory multiplies a cost that is already the dominant term. In the
+token-cost optimum, reasoning saturates at the smallest budgets while trajectory
+length stays at one turn, and turns are bought only after the reasoning axis is
+exhausted. In latency currency the same logic pushes network search out of the
+allocation entirely, because a single search call costs more wall clock
+($2233.75$~ms) than an entire local tool budget.
+
+Second, the measured dispersion argues against uniform effort tiers. The
+primitives we measured span $4.8$ orders of magnitude---a $6.7\times10^{4}$ ratio between
+the fastest ($0.033$~ms) and slowest ($2233.75$~ms) primitive. A deployment that raises ``effort'' by scaling every axis
+together pays for the expensive axes at the same rate as the cheap ones, which is
+exactly what the max-everything baseline does and why it needs $8.67\times$ the
+router's tokens to reach $90\%$ of attainable success.
+
+Third, and most consequentially, putting a real language model in the loop does
+not reproduce the saturation shape (Sec.~\ref{sec:res-h4})---though the two registered
+arms do not agree about what happens instead: the $8$B point estimates peak at the low
+budget and fall, while the $14$B curve peaks at the mid budget and its paired low-to-max
+contrast has more improvements than worsenings. This changes what the allocation study can claim.
+Its frontier is conditional on the four gains being positive and saturating;
+measured over one task set at two model sizes, that condition is not met, not because the
+gains are small but because neither measured curve has the assumed shape. The $8$B reversal
+is the striking one, and we state it as an observation rather than as an established
+decline: on the $16$ independent units that contrast is $3$ worse and $0$ better,
+$p{=}0.25$. We read the
+mechanism as the interesting part. On the $8$B arm, effort is not a dial that scales a fixed
+behaviour: a larger advertised budget changed \emph{what the agent did}, shifting
+work from verification toward rewriting until the trajectory exhausted its budget
+without ever producing the grading signal. That is a failure mode a cost model
+over axis counts cannot express, because it depends on the policy's response to
+the budget rather than on the budget itself. It also supplies a concrete instance
+of the gap that \citet{wu2026ecoagentbench} report between completing a task under
+a budget and spending that budget economically: here the agent is told the budget
+and spends it worse. Both sentences describe the $8$B arm. The $14$B arm tested the
+same mechanism on the same tasks and found tests per episode \emph{rising} with the
+budget, so the mechanism is a property of that pairing, not of agent effort, and we do
+not offer it as an explanation of anything the $14$B data do not show.
+
+The source report's front-loading result and ours are not in conflict. The
+report varies \emph{reasoning effort} with a trained penalty term and observes
+diminishing returns; we vary \emph{agent budget} on models that were not trained
+for it, and get curves with neither the assumed shape nor a common alternative one---a
+reversal downward at $8$B, a peak at mid at $14$B. That distinction is itself the finding worth
+stating: controllable reasoning effort does not make controllable agent effort
+automatic, and the transfer the report demonstrates should not be assumed to hold
+for budgets the model was never optimised against.
+
+\paragraph{Constraints: $n$, single-axis noise, ceiling.} Three limits keep the negative result honest
+rather than strong. First, the paired decline is underpowered: at $n{=}16$ independent
+(task, schedule) units with paired $\alpha{=}0.05$ and power $0.8$, only standardized differences
+around $0.75$ are detectable, so the observed $3$-vs-$0$ contrast with $p{=}0.25$ is directional,
+not established, and not evidence of absence. The record-level $9$-vs-$0$ figure counts each of the
+three deterministic repeats separately; temperature $0$ with per-request seeds leaves success unchanged
+across repeats in all $80$ iso units, so the unit count is the defensible one. Second, the gain fit is
+resolution-limited, not refuted in magnitude: the three CI widths are $1.00$/$1.00$/$0.58$ against the
+$0.30$ bar, and each single-axis cell has only $n{=}24$ episodes, so neighbouring levels differ by
+three episodes inside noise. Third, the cross-scale comparison is ceiling-confounded: the $14$B curve
+peaks at $1.0000$, so its drop to $0.8750$ is $0.1250$ off a saturated cell, and two sizes of one model
+family on one eight-task set are two points, not a scale trend. Wall-clock is reported only as an upper
+bound under co-tenant contention and is never compared across cards.
+
+\paragraph{Future directions.} The preregistered question stays open and now has a tighter protocol:
+(i) stochastic sampling with true independent repeats so the paired test is powered at the unit level
+rather than the record level; (ii) harder, unsaturated tasks where the mid budget does not sit at
+$1.0000$, so shape and mechanism can be separated from ceiling; (iii) a retrieval-bearing task set
+where $g_{\mathrm{search}}$ varies at all, since the current set leaves it unmeasured; (iv) a third
+model scale run under the same harness and seed list, with the unit-level recount preregistered for
+both arms before running. Until then the routing frontier of Sec.~\ref{sec:e2} remains conditional,
+and no $g_x$ value from Sec.~\ref{sec:res-h4} may be quoted.
+
+\paragraph{What would falsify the allocation claim.}
+The claim that survives this study is comparative and conditional: \emph{if} the
+agent axes have non-negligible, saturating gains, \emph{then} trading budget
+across axes beats both uniform scaling and hard partition, and the optimal mix
+rotates. The $30$-case grid tells us exactly which direction breaks it: weak
+agent-axis gains with far-out saturation move the problem into the
+accuracy-limited regime, where the reasoning axis is the only lever left. We did
+measure them on real models at two scales (Sec.~\ref{sec:res-h4}), and the measurement did not
+settle the regime: it returned intervals too wide to pin the gains at either scale and
+curves the monotone form cannot represent. What it leaves is a concern rather than a
+result: at $8$B the point estimates fall past the low setting, but on the $16$ independent
+units that contrast is $3$ worse and $0$ better, $p{=}0.25$, and at $14$B the same contrast
+points the other way, $3$ better and $2$ worse on the same $16$-unit design ($p{=}1.00$; its
+record-level form is $9$/$6$/$33$, $p{=}0.6072$), so neither arm establishes a turnover. So the
+conditional claim is untested on a real agent, and the two model-backed readings of it
+disagree about the sign of the risk.
+No claim in Sec.~\ref{sec:e2} depends on the assumed gains holding at any
+particular value, and none of the measured $g_x$ values is quoted.
+
+\section{Conclusion}
+
+The discussion of Sec.~\ref{sec:discussion} closes on the same scope limit. We took the one controllable effort axis of a published systems report---a scalar
+reasoning-effort level with an exponentially decaying token penalty---measured the
+real cost of eighteen tool primitives on the host that runs our agent loop, and
+asked what a joint router over five effort axes buys relative to uniform, fixed,
+single-axis and partitioned budgets. Measured costs span $4.8$ orders of
+magnitude (a $6.7\times10^{4}$ ratio); the joint router needs $3.44\times$ fewer tokens than a fixed mid
+setting and $4.52\times$ fewer than maxing reasoning only at matched success,
+while partitioned budgets cost $1.32\times$ more; the optimal composition rotates
+across the budget rather than scaling uniformly; and an end-to-end loop with real
+auto-graded tests shows monotone saturating returns with no benefit from four
+times the saturated budget. We then replaced the rule-based policy with a real
+language model at two scales, and the assumed shape did not survive at either: the
+$8$B point estimates peak at the low budget and fall thereafter---a decline not
+established on the $16$ independent units, where the contrast is $3$ worse and $0$
+better, $p{=}0.25$---while the $14$B curve peaks at the mid budget and its low-to-max
+contrast has more improvements than worsenings. The fitted gains were too weakly
+identified to quote at either scale, and the behaviour we read as the mechanism on the
+$8$B arm, a shift from verification to rewriting as the budget grew, is absent on the
+$14$B arm, where test invocations per episode rise with the budget.
+The honest summary is therefore two-sided. Joint routing is worth doing when the
+agent axes saturate; on neither of the two real models we tested does the measured curve
+have that shape, and the two disagree about how it fails, so the routing argument cannot
+be extended to a real agent by assumption. We state the scope limit plainly: nothing here is
+a measurement of the source model, and the four agent-axis gains remain assumptions
+with a published sensitivity grid---now with two model-backed curves attached, and they
+do not agree with each other.
+
+\subsubsection*{Broader Impact Statement}
+This work studies the cost side of agent deployment. Better effort routing lowers
+the compute and energy cost of running an agent for the same task success, which
+is a mild positive benefit. The dual risk is familiar from efficiency work:
+cheaper agentic capability also lowers the barrier to running agents at scale,
+including uses that are undesirable. That is a limitation of the broader effort
+literature and not something a single measurement can remove; what we can do is
+avoid overstating the effect. We therefore deliberately publish the full
+sensitivity grid, including the parameter regimes in which our proposed router
+does not help, and the loss mechanism that produces them, so that the result is
+not used as a blanket claim that joint routing always wins. The tools measured
+here are ordinary filesystem, process and network primitives; we performed no
+security-sensitive probing, and the unreachable-host measurements target
+RFC~2606 reserved names only.
+
+\subsubsection*{Reproducibility}
+All raw outputs (per-invocation latency samples, the $8{,}820$-allocation sweep,
+the $240$ rule-based loop episodes, and the two $672$-episode real-model arms, $8$B and
+$14$B, with their
+per-episode records), the generator scripts, and the recomputation scripts are
+released with the paper. Secs.~\ref{sec:e1}--\ref{sec:e3} are recomputed by
+\texttt{analysis.py}, which asserts that the stored aggregates match a
+recomputation from the raw samples. Sec.~\ref{sec:res-h4} is recomputed by
+\texttt{h4\_derived\_stats.py} (derived statistics: the budget curve, the paired
+test, both non-monotonicity fits and the per-level action profile) and
+\texttt{analyze\_h4\_result.py} (\texttt{--refit} re-runs the gain fit under the
+current identifiability guard). Absolute host paths are replaced by declared
+placeholders in the released copies; the measured values are unchanged. Latency
+measurements are host-specific and are reported with their host descriptor.
+
+\section{Ethics and Broader Impact}
+
+Effort routing is offered as lowering the compute and energy cost of agents, so each saving can argue for a cut made without measuring. The quotable line is that at matched success the router needs $3.44\times$ fewer tokens than a fixed mid setting. That frontier is conditional on the four agent-axis gains being positive and saturating. On the two real models we tested, over one task set, neither measured curve has that shape. The $8$B point estimates fall past a low setting rather than buying slack, though on the sixteen independent units of that arm the decline is not established, and the $14$B arm does not reproduce the fall: its curve peaks at the mid budget. Nothing in this paper is a measurement of the source model. The four agent-axis gains remain assumptions with a published sensitivity grid. The routing argument cannot be extended to a real agent by assumption, so nothing here warrants a deployed policy. The premise sits on a technical report whose own checkpoints instantiate its reported curves. Costs are host-bound: we measured eighteen tool primitives on the host that runs our loop. A search call costs more wall clock than an entire local tool budget. That $315\times$ gap is a property of this host, not a portable ratio. The warning against uniform tiers matters: scaling every axis together pays for the expensive axes at the cheap rate. That is why the max-everything baseline needs $8.67\times$ the router's tokens for $90\%$ of attainable success.
+
+%% PROVENANCE
+%% S1: Better effort routing lowers the compute and energy cost
+%% S2: the joint router needs $3.44\times$ fewer tokens than a fixed mid setting
+%% S3: Its frontier is conditional on the four gains being positive and saturating
+%% S4: on the two real models we tested, over one task set, neither measured curve has that shape
+%% S5: the $8$B point estimates fall past a low setting rather than buying slack
+%% S6: nothing here is a measurement of the source model
+%% S7: the four agent-axis gains remain assumptions with a published sensitivity grid
+%% S8: the routing argument cannot be extended to a real agent by assumption
+%% S9: only the report's own checkpoints instantiate the reported curves
+%% S10: measured the real cost of eighteen tool primitives on the host
+%% S11: costs more wall clock ($2233.75$~ms) than an entire local tool budget
+%% S12: is $315\times$
+%% S13: by scaling every axis together pays for the expensive axes
+%% S14: it needs $8.67\times$ the router's tokens to reach $90\%$ of
+
+\bibliography{main}
+\bibliographystyle{tmlr}
+
+\appendix
+
+\section{Source quotations with line numbers}
+\label{app:quotes}
+
+This appendix lists the source quotations (App.~\ref{app:quotes}) that the paper relies on. Line numbers refer to the plain-text rendering of the source report
+(SHA-256 \texttt{ac24848a\ldots abf3}), split on LF only. The extractor
+\texttt{experiments/extract\_v41\_effort\_evidence.py} re-derives each quotation
+and fails if a required substring is absent;
+\texttt{evidence/v41flash\_effort\_control.json} holds the $40$ anchored
+quotations and $19$ numeric facts.
+
+\begin{itemize}
+\item lines 2039--2044: \S5.1.4 heading and the definition of the scalar effort
+  level as an explicit conditioning signal applied to both single-turn reasoning
+  and multi-turn agentic tasks.
+\item line 2051: ``Here, $\eff \in \{1, \ldots, 100\}$ denotes the requested
+  effort level.''
+\item line 2052: $M_b$ samples per prompt per effort level; lines 2061--2063:
+  subgroup normalisation, ``responses from different effort levels are not
+  directly compared''.
+\item lines 2065--2081: the length penalty of Eq.~(9), with $\ell$ the number of
+  reasoning tokens, $L_{\mathrm{norm}}$ a reference length and $C_{\max}$ the cap.
+\item lines 2081--2096: exponential penalty coefficient (Eq.~10), with
+  $\tau=\lambda\Delta_b$; increasing effort by $\tau$ multiplies the coefficient
+  by $e^{-1}$.
+\item lines 2100--2104: deployment-time interpolation between trained effort
+  levels.
+\item lines 2105--2109: production API tiers \texttt{max}/\texttt{high}/\texttt{low}
+  at $\eff=100/75/50$; the same mapping is restated at line 2455.
+\item lines 2431--2436: accuracy and output length increase with effort across
+  reasoning and agentic benchmarks; $67.1\%\to76.3\%$, $66.0\%\to74.2\%$,
+  $82.4\%\to90.6\%$, at roughly $2.5\times$ output tokens.
+\item lines 2437--2438: ``the effort control learned on single-response reasoning
+  transfers faithfully to long-horizon agentic trajectories''.
+\item lines 2439--2441: front-loaded gains; $60$--$80$ recovers most of the
+  maximum at less than half its token budget; the final step to $100$ lengthens
+  trajectories by $1.6$--$1.8\times$.
+\item lines 2456--2465: scaffold-robustness study over eight configurations from
+  six scaffold families at max effort.
+\item lines 2736--2763: multi-agent test-time scaling against per-rollout
+  wall-clock deadlines.
+\item lines 2740--2744: derived-latency accounting from token counts at fixed
+  prefill/decode rates plus measured tool-execution time.
+\item lines 3486--3511: appendix C, restating the length deduction (Eq.~11) and
+  $k(\eff)=k_0\exp\left(-(\eff-\eff_{\min})/\tau\right)$ (Eq.~12).
+\item lines 3743--3773: marginal-benefit model giving the affine effort--length
+  trend (Eqs.~15--17).
+\item lines 3779--3788: the explicit statement that the derivation is a local
+  reward-level approximation and that realized behaviour may deviate.
+\item line 24: checkpoints ``are available at'' a model hub (quoted so that the
+  provenance of the source's own claims is visible).
+\end{itemize}
+
+\section{Model check: parameter calibration}
+\label{app:calibration}
+
+The reasoning kernel of Sec.~\ref{sec:kernel} is calibrated so that
+(i) the accuracy endpoints reproduce lines 2434; (ii) the length ratio at
+endpoints is exactly $2.5$ (line 2436); and (iii) the fraction of the
+$25\to100$ accuracy gain recovered at $\reff=80$ is $0.735$, matching the
+front-load statement of lines 2439--2440. The fitted curvature is $s_0=5000$ and
+the fitted decay is $\kappa=0.01222$. Conditions (i)--(iii) fix both parameters
+and leave no freedom; a different functional family with the same three
+constraints would shift the absolute values reported in Table~\ref{tab:e2} while
+leaving the ordering of the routers unchanged, which is why the ordering, not the
+level, is the claim.
+
+\end{document}

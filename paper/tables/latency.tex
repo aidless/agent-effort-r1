@@ -1,0 +1,29 @@
+\begin{table}[H]
+\centering\small
+\caption{All retained latency primitives. Means and standard deviations include failed attempts; counts of successful invocations are separate. Units are milliseconds. These are sequential samples on one host, without a portability or independent-sample interval claim.}
+\label{tab:latency}
+\begin{tabular}{lrrrr}
+\toprule
+Primitive ID & Attempts & Successful & Mean ms & SD ms \\
+\midrule
+P1\_image\_codec\_png & 60 & 60 & 177.341 & 12.675 \\
+P2\_screenshot\_capture & 30 & 0 & 0.075 & 0.057 \\
+P3\_test\_run\_small & 30 & 30 & 58.245 & 3.445 \\
+P4\_local\_http\_search & 60 & 60 & 1.018 & 1.084 \\
+P5\_patch\_apply & 60 & 60 & 2.264 & 0.205 \\
+P6\_json\_tool\_call & 60 & 60 & 33.982 & 14.429 \\
+T1\_shell\_simple & 120 & 120 & 1.305 & 0.116 \\
+T2\_shell\_command & 90 & 90 & 7.129 & 0.912 \\
+T3\_python\_exec & 60 & 60 & 30.365 & 3.025 \\
+T4\_file\_read\_small & 200 & 200 & 0.033 & 0.008 \\
+T5\_file\_read\_medium & 60 & 60 & 0.052 & 0.025 \\
+T6\_file\_write\_atomic & 90 & 90 & 0.512 & 0.264 \\
+T7\_glob\_scan\_200 & 120 & 120 & 0.101 & 0.065 \\
+T8\_net\_reachable & 40 & 40 & 2233.753 & 2155.258 \\
+T9\_net\_unreachable & 40 & 0 & 961.820 & 1914.169 \\
+T10\_cpu\_kernel & 60 & 60 & 1.941 & 7.792 \\
+T11\_process\_spawn\_tree & 45 & 45 & 38.335 & 8.275 \\
+T12\_shell\_read\_verify & 60 & 60 & 7.091 & 1.312 \\
+\bottomrule
+\end{tabular}
+\end{table}

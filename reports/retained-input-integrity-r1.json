@@ -1,0 +1,30 @@
+{
+  "unchanged_original_result_and_evidence_files": [
+    "evidence/v41flash_effort_control.json",
+    "evidence/E3_UNIT_LEVEL.json",
+    "evidence/h4_observation_protocol.json",
+    "results/h4_real_llm_gx_qwen3_14b_persist.json",
+    "results/stats.json",
+    "results/h4_derived_stats_a9_repl12.json",
+    "results/e1_tool_latency.json",
+    "results/e3_agent_loop.json",
+    "results/h4_derived_stats_14b.json",
+    "results/h4_real_llm_gx_qwen3_8b_a9_repl12.json",
+    "results/h4_unit_recount.json",
+    "results/h4_derived_stats.json",
+    "results/h4_pilot_steps.json",
+    "results/h4_real_llm_gx_qwen3_8b_persist.json",
+    "results/h4_derived_stats_newcard.json",
+    "results/e1b_agent_primitives.json",
+    "results/h4_derived_stats_8b_persist.json",
+    "results/h4_real_llm_gx_qwen3_8b.json",
+    "results/h4_dryrun_stub.json",
+    "results/e2_allocation.json",
+    "results/h4_think_off_probe.json",
+    "results/h4_real_llm_gx_qwen3_8b_newcard.json",
+    "evidence/related_work/2608_05519v1.json",
+    "evidence/related_work/2608_08020v2.json",
+    "evidence/related_work/2608_07424v2.json"
+  ],
+  "count": 25
+}

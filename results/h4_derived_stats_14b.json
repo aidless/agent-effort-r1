@@ -1,0 +1,184 @@
+{
+ "generated_by": "experiments/h4_derived_stats.py",
+ "source_result": "results/h4_real_llm_gx_qwen3_14b_persist.json",
+ "source_sha256": "cdc3f659ace7bd14189a90c8bd848da33f3d3228ab52e4c1b50d197cd5ebf69d",
+ "n_records": 672,
+ "iso_curve": {
+  "L0_minimal": {
+   "n": 48,
+   "n_success": 0,
+   "success": 0.0,
+   "max_steps": 2,
+   "failure_reasons": {
+    "budget:steps": 48
+   }
+  },
+  "L1_low": {
+   "n": 48,
+   "n_success": 39,
+   "success": 0.8125,
+   "max_steps": 4,
+   "failure_reasons": {
+    "tests_passed": 39,
+    "budget:steps": 9
+   }
+  },
+  "L2_mid": {
+   "n": 48,
+   "n_success": 48,
+   "success": 1.0,
+   "max_steps": 8,
+   "failure_reasons": {
+    "tests_passed": 48
+   }
+  },
+  "L3_high": {
+   "n": 48,
+   "n_success": 42,
+   "success": 0.875,
+   "max_steps": 16,
+   "failure_reasons": {
+    "tests_passed": 42,
+    "budget:steps": 6
+   }
+  },
+  "L4_max": {
+   "n": 48,
+   "n_success": 42,
+   "success": 0.875,
+   "max_steps": 32,
+   "failure_reasons": {
+    "tests_passed": 42,
+    "budget:steps": 6
+   }
+  }
+ },
+ "mcnemar_pairs": {
+  "L0_minimal_to_L1_low": {
+   "n_pairs": 48,
+   "worsened": 0,
+   "improved": 39,
+   "ties": 9,
+   "exact_p_two_sided": 3.637978807091713e-12
+  },
+  "L1_low_to_L4_max": {
+   "n_pairs": 48,
+   "worsened": 6,
+   "improved": 9,
+   "ties": 33,
+   "exact_p_two_sided": 0.60723876953125
+  },
+  "L2_mid_to_L3_high": {
+   "n_pairs": 48,
+   "worsened": 6,
+   "improved": 0,
+   "ties": 42,
+   "exact_p_two_sided": 0.03125
+  },
+  "L3_high_to_L4_max": {
+   "n_pairs": 48,
+   "worsened": 0,
+   "improved": 0,
+   "ties": 48,
+   "exact_p_two_sided": 1.0
+  }
+ },
+ "logistic_lr_all_levels": {
+  "n": 240,
+  "levels": [
+   "L0_minimal",
+   "L1_low",
+   "L2_mid",
+   "L3_high",
+   "L4_max"
+  ],
+  "loglik_linear": -98.94262667643568,
+  "loglik_quadratic": -68.10878269677379,
+  "lr_chi2": 61.667687959323786,
+  "df": 1,
+  "p_value": 4.06598161364908e-15,
+  "quadratic_coef_std_log2_budget": -2.1631701721162147,
+  "monotone_model_implied": "p increases in every axis; a decrease is out of range"
+ },
+ "logistic_lr_excluding_structurally_floored_level": {
+  "n": 192,
+  "levels": [
+   "L1_low",
+   "L2_mid",
+   "L3_high",
+   "L4_max"
+  ],
+  "loglik_linear": -66.23152802805924,
+  "loglik_quadratic": -64.01262333742878,
+  "lr_chi2": 4.437809381260934,
+  "df": 1,
+  "p_value": 0.035151323251845584,
+  "quadratic_coef_std_log2_budget": -0.6374842079194495,
+  "monotone_model_implied": "p increases in every axis; a decrease is out of range"
+ },
+ "non_monotonicity_verdict": {
+  "with_floored_level_quadratic_significant": true,
+  "without_floored_level_quadratic_significant": true,
+  "reading": "the quadratic term's significance comes from the structurally floored level (no policy can pass there); once excluded the quadratic is NOT significant, so the supported statement is a monotone DECLINE above the low budget, not an interior optimum"
+ },
+ "actions_per_episode": {
+  "L0_minimal": {
+   "read": 1.0,
+   "write": 1.0,
+   "test": 0.0
+  },
+  "L1_low": {
+   "read": 1.125,
+   "write": 1.0,
+   "test": 1.1875
+  },
+  "L2_mid": {
+   "read": 1.125,
+   "write": 1.0,
+   "test": 1.25
+  },
+  "L3_high": {
+   "read": 1.5625,
+   "write": 1.8125,
+   "test": 1.6875
+  },
+  "L4_max": {
+   "read": 1.625,
+   "write": 3.4375,
+   "test": 2.0
+  },
+  "_units": "actions per episode (mean)"
+ },
+ "representative_failing_high_budget_trajectory": {
+  "task": "t07_interval_merge",
+  "repeat": 0,
+  "budget_level": "L4_max",
+  "writes": 24,
+  "tests": 5,
+  "steps_used": 33,
+  "model_turns": 32,
+  "reason": "budget:steps",
+  "reads": 3
+ },
+ "identifiability_max_ci_width": 0.3,
+ "gain_identifiability": {
+  "steps": {
+   "point_estimate": 0.9999999999999999,
+   "ci95_width": 0.9999999999773265,
+   "n_interior_cells": 2,
+   "withheld": true
+  },
+  "tools": {
+   "point_estimate": 0.9999999999999999,
+   "ci95_width": 0.4526522480004467,
+   "n_interior_cells": 2,
+   "withheld": true
+  },
+  "vision": {
+   "point_estimate": 4.465900771083728e-18,
+   "ci95_width": 0.6431869513103053,
+   "n_interior_cells": 5,
+   "withheld": true
+  }
+ }
+}

@@ -1,0 +1,2209 @@
+{
+ "experiment": "E2_joint_effort_allocation",
+ "seed": 20260911,
+ "generated_by": "experiments/e2_effort_allocation.py",
+ "kind": "model-based optimisation over MEASURED cost primitives with a SOURCE-anchored reasoning kernel",
+ "measured_inputs": {
+  "e1_file": "results/e1_tool_latency.json",
+  "e1b_file": "results/e1b_agent_primitives.json",
+  "cost_coefficients_ms": {
+   "local_tool_ms": 7.091193333333334,
+   "local_tool_p50_ms": 7.6129,
+   "local_tool_p95_ms": 8.69932,
+   "shell_command_ms": 7.128578888888889,
+   "file_write_ms": 0.5116577777777778,
+   "python_exec_ms": 30.36466666666667,
+   "json_tool_call_ms": 33.982151666666674,
+   "patch_apply_ms": 2.2641316666666667,
+   "test_run_ms": 58.245250000000006,
+   "loopback_search_ms": 1.0177649999999998,
+   "internet_search_ms": 2233.7534825,
+   "internet_search_p50_ms": 1220.81205,
+   "internet_unreachable_ms": 961.8204600000001,
+   "internet_unreachable_failure_rate": 1.0,
+   "vision_op_ms": 177.34110833333335,
+   "vision_op_p95_ms": 186.26217499999998,
+   "screenshot_capture_failure_rate": 1.0,
+   "process_spawn_ms": 38.33539777777778
+  }
+ },
+ "source_anchors": {
+  "acc_b25": 0.671,
+  "acc_b100": 0.763,
+  "token_mult_25_100": 2.5,
+  "frontload_target_fraction_at_b80": 0.76,
+  "frontload_fraction_achieved": 0.7347788614746026,
+  "kappa": 0.012217209758322068,
+  "s0": 5000.0,
+  "r_ref_tokens_at_b25": 1200.0,
+  "r_tokens_at_b100": 3000.0
+ },
+ "assumed_params": {
+  "base_success": 0.35,
+  "gain_steps": 0.3,
+  "gain_tools": 0.25,
+  "gain_search": 0.28,
+  "gain_vision": 0.2,
+  "ref_steps": 10.0,
+  "ref_tools": 6.0,
+  "ref_search": 4.0,
+  "ref_vision": 4.0,
+  "tokens_per_step_overhead": 1000.0,
+  "tokens_per_tool_call": 200.0,
+  "tokens_per_search_call": 400.0,
+  "tokens_per_vision_op": 200.0,
+  "ms_per_1k_decode_tokens": 30.0,
+  "search_success_rate": 0.85,
+  "retry_multiplier": 1.4
+ },
+ "assumed_params_declared_unmeasured": [
+  "base_success",
+  "gain_steps",
+  "gain_tools",
+  "gain_search",
+  "gain_vision",
+  "ref_steps",
+  "ref_tools",
+  "ref_search",
+  "ref_vision",
+  "tokens_per_step_overhead",
+  "tokens_per_tool_call",
+  "tokens_per_search_call",
+  "tokens_per_vision_op",
+  "ms_per_1k_decode_tokens",
+  "search_success_rate",
+  "retry_multiplier"
+ ],
+ "axis_names": [
+  "b_reason",
+  "b_steps",
+  "b_tools",
+  "b_search",
+  "b_vision"
+ ],
+ "grid": {
+  "n_allocations": 8820,
+  "levels": {
+   "b_reason": [
+    0.0,
+    25.0,
+    50.0,
+    75.0,
+    100.0
+   ],
+   "b_steps": [
+    1.0,
+    2.0,
+    4.0,
+    8.0,
+    12.0,
+    20.0,
+    32.0
+   ],
+   "b_tools": [
+    0.0,
+    1.0,
+    2.0,
+    4.0,
+    8.0,
+    16.0,
+    24.0
+   ],
+   "b_search": [
+    0.0,
+    1.0,
+    2.0,
+    4.0,
+    8.0,
+    16.0
+   ],
+   "b_vision": [
+    0.0,
+    1.0,
+    2.0,
+    4.0,
+    8.0,
+    16.0
+   ]
+  },
+  "mid_reference_alloc": {
+   "b_reason": 50.0,
+   "b_steps": 8.0,
+   "b_tools": 4.0,
+   "b_search": 2.0,
+   "b_vision": 2.0
+  }
+ },
+ "unified_router": {
+  "target_frontier_tokens": [
+   {
+    "target_success": 0.45,
+    "min_cost_tokens": 3484.1675596736927,
+    "achieved_success": 0.455916804454366,
+    "alloc": [
+     0.0,
+     1.0,
+     4.0,
+     0.0,
+     4.0
+    ]
+   },
+   {
+    "target_success": 0.5,
+    "min_cost_tokens": 5200.0,
+    "achieved_success": 0.5028630041378789,
+    "alloc": [
+     25.0,
+     1.0,
+     8.0,
+     1.0,
+     4.0
+    ]
+   },
+   {
+    "target_success": 0.55,
+    "min_cost_tokens": 7800.0,
+    "achieved_success": 0.5508416806426712,
+    "alloc": [
+     25.0,
+     1.0,
+     8.0,
+     4.0,
+     8.0
+    ]
+   },
+   {
+    "target_success": 0.575,
+    "min_cost_tokens": 9600.0,
+    "achieved_success": 0.5783788410288497,
+    "alloc": [
+     100.0,
+     1.0,
+     8.0,
+     4.0,
+     8.0
+    ]
+   },
+   {
+    "target_success": 0.6,
+    "min_cost_tokens": 12800.0,
+    "achieved_success": 0.6014148056380064,
+    "alloc": [
+     100.0,
+     1.0,
+     16.0,
+     4.0,
+     16.0
+    ]
+   },
+   {
+    "target_success": 0.625,
+    "min_cost_tokens": 19200.0,
+    "achieved_success": 0.6267493003141063,
+    "alloc": [
+     100.0,
+     2.0,
+     16.0,
+     8.0,
+     16.0
+    ]
+   },
+   {
+    "target_success": 0.65,
+    "min_cost_tokens": 43200.0,
+    "achieved_success": 0.6524382229963888,
+    "alloc": [
+     100.0,
+     8.0,
+     16.0,
+     8.0,
+     16.0
+    ]
+   },
+   {
+    "target_success": 0.675,
+    "min_cost_tokens": 92800.0,
+    "achieved_success": 0.6771357704664192,
+    "alloc": [
+     100.0,
+     20.0,
+     24.0,
+     8.0,
+     16.0
+    ]
+   }
+  ],
+  "budget_frontier_tokens": [
+   {
+    "budget_tokens": 5000,
+    "max_success": 0.4968598875527246,
+    "alloc": [
+     25.0,
+     1.0,
+     4.0,
+     2.0,
+     4.0
+    ],
+    "cost_tokens": 5000.0
+   },
+   {
+    "budget_tokens": 10000,
+    "max_success": 0.5783788410288497,
+    "alloc": [
+     100.0,
+     1.0,
+     8.0,
+     4.0,
+     8.0
+    ],
+    "cost_tokens": 9600.0
+   },
+   {
+    "budget_tokens": 20000,
+    "max_success": 0.6304967024540894,
+    "alloc": [
+     100.0,
+     1.0,
+     16.0,
+     16.0,
+     16.0
+    ],
+    "cost_tokens": 20000.0
+   },
+   {
+    "budget_tokens": 30000,
+    "max_success": 0.6405520670329437,
+    "alloc": [
+     100.0,
+     4.0,
+     24.0,
+     8.0,
+     16.0
+    ],
+    "cost_tokens": 28800.0
+   },
+   {
+    "budget_tokens": 50000,
+    "max_success": 0.663890535436555,
+    "alloc": [
+     100.0,
+     8.0,
+     24.0,
+     16.0,
+     16.0
+    ],
+    "cost_tokens": 49600.0
+   },
+   {
+    "budget_tokens": 80000,
+    "max_success": 0.6735824530272714,
+    "alloc": [
+     100.0,
+     12.0,
+     24.0,
+     16.0,
+     16.0
+    ],
+    "cost_tokens": 65600.0
+   },
+   {
+    "budget_tokens": 120000,
+    "max_success": 0.6844339989642,
+    "alloc": [
+     100.0,
+     20.0,
+     24.0,
+     16.0,
+     16.0
+    ],
+    "cost_tokens": 97600.0
+   }
+  ],
+  "budget_frontier_ms": [
+   {
+    "budget_ms": 2000,
+    "max_success": 0.546368558248925,
+    "alloc": [
+     100.0,
+     4.0,
+     16.0,
+     0.0,
+     4.0
+    ],
+    "cost_ms": 1932.9100044444447
+   },
+   {
+    "budget_ms": 5000,
+    "max_success": 0.6038319059860833,
+    "alloc": [
+     100.0,
+     20.0,
+     24.0,
+     0.0,
+     4.0
+    ],
+    "cost_ms": 4924.091795555555
+   },
+   {
+    "budget_ms": 10000,
+    "max_success": 0.6370044038535427,
+    "alloc": [
+     100.0,
+     20.0,
+     24.0,
+     1.0,
+     16.0
+    ],
+    "cost_ms": 9419.963787005556
+   },
+   {
+    "budget_ms": 20000,
+    "max_success": 0.6696553322379148,
+    "alloc": [
+     100.0,
+     32.0,
+     24.0,
+     4.0,
+     16.0
+    ],
+    "cost_ms": 18562.793294688887
+   },
+   {
+    "budget_ms": 40000,
+    "max_success": 0.6836029331315248,
+    "alloc": [
+     100.0,
+     32.0,
+     24.0,
+     8.0,
+     16.0
+    ],
+    "cost_ms": 28033.908060488888
+   },
+   {
+    "budget_ms": 80000,
+    "max_success": 0.6906215712713561,
+    "alloc": [
+     100.0,
+     32.0,
+     24.0,
+     16.0,
+     16.0
+    ],
+    "cost_ms": 46976.13759208889
+   }
+  ]
+ },
+ "baselines": {
+  "B1_all_max": {
+   "alloc": {
+    "b_reason": 100.0,
+    "b_steps": 32.0,
+    "b_tools": 24.0,
+    "b_search": 16.0,
+    "b_vision": 16.0
+   },
+   "success": 0.6906215712713561,
+   "cost_tokens": 145600.0,
+   "cost_ms": 46976.13759208889,
+   "factors": {
+    "reasoning_kernel": 0.763,
+    "agent_recovery": 0.6868062733569034
+   }
+  },
+  "B2_fixed_mid": {
+   "alloc": {
+    "b_reason": 50.0,
+    "b_steps": 8.0,
+    "b_tools": 4.0,
+    "b_search": 2.0,
+    "b_vision": 2.0
+   },
+   "success": 0.5319614675203791,
+   "cost_tokens": 23429.204559655554,
+   "cost_ms": 6256.7066319118885,
+   "factors": {
+    "reasoning_kernel": 0.7018183881511945,
+    "agent_recovery": 0.3988791459277259
+   }
+  },
+  "B3_reason_only_max": {
+   "alloc": {
+    "b_reason": 100.0,
+    "b_steps": 8.0,
+    "b_tools": 4.0,
+    "b_search": 2.0,
+    "b_vision": 2.0
+   },
+   "success": 0.5478241124228556,
+   "cost_tokens": 34400.0,
+   "cost_ms": 6585.830495122223,
+   "factors": {
+    "reasoning_kernel": 0.763,
+    "agent_recovery": 0.3988791459277259
+   }
+  },
+  "B4_agent_only_max": {
+   "alloc": {
+    "b_reason": 50.0,
+    "b_steps": 32.0,
+    "b_tools": 24.0,
+    "b_search": 16.0,
+    "b_vision": 16.0
+   },
+   "success": 0.6633086266306558,
+   "cost_tokens": 101716.81823862222,
+   "cost_ms": 45659.64213924755,
+   "factors": {
+    "reasoning_kernel": 0.7018183881511945,
+    "agent_recovery": 0.6868062733569034
+   }
+  }
+ },
+ "single_axis_ablations": {
+  "b_reason": {
+   "frontier": [
+    {
+     "cost": 17473.34047738954,
+     "success": 0.5159409513452573,
+     "alloc": [
+      0.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 20000.0,
+     "success": 0.5239711394963776,
+     "alloc": [
+      25.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 23429.204559655554,
+     "success": 0.5319614675203791,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 28083.351193473856,
+     "success": 0.5399123291777215,
+     "alloc": [
+      75.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 34400.0,
+     "success": 0.5478241124228556,
+     "alloc": [
+      100.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    }
+   ],
+   "best_success_single_axis": 0.5478241124228556
+  },
+  "b_steps": {
+   "frontier": [
+    {
+     "cost": 5028.650569956944,
+     "success": 0.48707289114930163,
+     "alloc": [
+      50.0,
+      1.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 7657.301139913889,
+     "success": 0.49555836616688387,
+     "alloc": [
+      50.0,
+      2.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 12914.602279827777,
+     "success": 0.5101836608239712,
+     "alloc": [
+      50.0,
+      4.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 23429.204559655554,
+     "success": 0.5319614675203791,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 33943.806839483324,
+     "success": 0.5465595679076704,
+     "alloc": [
+      50.0,
+      12.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 54973.01139913888,
+     "success": 0.5629043165564134,
+     "alloc": [
+      50.0,
+      20.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 86516.81823862222,
+     "success": 0.57222412358614,
+     "alloc": [
+      50.0,
+      32.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    }
+   ],
+   "best_success_single_axis": 0.57222412358614
+  },
+  "b_tools": {
+   "frontier": [
+    {
+     "cost": 22629.204559655554,
+     "success": 0.49398391205715286,
+     "alloc": [
+      50.0,
+      8.0,
+      0.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 22829.204559655554,
+     "success": 0.5059659382147399,
+     "alloc": [
+      50.0,
+      8.0,
+      1.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 23029.204559655554,
+     "success": 0.5161085043842986,
+     "alloc": [
+      50.0,
+      8.0,
+      2.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 23429.204559655554,
+     "success": 0.5319614675203791,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 24229.204559655554,
+     "success": 0.5514597946342091,
+     "alloc": [
+      50.0,
+      8.0,
+      8.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 25829.204559655554,
+     "success": 0.5666102727921967,
+     "alloc": [
+      50.0,
+      8.0,
+      16.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 27429.204559655554,
+     "success": 0.5706038954757271,
+     "alloc": [
+      50.0,
+      8.0,
+      24.0,
+      2.0,
+      2.0
+     ]
+    }
+   ],
+   "best_success_single_axis": 0.5706038954757271
+  },
+  "b_search": {
+   "frontier": [
+    {
+     "cost": 22229.204559655554,
+     "success": 0.4980096936330547,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      0.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 22829.204559655554,
+     "success": 0.5170965830758965,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      1.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 23429.204559655554,
+     "success": 0.5319614675203791,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 24629.204559655554,
+     "success": 0.552554259334672,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      4.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 27029.204559655554,
+     "success": 0.572620083683922,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 31829.204559655554,
+     "success": 0.5827175019538502,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      16.0,
+      2.0
+     ]
+    }
+   ],
+   "best_success_single_axis": 0.5827175019538502
+  },
+  "b_vision": {
+   "frontier": [
+    {
+     "cost": 23029.204559655554,
+     "success": 0.5085387745635125,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      0.0
+     ]
+    },
+    {
+     "cost": 23229.204559655554,
+     "success": 0.5217064621313261,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      1.0
+     ]
+    },
+    {
+     "cost": 23429.204559655554,
+     "success": 0.5319614675203791,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "cost": 23829.204559655554,
+     "success": 0.5461680489317537,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      4.0
+     ]
+    },
+    {
+     "cost": 24629.204559655554,
+     "success": 0.5600110853580293,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      8.0
+     ]
+    },
+    {
+     "cost": 26229.204559655554,
+     "success": 0.5669771051182482,
+     "alloc": [
+      50.0,
+      8.0,
+      4.0,
+      2.0,
+      16.0
+     ]
+    }
+   ],
+   "best_success_single_axis": 0.5669771051182482
+  }
+ },
+ "matched_comparisons": {
+  "vs_all_max": {
+   "baseline_success": 0.6906215712713561,
+   "baseline_cost_tokens": 145600.0,
+   "baseline_cost_ms": 46976.13759208889,
+   "unified_success_at_baseline_cost": 0.6906215712713561,
+   "unified_alloc_at_baseline_cost": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "unified_cost_tokens_at_baseline_success": 145600.0,
+   "cost_ratio_baseline_over_unified_at_matched_success": 1.0,
+   "success_gain_points_at_baseline_cost": 0.0
+  },
+  "vs_fixed_mid": {
+   "baseline_success": 0.5319614675203791,
+   "baseline_cost_tokens": 23429.204559655554,
+   "baseline_cost_ms": 6256.7066319118885,
+   "unified_success_at_baseline_cost": 0.6340882754567696,
+   "unified_alloc_at_baseline_cost": [
+    100.0,
+    1.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "unified_cost_tokens_at_baseline_success": 6810.418899184232,
+   "cost_ratio_baseline_over_unified_at_matched_success": 3.4402002147712176,
+   "success_gain_points_at_baseline_cost": 10.21268079363905
+  },
+  "vs_reason_only_max": {
+   "baseline_success": 0.5478241124228556,
+   "baseline_cost_tokens": 34400.0,
+   "baseline_cost_ms": 6585.830495122223,
+   "unified_success_at_baseline_cost": 0.6494318934072203,
+   "unified_alloc_at_baseline_cost": [
+    100.0,
+    4.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "unified_cost_tokens_at_baseline_success": 7610.418899184232,
+   "cost_ratio_baseline_over_unified_at_matched_success": 4.520119122968036,
+   "success_gain_points_at_baseline_cost": 10.160778098436474
+  },
+  "vs_agent_only_max": {
+   "baseline_success": 0.6633086266306558,
+   "baseline_cost_tokens": 101716.81823862222,
+   "baseline_cost_ms": 45659.64213924755,
+   "unified_success_at_baseline_cost": 0.6844339989642,
+   "unified_alloc_at_baseline_cost": [
+    100.0,
+    20.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "unified_cost_tokens_at_baseline_success": 49600.0,
+   "cost_ratio_baseline_over_unified_at_matched_success": 2.0507423031980285,
+   "success_gain_points_at_baseline_cost": 2.112537233354417
+  },
+  "vs_decoupled_separate_budgets": {
+   "n_frontier_points": 15,
+   "decoupled_best_success": 0.6735824530272714,
+   "decoupled_cost_at_40pct_success": 3284.1675596736927,
+   "unified_cost_at_40pct_success": 2484.1675596736927,
+   "cost_ratio_decoupled_over_unified_at_40pct": 1.3220394682656125,
+   "decoupled_success_at_all_max_cost": 0.6735824530272714,
+   "unified_success_at_all_max_cost": 0.6906215712713561
+  }
+ },
+ "saturation_comparison": {
+  "attainable_success_s_star": 0.6906215712713561,
+  "target90_success": 0.6215594141442206,
+  "unified_cost_tokens_at_target90": 16800.0,
+  "unified_alloc_at_target90": [
+   100.0,
+   1.0,
+   24.0,
+   8.0,
+   16.0
+  ],
+  "all_max_cost_tokens": 145600.0,
+  "all_max_success": 0.6906215712713561,
+  "all_max_reaches_target90": true,
+  "cost_ratio_all_max_over_unified_at_target90": 8.666666666666666,
+  "caveat": "Above ~90% of attainable success extra spending buys almost nothing, so the all-max baseline's disadvantage is concentrated on the rising part of the curve; the matched-success ratio is the honest headline."
+ },
+ "decoupled_frontier": [
+  {
+   "cost": 3284.1675596736927,
+   "success": 0.4414935482143073,
+   "alloc": [
+    0.0,
+    1.0,
+    2.0,
+    1.0,
+    2.0
+   ]
+  },
+  {
+   "cost": 4084.1675596736927,
+   "success": 0.4751231713780254,
+   "alloc": [
+    0.0,
+    1.0,
+    4.0,
+    1.0,
+    4.0
+   ]
+  },
+  {
+   "cost": 4684.167559673693,
+   "success": 0.49008110497812796,
+   "alloc": [
+    0.0,
+    1.0,
+    4.0,
+    2.0,
+    4.0
+   ]
+  },
+  {
+   "cost": 6284.167559673693,
+   "success": 0.5233476802258479,
+   "alloc": [
+    0.0,
+    1.0,
+    8.0,
+    2.0,
+    8.0
+   ]
+  },
+  {
+   "cost": 7800.0,
+   "success": 0.5508416806426712,
+   "alloc": [
+    25.0,
+    1.0,
+    8.0,
+    4.0,
+    8.0
+   ]
+  },
+  {
+   "cost": 10000.0,
+   "success": 0.5570987980624857,
+   "alloc": [
+    25.0,
+    2.0,
+    8.0,
+    4.0,
+    8.0
+   ]
+  },
+  {
+   "cost": 13200.0,
+   "success": 0.57681846965118,
+   "alloc": [
+    25.0,
+    2.0,
+    16.0,
+    4.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 17200.0,
+   "success": 0.5965932404114391,
+   "alloc": [
+    25.0,
+    2.0,
+    24.0,
+    8.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 18057.30113991389,
+   "success": 0.607919032063392,
+   "alloc": [
+    50.0,
+    2.0,
+    24.0,
+    8.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 23314.602279827777,
+   "success": 0.6172539755688837,
+   "alloc": [
+    50.0,
+    4.0,
+    24.0,
+    8.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 28114.602279827777,
+   "success": 0.6254217677485131,
+   "alloc": [
+    50.0,
+    4.0,
+    24.0,
+    16.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 30441.675596736928,
+   "success": 0.6374564056453738,
+   "alloc": [
+    75.0,
+    4.0,
+    24.0,
+    16.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 33600.0,
+   "success": 0.6494318934072203,
+   "alloc": [
+    100.0,
+    4.0,
+    24.0,
+    16.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 49600.0,
+   "success": 0.663890535436555,
+   "alloc": [
+    100.0,
+    8.0,
+    24.0,
+    16.0,
+    16.0
+   ]
+  },
+  {
+   "cost": 65600.0,
+   "success": 0.6735824530272714,
+   "alloc": [
+    100.0,
+    12.0,
+    24.0,
+    16.0,
+    16.0
+   ]
+  }
+ ],
+ "bootstrap_gains": {
+  "success_gain_vs_all_max_points_ms_budget": {
+   "mean": 0.0,
+   "lo95": 0.0,
+   "hi95": 0.0,
+   "n": 200
+  },
+  "success_gain_vs_all_max_points_token_budget": {
+   "mean": 0.0,
+   "lo95": 0.0,
+   "hi95": 0.0,
+   "n": 200
+  },
+  "n_boot": 200,
+  "resampled_measured_tools": [
+   "T12",
+   "P6",
+   "T8",
+   "P1",
+   "T6",
+   "T2"
+  ],
+  "note": "resamples per-invocation latencies from the E1/E1b raw samples"
+ },
+ "sensitivity": [
+  {
+   "param": "base_success",
+   "value": 0.2,
+   "unified_success_at_all_max_cost": 0.6192265492570538,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -7.139502201430236
+  },
+  {
+   "param": "base_success",
+   "value": 0.35,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "base_success",
+   "value": 0.5,
+   "unified_success_at_all_max_cost": 0.7620165932856586,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 7.139502201430248
+  },
+  {
+   "param": "gain_steps",
+   "value": 0.15,
+   "unified_success_at_all_max_cost": 0.6592418527024304,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -3.137971856892574
+  },
+  {
+   "param": "gain_steps",
+   "value": 0.3,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "gain_steps",
+   "value": 0.45,
+   "unified_success_at_all_max_cost": 0.7220012898402821,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 3.1379718568925963
+  },
+  {
+   "param": "gain_tools",
+   "value": 0.12,
+   "unified_success_at_all_max_cost": 0.6643514842651415,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -2.6270087006214693
+  },
+  {
+   "param": "gain_tools",
+   "value": 0.25,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "gain_tools",
+   "value": 0.4,
+   "unified_success_at_all_max_cost": 0.7209332101246809,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 3.0311638853324774
+  },
+  {
+   "param": "gain_search",
+   "value": 0.15,
+   "unified_success_at_all_max_cost": 0.663284544906684,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -2.733702636467217
+  },
+  {
+   "param": "gain_search",
+   "value": 0.28,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "gain_search",
+   "value": 0.42,
+   "unified_success_at_all_max_cost": 0.7200614458179264,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 2.9439874546570266
+  },
+  {
+   "param": "gain_vision",
+   "value": 0.1,
+   "unified_success_at_all_max_cost": 0.671648013315483,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -1.8973557955873188
+  },
+  {
+   "param": "gain_vision",
+   "value": 0.2,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "gain_vision",
+   "value": 0.35,
+   "unified_success_at_all_max_cost": 0.7190819082051663,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 2.8460336933810115
+  },
+  {
+   "param": "ref_steps",
+   "value": 6.0,
+   "unified_success_at_all_max_cost": 0.6929726187002537,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.2351047428897579
+  },
+  {
+   "param": "ref_steps",
+   "value": 10.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "ref_steps",
+   "value": 16.0,
+   "unified_success_at_all_max_cost": 0.6844339989642,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -0.6187572307156164
+  },
+  {
+   "param": "ref_tools",
+   "value": 3.0,
+   "unified_success_at_all_max_cost": 0.6915468663236283,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.09252950522721237
+  },
+  {
+   "param": "ref_tools",
+   "value": 6.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "ref_tools",
+   "value": 12.0,
+   "unified_success_at_all_max_cost": 0.6845995114003638,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -0.6022059870992358
+  },
+  {
+   "param": "tokens_per_step_overhead",
+   "value": 500.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "tokens_per_step_overhead",
+   "value": 1000.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "tokens_per_step_overhead",
+   "value": 2000.0,
+   "unified_success_at_all_max_cost": 0.6844339989642,
+   "unified_alloc": [
+    100.0,
+    20.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": -0.6187572307156164
+  },
+  {
+   "param": "ms_per_1k_decode_tokens",
+   "value": 10.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "ms_per_1k_decode_tokens",
+   "value": 30.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "ms_per_1k_decode_tokens",
+   "value": 60.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "search_success_rate",
+   "value": 0.7,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "search_success_rate",
+   "value": 0.85,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  },
+  {
+   "param": "search_success_rate",
+   "value": 1.0,
+   "unified_success_at_all_max_cost": 0.6906215712713561,
+   "unified_alloc": [
+    100.0,
+    32.0,
+    24.0,
+    16.0,
+    16.0
+   ],
+   "success_gain_vs_all_max_points": 0.0
+  }
+ ],
+ "sensitivity_summary": {
+  "min_gain_points": -7.139502201430236,
+  "max_gain_points": 7.139502201430248,
+  "n_cases": 30,
+  "n_cases_unified_loses": 8,
+  "n_cases_tie": 15
+ },
+ "pareto_front_tokens": [
+  {
+   "cost_tokens": 1884.1675596736927,
+   "success": 0.36187680745769935
+  },
+  {
+   "cost_tokens": 2084.1675596736927,
+   "success": 0.379755955713725
+  },
+  {
+   "cost_tokens": 2284.1675596736927,
+   "success": 0.3945805309129301
+  },
+  {
+   "cost_tokens": 2484.1675596736927,
+   "success": 0.40797041715069937
+  },
+  {
+   "cost_tokens": 2684.1675596736927,
+   "success": 0.4200667821709798
+  },
+  {
+   "cost_tokens": 2884.1675596736927,
+   "success": 0.4267430945700439
+  },
+  {
+   "cost_tokens": 3084.1675596736927,
+   "success": 0.43897355837941365
+  },
+  {
+   "cost_tokens": 3284.1675596736927,
+   "success": 0.4414935482143073
+  },
+  {
+   "cost_tokens": 3400.0,
+   "success": 0.44327915267949003
+  },
+  {
+   "cost_tokens": 3484.1675596736927,
+   "success": 0.455916804454366
+  },
+  {
+   "cost_tokens": 3684.1675596736927,
+   "success": 0.4592293184769952
+  },
+  {
+   "cost_tokens": 3800.0,
+   "success": 0.4610423136263869
+  },
+  {
+   "cost_tokens": 3884.1675596736927,
+   "success": 0.46222791808589625
+  },
+  {
+   "cost_tokens": 4000.0,
+   "success": 0.46451512630127345
+  },
+  {
+   "cost_tokens": 4084.1675596736927,
+   "success": 0.4751231713780254
+  },
+  {
+   "cost_tokens": 4284.167559673693,
+   "success": 0.4779664220913161
+  },
+  {
+   "cost_tokens": 4400.0,
+   "success": 0.48117811200651384
+  },
+  {
+   "cost_tokens": 4600.0,
+   "success": 0.48415895285655763
+  },
+  {
+   "cost_tokens": 4684.167559673693,
+   "success": 0.49008110497812796
+  },
+  {
+   "cost_tokens": 4884.167559673693,
+   "success": 0.49580712873161226
+  },
+  {
+   "cost_tokens": 5000.0,
+   "success": 0.4968598875527246
+  },
+  {
+   "cost_tokens": 5200.0,
+   "success": 0.5028630041378789
+  },
+  {
+   "cost_tokens": 5428.650569956944,
+   "success": 0.5036050217083738
+  },
+  {
+   "cost_tokens": 5484.167559673693,
+   "success": 0.5097014850336223
+  },
+  {
+   "cost_tokens": 5628.650569956944,
+   "success": 0.5098838556959695
+  },
+  {
+   "cost_tokens": 5684.167559673693,
+   "success": 0.510193053907189
+  },
+  {
+   "cost_tokens": 5800.0,
+   "success": 0.5174297339223797
+  },
+  {
+   "cost_tokens": 6000.0,
+   "success": 0.5179450907187706
+  },
+  {
+   "cost_tokens": 6200.0,
+   "success": 0.5185843442955722
+  },
+  {
+   "cost_tokens": 6228.650569956944,
+   "success": 0.5251196214455854
+  },
+  {
+   "cost_tokens": 6428.650569956944,
+   "success": 0.5256586480866672
+  },
+  {
+   "cost_tokens": 6600.0,
+   "success": 0.5317362936241017
+  },
+  {
+   "cost_tokens": 6810.418899184232,
+   "success": 0.532771526558101
+  },
+  {
+   "cost_tokens": 7000.0,
+   "success": 0.5376094827113871
+  },
+  {
+   "cost_tokens": 7028.650569956944,
+   "success": 0.5400832677493879
+  },
+  {
+   "cost_tokens": 7428.650569956944,
+   "success": 0.5462262067934204
+  },
+  {
+   "cost_tokens": 7610.418899184232,
+   "success": 0.5483890139375565
+  },
+  {
+   "cost_tokens": 7800.0,
+   "success": 0.5508416806426712
+  },
+  {
+   "cost_tokens": 8010.418899184232,
+   "success": 0.5548003705711708
+  },
+  {
+   "cost_tokens": 8228.650569956944,
+   "success": 0.5600661469183554
+  },
+  {
+   "cost_tokens": 8800.0,
+   "success": 0.5633323924125013
+  },
+  {
+   "cost_tokens": 8810.418899184231,
+   "success": 0.5692450510885572
+  },
+  {
+   "cost_tokens": 9600.0,
+   "success": 0.5783788410288497
+  },
+  {
+   "cost_tokens": 10400.0,
+   "success": 0.5801420485887968
+  },
+  {
+   "cost_tokens": 10410.418899184231,
+   "success": 0.5845232742385469
+  },
+  {
+   "cost_tokens": 11200.0,
+   "success": 0.5942935578201787
+  },
+  {
+   "cost_tokens": 12000.0,
+   "success": 0.5995478065077529
+  },
+  {
+   "cost_tokens": 12800.0,
+   "success": 0.6014148056380064
+  },
+  {
+   "cost_tokens": 12810.418899184231,
+   "success": 0.6036368666965818
+  },
+  {
+   "cost_tokens": 13600.0,
+   "success": 0.6142034261241185
+  },
+  {
+   "cost_tokens": 15200.0,
+   "success": 0.6207612744716823
+  },
+  {
+   "cost_tokens": 16800.0,
+   "success": 0.6245151355465777
+  },
+  {
+   "cost_tokens": 19200.0,
+   "success": 0.6267493003141063
+  },
+  {
+   "cost_tokens": 20000.0,
+   "success": 0.6304967024540894
+  },
+  {
+   "cost_tokens": 21600.0,
+   "success": 0.6340882754567696
+  },
+  {
+   "cost_tokens": 24000.0,
+   "success": 0.6362258521284951
+  },
+  {
+   "cost_tokens": 25600.0,
+   "success": 0.6397219210960394
+  },
+  {
+   "cost_tokens": 28800.0,
+   "success": 0.6405520670329437
+  },
+  {
+   "cost_tokens": 32000.0,
+   "success": 0.6461004321548485
+  },
+  {
+   "cost_tokens": 33600.0,
+   "success": 0.6494318934072203
+  },
+  {
+   "cost_tokens": 43200.0,
+   "success": 0.6524382229963888
+  },
+  {
+   "cost_tokens": 44800.0,
+   "success": 0.6556640342599119
+  },
+  {
+   "cost_tokens": 48000.0,
+   "success": 0.6608041834340013
+  },
+  {
+   "cost_tokens": 49600.0,
+   "success": 0.663890535436555
+  },
+  {
+   "cost_tokens": 60800.0,
+   "success": 0.6657938888271824
+  },
+  {
+   "cost_tokens": 64000.0,
+   "success": 0.6706604026683395
+  },
+  {
+   "cost_tokens": 65600.0,
+   "success": 0.6735824530272714
+  },
+  {
+   "cost_tokens": 91200.0,
+   "success": 0.6742739575053086
+  },
+  {
+   "cost_tokens": 92800.0,
+   "success": 0.6771357704664192
+  },
+  {
+   "cost_tokens": 96000.0,
+   "success": 0.681695908777916
+  },
+  {
+   "cost_tokens": 97600.0,
+   "success": 0.6844339989642
+  },
+  {
+   "cost_tokens": 144000.0,
+   "success": 0.6879883755283627
+  },
+  {
+   "cost_tokens": 145600.0,
+   "success": 0.6906215712713561
+  }
+ ],
+ "pareto_front_ms": [
+  {
+   "cost_ms": 106.4828129013219,
+   "success": 0.36187680745769935
+  },
+  {
+   "cost_ms": 115.95778611111112,
+   "success": 0.3624515480370848
+  },
+  {
+   "cost_ms": 128.81730320981944,
+   "success": 0.36302343572783025
+  },
+  {
+   "cost_ms": 140.46496456798857,
+   "success": 0.3773875766570771
+  },
+  {
+   "cost_ms": 149.9399377777778,
+   "success": 0.37871291191505074
+  },
+  {
+   "cost_ms": 162.79945487648612,
+   "success": 0.3800316684938124
+  },
+  {
+   "cost_ms": 174.44711623465525,
+   "success": 0.39051715932334663
+  },
+  {
+   "cost_ms": 183.92208944444445,
+   "success": 0.39247785925954537
+  },
+  {
+   "cost_ms": 196.7816065431528,
+   "success": 0.39442882670290225
+  },
+  {
+   "cost_ms": 214.23465641997143,
+   "success": 0.3963701577963836
+  },
+  {
+   "cost_ms": 237.92208944444445,
+   "success": 0.398301947265325
+  },
+  {
+   "cost_ms": 242.41141956798862,
+   "success": 0.4110388681809334
+  },
+  {
+   "cost_ms": 251.88639277777781,
+   "success": 0.41399265139147134
+  },
+  {
+   "cost_ms": 264.74590987648617,
+   "success": 0.4169317726573528
+  },
+  {
+   "cost_ms": 282.19895975330473,
+   "success": 0.41985637681740495
+  },
+  {
+   "cost_ms": 305.8863927777778,
+   "success": 0.4227666065748028
+  },
+  {
+   "cost_ms": 367.8441788888889,
+   "success": 0.42388874106331254
+  },
+  {
+   "cost_ms": 378.3400262346553,
+   "success": 0.4362795117631615
+  },
+  {
+   "cost_ms": 387.81499944444454,
+   "success": 0.4404547361874416
+  },
+  {
+   "cost_ms": 400.67451654315283,
+   "success": 0.44460923569554656
+  },
+  {
+   "cost_ms": 418.12756641997146,
+   "success": 0.4487432150197018
+  },
+  {
+   "cost_ms": 441.81499944444454,
+   "success": 0.4528568758733501
+  },
+  {
+   "cost_ms": 529.4918197529723,
+   "success": 0.4542238678928425
+  },
+  {
+   "cost_ms": 564.3979195066095,
+   "success": 0.4587779614946449
+  },
+  {
+   "cost_ms": 578.0156248764862,
+   "success": 0.4606051560506004
+  },
+  {
+   "cost_ms": 595.4686747533049,
+   "success": 0.46543808197899017
+  },
+  {
+   "cost_ms": 619.1561077777778,
+   "success": 0.4702472541207161
+  },
+  {
+   "cost_ms": 689.9847797533048,
+   "success": 0.47118870014682324
+  },
+  {
+   "cost_ms": 713.6722127777779,
+   "success": 0.47623744411975377
+  },
+  {
+   "cost_ms": 772.8097830866382,
+   "success": 0.4784400574401567
+  },
+  {
+   "cost_ms": 789.1138938888889,
+   "success": 0.4802376199621531
+  },
+  {
+   "cost_ms": 796.4972161111112,
+   "success": 0.48379089431767264
+  },
+  {
+   "cost_ms": 867.3258880866381,
+   "success": 0.4868905823593712
+  },
+  {
+   "cost_ms": 891.0133211111113,
+   "success": 0.4925934696896298
+  },
+  {
+   "cost_ms": 966.4550022222223,
+   "success": 0.4934211192714626
+  },
+  {
+   "cost_ms": 1013.5962411732762,
+   "success": 0.49591094669366986
+  },
+  {
+   "cost_ms": 1044.6669964199714,
+   "success": 0.4991192205221985
+  },
+  {
+   "cost_ms": 1060.9711072222224,
+   "success": 0.5019896240935575
+  },
+  {
+   "cost_ms": 1068.3544294444446,
+   "success": 0.5053315552113851
+  },
+  {
+   "cost_ms": 1190.9373495066097,
+   "success": 0.5078144113773859
+  },
+  {
+   "cost_ms": 1238.3122155555557,
+   "success": 0.5143889893480866
+  },
+  {
+   "cost_ms": 1399.3492130866382,
+   "success": 0.516059937471592
+  },
+  {
+   "cost_ms": 1400.8866794444446,
+   "success": 0.5181845367550393
+  },
+  {
+   "cost_ms": 1423.0366461111112,
+   "success": 0.522978025605545
+  },
+  {
+   "cost_ms": 1545.6195661732763,
+   "success": 0.5243046552818071
+  },
+  {
+   "cost_ms": 1578.2277877777778,
+   "success": 0.5300000945380663
+  },
+  {
+   "cost_ms": 1592.9944322222225,
+   "success": 0.5315662199057498
+  },
+  {
+   "cost_ms": 1838.1602723465523,
+   "success": 0.5385149884793103
+  },
+  {
+   "cost_ms": 1932.9100044444447,
+   "success": 0.546368558248925
+  },
+  {
+   "cost_ms": 2204.7672177777777,
+   "success": 0.5513625343474707
+  },
+  {
+   "cost_ms": 2258.058932222222,
+   "success": 0.5532458231962523
+  },
+  {
+   "cost_ms": 2423.2416846931046,
+   "success": 0.5596748964827234
+  },
+  {
+   "cost_ms": 2612.7411488888893,
+   "success": 0.5684099919875805
+  },
+  {
+   "cost_ms": 2884.598362222222,
+   "success": 0.5730365408095061
+  },
+  {
+   "cost_ms": 3008.323097039657,
+   "success": 0.5738588069896811
+  },
+  {
+   "cost_ms": 3132.6061180264383,
+   "success": 0.5738600591863283
+  },
+  {
+   "cost_ms": 3280.180310372991,
+   "success": 0.5780638778999868
+  },
+  {
+   "cost_ms": 3292.5722933333336,
+   "success": 0.5831848068659674
+  },
+  {
+   "cost_ms": 3322.1055822222224,
+   "success": 0.5831861112293617
+  },
+  {
+   "cost_ms": 3564.4295066666673,
+   "success": 0.5875650618189143
+  },
+  {
+   "cost_ms": 3593.9627955555557,
+   "success": 0.5875663444387733
+  },
+  {
+   "cost_ms": 3989.544743706324,
+   "success": 0.5912700185732103
+  },
+  {
+   "cost_ms": 4001.9367266666673,
+   "success": 0.5971743208612412
+  },
+  {
+   "cost_ms": 4273.7939400000005,
+   "success": 0.6013213727889462
+  },
+  {
+   "cost_ms": 4887.850355066095,
+   "success": 0.6023243271456623
+  },
+  {
+   "cost_ms": 4924.091795555555,
+   "success": 0.6038319059860833
+  },
+  {
+   "cost_ms": 5159.707568399428,
+   "success": 0.6060548822566557
+  },
+  {
+   "cost_ms": 5361.5990155555555,
+   "success": 0.6128362059293858
+  },
+  {
+   "cost_ms": 5633.456228888888,
+   "success": 0.6167221766658417
+  },
+  {
+   "cost_ms": 6780.327882222223,
+   "success": 0.6194327431884825
+  },
+  {
+   "cost_ms": 7052.185095555556,
+   "success": 0.6232087506735017
+  },
+  {
+   "cost_ms": 7672.949662222223,
+   "success": 0.625503744576118
+  },
+  {
+   "cost_ms": 7729.377707005555,
+   "success": 0.6272742907664144
+  },
+  {
+   "cost_ms": 8001.234920338888,
+   "success": 0.6309195808713751
+  },
+  {
+   "cost_ms": 9091.67852888889,
+   "success": 0.6317418221782161
+  },
+  {
+   "cost_ms": 9148.106573672223,
+   "success": 0.6334622663401885
+  },
+  {
+   "cost_ms": 9419.963787005556,
+   "success": 0.6370044038535427
+  },
+  {
+   "cost_ms": 10040.728353672223,
+   "success": 0.6391572555170071
+  },
+  {
+   "cost_ms": 10369.013611788889,
+   "success": 0.6419765303842258
+  },
+  {
+   "cost_ms": 11459.457220338889,
+   "success": 0.6450089729125024
+  },
+  {
+   "cost_ms": 11787.742478455555,
+   "success": 0.6477484693531403
+  },
+  {
+   "cost_ms": 12408.507045122222,
+   "success": 0.6497906205294455
+  },
+  {
+   "cost_ms": 13555.378698455555,
+   "success": 0.652110160275368
+  },
+  {
+   "cost_ms": 13827.235911788888,
+   "success": 0.655341440293491
+  },
+  {
+   "cost_ms": 15104.570994688887,
+   "success": 0.6572940702056536
+  },
+  {
+   "cost_ms": 16251.442648022221,
+   "success": 0.6595248833772849
+  },
+  {
+   "cost_ms": 16523.299861355554,
+   "success": 0.6626325611130641
+  },
+  {
+   "cost_ms": 17144.064428022222,
+   "success": 0.6645213554237761
+  },
+  {
+   "cost_ms": 18290.936081355554,
+   "success": 0.6666667076025974
+  },
+  {
+   "cost_ms": 18562.793294688887,
+   "success": 0.6696553322379148
+  },
+  {
+   "cost_ms": 24575.68576048889,
+   "success": 0.6722196357283468
+  },
+  {
+   "cost_ms": 25722.55741382222,
+   "success": 0.6742739575053086
+  },
+  {
+   "cost_ms": 25994.414627155555,
+   "success": 0.6771357704664192
+  },
+  {
+   "cost_ms": 26615.179193822223,
+   "success": 0.6788751322982574
+  },
+  {
+   "cost_ms": 27762.050847155555,
+   "success": 0.6808507543522468
+  },
+  {
+   "cost_ms": 28033.908060488888,
+   "success": 0.6836029331315248
+  },
+  {
+   "cost_ms": 44936.64415875555,
+   "success": 0.6844339989642
+  },
+  {
+   "cost_ms": 45557.40872542222,
+   "success": 0.686098164172364
+  },
+  {
+   "cost_ms": 46704.28037875555,
+   "success": 0.6879883755283627
+  },
+  {
+   "cost_ms": 46976.13759208889,
+   "success": 0.6906215712713561
+  }
+ ]
+}

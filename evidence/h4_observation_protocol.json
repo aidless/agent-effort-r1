@@ -1,0 +1,39 @@
+{
+ "generated_by": "scripts/export_observation_protocol.py",
+ "generated_utc": "2026-10-10T01:22:14Z",
+ "source_file": "experiments/h4_real_llm_gx.py",
+ "source_sha256": "7e2d56e7195074ab7c856d18054f59bf8e8557e1e89f90d39be879667adec157",
+ "SYS_lines": [
+  406,
+  417
+ ],
+ "USER_TMPL_lines": [
+  419,
+  429
+ ],
+ "build_messages_lines": [
+  432,
+  449
+ ],
+ "SYS_first_line": 406,
+ "USER_TMPL_first_line": 419,
+ "USER_TMPL_last_line": 429,
+ "build_messages_first_line": 432,
+ "n_budget_keys_interpolated": 4,
+ "n_used_count_keys_interpolated": 4,
+ "user_template_text": "USER_TMPL = (\n    \"task: {task_id}\\n\"\n    \"spec: {spec}\\n\"\n    \"starter file sol.py:\\n---\\n{starter}\\n---\\n\"\n    \"allowed actions: {menu}\\n\"\n    \"budget: max_steps={max_steps} max_tool_calls={max_tool_calls} \"\n    \"max_context_chars={max_context_chars} max_vision_probes={max_vision_probes}\\n\"\n    \"state: {state_json}\\n\"\n    \"history: {history}\\n\"\n    \"Reply with the next single JSON action.\"\n)",
+ "budget_keys_in_message": [
+  "max_steps",
+  "max_tool_calls",
+  "max_context_chars",
+  "max_vision_probes"
+ ],
+ "used_count_keys_in_message": [
+  "steps_used",
+  "tools_used",
+  "vision_used",
+  "actions"
+ ],
+ "budget_visible_to_model": true,
+ "history_truncation_chars": null
+}

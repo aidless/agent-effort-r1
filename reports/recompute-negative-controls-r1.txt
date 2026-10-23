@@ -1,0 +1,5 @@
+clean: accepted
+duplicate-task-condition: correctly rejected
+stub-as-real: correctly rejected
+tampered-budget: correctly rejected
+allocation-cost-corruption: correctly rejected

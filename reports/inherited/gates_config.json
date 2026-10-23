@@ -1,0 +1,321 @@
+{
+  "checks": [
+    {
+      "type": "file_exists",
+      "name": "main.tex present",
+      "path": "paper/main.tex"
+    },
+    {
+      "type": "file_exists",
+      "name": "compiled pdf present",
+      "path": "paper/main.pdf"
+    },
+    {
+      "type": "file_exists",
+      "name": "bibliography present",
+      "path": "paper/main.bib"
+    },
+    {
+      "type": "file_exists",
+      "name": "source-anchored evidence package present",
+      "path": "evidence/v41flash_effort_control.json"
+    },
+    {
+      "type": "file_exists",
+      "name": "E1 raw latency samples present",
+      "path": "results/e1_tool_latency.json"
+    },
+    {
+      "type": "file_exists",
+      "name": "E1b raw agent-primitive samples present",
+      "path": "results/e1b_agent_primitives.json"
+    },
+    {
+      "type": "file_exists",
+      "name": "E2 allocation sweep present",
+      "path": "results/e2_allocation.json"
+    },
+    {
+      "type": "file_exists",
+      "name": "E3 end-to-end episodes present",
+      "path": "results/e3_agent_loop.json"
+    },
+    {
+      "type": "file_exists",
+      "name": "canonical recomputation output present",
+      "path": "results/stats.json"
+    },
+    {
+      "type": "file_exists",
+      "name": "requirements lock present",
+      "path": "requirements.txt"
+    },
+    {
+      "type": "script_runs",
+      "name": "canonical analysis recomputes every reported statistic",
+      "cmd": [
+        "python3",
+        "analysis.py",
+        "."
+      ],
+      "cwd": ".",
+      "timeout": 600
+    },
+    {
+      "type": "script_runs",
+      "name": "source quotations re-verify byte-for-byte",
+      "cmd": [
+        "python3",
+        "experiments/extract_v41_effort_evidence.py"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "manifest hash reconciliation",
+      "cmd": [
+        "python3",
+        "scripts/build_evidence_manifest.py",
+        ".",
+        "--verify",
+        "evidence_manifest.json",
+        "--exclude",
+        "submission"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "ledger verifier",
+      "cmd": [
+        "python3",
+        "scripts/verify_claim_ledger.py",
+        "."
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "compile gate (temp copy, never pollutes the delivery tree)",
+      "cmd": [
+        "python3",
+        "scripts/compile_gate.py",
+        "."
+      ],
+      "cwd": ".",
+      "timeout": 900
+    },
+    {
+      "type": "script_runs",
+      "name": "TMLR G1-G11 compliance (evidence/ excluded as source material, not manuscript)",
+      "cmd": [
+        "python3",
+        "scripts/check_tmlr_compliance.py",
+        ".",
+        "--names",
+        "",
+        "--exclude-dir",
+        "evidence",
+        "--out",
+        "reports/tmlr.md"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "evidence-taint propagation check",
+      "cmd": [
+        "python3",
+        "scripts/verify_taint.py",
+        ".",
+        "--out",
+        "reports/taint.md",
+        "--fail-on-error"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "hallucination scan (nonexistent citations / named-but-missing files)",
+      "cmd": [
+        "python3",
+        "scripts/scan_hallucination.py",
+        ".",
+        "--out",
+        "reports/hallucination.md",
+        "--fail-on-error"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "statistical-consistency scan",
+      "cmd": [
+        "python3",
+        "scripts/scan_stats_consistency.py",
+        ".",
+        "--out",
+        "reports/stats.md",
+        "--fail-on-error"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "writing-style scan",
+      "cmd": [
+        "python3",
+        "scripts/check_writing_style.py",
+        ".",
+        "--out",
+        "reports/style.md"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "cwd": ".",
+      "timeout": 300,
+      "name": "H4 claims gate is non-vacuous (injected withheld estimate must be rejected)",
+      "cmd": [
+        "python3",
+        "scripts/check_h4_claims.py",
+        ".",
+        "--selftest"
+      ]
+    },
+    {
+      "type": "script_runs",
+      "cwd": ".",
+      "timeout": 300,
+      "name": "H4 numbers in the manuscript are backed and no withheld g_x is quoted",
+      "cmd": [
+        "python3",
+        "scripts/check_h4_claims.py",
+        ".",
+        "--out",
+        "reports/h4_claims.md"
+      ]
+    },
+    {
+      "type": "script_runs",
+      "cwd": ".",
+      "timeout": 300,
+      "name": "released package ships the H4 evidence and is self-consistent",
+      "cmd": [
+        "python3",
+        "scripts/check_h4_claims.py",
+        ".",
+        "--package"
+      ]
+    },
+    {
+      "type": "file_exists",
+      "name": "novelty claims present",
+      "path": "novelty_claims.txt"
+    },
+    {
+      "type": "script_runs",
+      "name": "novelty claims extracted from main.tex (draft non-empty)",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/extract_novelty_claims.py",
+        ".",
+        "--fail-on-empty"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "A gate novelty prescan: query ladder reached a live pool",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/novelty_prescan.py",
+        "novelty_claims.txt",
+        "--since",
+        "2026-08-01",
+        "--out",
+        "reports/novelty_scan.md",
+        "--fail-on-missing"
+      ],
+      "cwd": ".",
+      "timeout": 600
+    },
+    {
+      "type": "script_runs",
+      "name": "A gate novelty prescan selftest",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/novelty_prescan.py",
+        "--selftest"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "B gate claim-search: pool=0 is Critical",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/novelty_claim_search_gate.py",
+        "--claims",
+        "novelty_claims.txt",
+        "--scan",
+        "reports/novelty_scan.md",
+        "--out",
+        "reports/novelty_claim_search_gate.md",
+        "--fail-on-major"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "B gate claim-search selftest",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/novelty_claim_search_gate.py",
+        "--selftest"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    },
+    {
+      "type": "script_runs",
+      "name": "C gate freshness drift: UNSEARCHED blocks unconditionally",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/freshness_drift.py",
+        "--claims",
+        "novelty_claims.txt",
+        "--cutoff",
+        "2026-08-01",
+        "--out",
+        "reports/freshness_drift.md",
+        "--fail-on-drift"
+      ],
+      "cwd": ".",
+      "timeout": 600
+    },
+    {
+      "type": "script_runs",
+      "name": "C gate freshness drift selftest",
+      "cmd": [
+        "python3",
+        "/home/liuzewen/.agents/skills/paper-writing-agent/scripts/freshness_drift.py",
+        "--selftest"
+      ],
+      "cwd": ".",
+      "timeout": 300
+    }
+  ]
+}

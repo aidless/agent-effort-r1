@@ -1,0 +1,185 @@
+{
+ "generated_by": "experiments/h4_derived_stats.py",
+ "source_result": "results/h4_real_llm_gx_qwen3_8b_newcard.json",
+ "source_sha256": "c66e4801394265ef4e3b077990e0fe4e7959553b92985aeb6f9b111463b8dc50",
+ "n_records": 672,
+ "iso_curve": {
+  "L0_minimal": {
+   "n": 48,
+   "n_success": 0,
+   "success": 0.0,
+   "max_steps": 2,
+   "failure_reasons": {
+    "budget:steps": 48
+   }
+  },
+  "L1_low": {
+   "n": 48,
+   "n_success": 45,
+   "success": 0.9375,
+   "max_steps": 4,
+   "failure_reasons": {
+    "tests_passed": 45,
+    "budget:steps": 3
+   }
+  },
+  "L2_mid": {
+   "n": 48,
+   "n_success": 42,
+   "success": 0.875,
+   "max_steps": 8,
+   "failure_reasons": {
+    "tests_passed": 42,
+    "budget:steps": 6
+   }
+  },
+  "L3_high": {
+   "n": 48,
+   "n_success": 39,
+   "success": 0.8125,
+   "max_steps": 16,
+   "failure_reasons": {
+    "tests_passed": 39,
+    "budget:steps": 9
+   }
+  },
+  "L4_max": {
+   "n": 48,
+   "n_success": 36,
+   "success": 0.75,
+   "max_steps": 32,
+   "failure_reasons": {
+    "tests_passed": 36,
+    "budget:steps": 12
+   }
+  }
+ },
+ "mcnemar_pairs": {
+  "L0_minimal_to_L1_low": {
+   "n_pairs": 48,
+   "worsened": 0,
+   "improved": 45,
+   "ties": 3,
+   "exact_p_two_sided": 5.684341886080802e-14
+  },
+  "L1_low_to_L4_max": {
+   "n_pairs": 48,
+   "worsened": 9,
+   "improved": 0,
+   "ties": 39,
+   "exact_p_two_sided": 0.00390625
+  },
+  "L2_mid_to_L3_high": {
+   "n_pairs": 48,
+   "worsened": 3,
+   "improved": 0,
+   "ties": 45,
+   "exact_p_two_sided": 0.25
+  },
+  "L3_high_to_L4_max": {
+   "n_pairs": 48,
+   "worsened": 3,
+   "improved": 0,
+   "ties": 45,
+   "exact_p_two_sided": 0.25
+  }
+ },
+ "logistic_lr_all_levels": {
+  "n": 240,
+  "levels": [
+   "L0_minimal",
+   "L1_low",
+   "L2_mid",
+   "L3_high",
+   "L4_max"
+  ],
+  "loglik_linear": -129.2416300692248,
+  "loglik_quadratic": -95.65304168157027,
+  "lr_chi2": 67.17717677530908,
+  "df": 1,
+  "p_value": 2.48170563743639e-16,
+  "quadratic_coef_std_log2_budget": -1.7306829397589165,
+  "monotone_model_implied": "p increases in every axis; a decrease is out of range"
+ },
+ "logistic_lr_excluding_structurally_floored_level": {
+  "n": 192,
+  "levels": [
+   "L1_low",
+   "L2_mid",
+   "L3_high",
+   "L4_max"
+  ],
+  "loglik_linear": -79.5623085402277,
+  "loglik_quadratic": -79.46704188979228,
+  "lr_chi2": 0.19053330087083964,
+  "df": 1,
+  "p_value": 0.66247312605178,
+  "quadratic_coef_std_log2_budget": 0.11683499635994746,
+  "monotone_model_implied": "p increases in every axis; a decrease is out of range"
+ },
+ "non_monotonicity_verdict": {
+  "with_floored_level_quadratic_significant": true,
+  "without_floored_level_quadratic_significant": false,
+  "reading": "the quadratic term's significance comes from the structurally floored level (no policy can pass there); once excluded the quadratic is NOT significant, so the supported statement is a monotone DECLINE above the low budget, not an interior optimum"
+ },
+ "actions_per_episode": {
+  "L0_minimal": {
+   "read": 1.0,
+   "write": 1.0,
+   "test": 0.0
+  },
+  "L1_low": {
+   "read": 1.0,
+   "write": 1.6875,
+   "test": 0.9375
+  },
+  "L2_mid": {
+   "read": 1.0625,
+   "write": 4.8125,
+   "test": 0.9375
+  },
+  "L3_high": {
+   "read": 1.0625,
+   "write": 7.375,
+   "test": 0.875
+  },
+  "L4_max": {
+   "read": 1.0,
+   "write": 13.8125,
+   "test": 0.75
+  },
+  "_units": "actions per episode (mean)"
+ },
+ "representative_failing_high_budget_trajectory": {
+  "task": "t02_json_roundtrip",
+  "repeat": 0,
+  "budget_level": "L4_max",
+  "writes": 31,
+  "tests": 0,
+  "steps_used": 33,
+  "model_turns": 32,
+  "reason": "budget:steps",
+  "reads": 1
+ },
+ "identifiability_max_ci_width": 0.3,
+ "gain_identifiability": {
+  "steps": {
+   "point_estimate": 0.9128117082429725,
+   "ci95_width": 0.9999999999999567,
+   "n_interior_cells": 4,
+   "withheld": true
+  },
+  "tools": {
+   "point_estimate": 0.49614565090841706,
+   "ci95_width": 0.9999999999999999,
+   "n_interior_cells": 5,
+   "withheld": true
+  },
+  "vision": {
+   "point_estimate": 0.04127290461391625,
+   "ci95_width": 0.5800805733977473,
+   "n_interior_cells": 6,
+   "withheld": true
+  }
+ }
+}

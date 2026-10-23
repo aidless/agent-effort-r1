@@ -1,0 +1,7 @@
+# From Controllable Reasoning Effort to Controllable Agent Effort (P2) environment lock
+# Remote execution host (where E1/E1b/E2/E3 actually ran): Python 3.10.12, 96 vCPU, 754 GB RAM
+numpy==2.2.6
+scipy==1.15.3
+Pillow==11.1.0
+# Local recomputation + LaTeX host: Python 3.12.3, numpy 2.5.2, scipy 1.18.1
+# (analysis.py uses only stdlib + numpy; scipy/Pillow are not needed to recompute)

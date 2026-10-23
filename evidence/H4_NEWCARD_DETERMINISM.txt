@@ -1,0 +1,45 @@
+records: old=672 new=672
+pairing keys unique on both sides: False / False
+NOTE: keys collide -> falling back to positional pairing (order is fixed by the sweep)
+paired records: 672
+outcome fields compared: ['parse_errors', 'reason', 'steps_used', 'success', 'tool_calls_used', 'vision_probes_used']
+
+per-field disagreement counts (out of 672):
+  parse_errors         0
+  reason               0
+  steps_used           7
+  success              0
+  tool_calls_used      3
+  vision_probes_used   0
+  records with ANY outcome difference: 7 / 672 (1.0%)
+  example: ({'steps_used': (6, 8)}, 'axis_steps', {'max_steps': 8, 'max_tool_calls': 4, 'max_context_chars': 1500, 'max_vision_probes': 2})
+  example: ({'steps_used': (6, 7)}, 'axis_vision', {'max_steps': 8, 'max_tool_calls': 4, 'max_context_chars': 1500, 'max_vision_probes': 1})
+  example: ({'steps_used': (6, 7)}, 'axis_vision', {'max_steps': 8, 'max_tool_calls': 4, 'max_context_chars': 1500, 'max_vision_probes': 1})
+
+== declared inputs (were these held fixed on purpose?) ==
+  seed                   old=20260911 new=20260911 same
+  chat_mode_requested    old='think_off' new='think_off' same
+  chat_mode_effective    old='think_off' new='think_off' same
+  backend                old='vllm' new='vllm' same
+  repeats                old=3 new=3 same
+  min_free_mib           old=25600 new=25600 same
+  lock_mode              old='external (flock held by the caller)' new='external (flock held by the caller)' same
+  fingerprint path               old='/root/autodl-tmp/models/Qwen3-8B-AWQ' new='/root/autodl-tmp/models/Qwen3-8B-AWQ-fixed'  DIFFERENT
+  fingerprint identical overall: False
+  declared_limits old=["g_reason is not swept; it is absorbed into the fitted p0", "g_search is not exercised by this task set and is left UNMEASURED, not fitted", "ref_x are E2 assumptions carried over, not measured here (see ref_sensitivity
+  (whether decoding is greedy is read from the harness source, not assumed here)
+
+== what the vehicle DID move: timing distribution ==
+  old  n=672 mean=  2545.6 p10=   474.7 p50=  1847.0 p90=  4331.8 p99= 18893.5 max=  27740.7  sd=  3114.7
+  new  n=672 mean=  2378.4 p10=   535.7 p50=  1948.0 p90=  4553.6 p99=  9951.4 max=  13595.7  sd=  2033.5
+  mean ratio old/new = 1.0703 (1.0 = no change); median ratio = 0.9481
+  quantile-matched deltas (new-old, ms): min=-14145 p50=77 max=428  (mixed sign = no clean speed-up)
+
+== do the differences reach the fit? ==
+  fit_gains input cells (harness line ~1074): arm, budget, fail=1-success, n, success.
+  so only `success` can move the fitted gains; steps/tool-call differences enter
+  summary means only.
+  episodes with a different success: 0 / 672
+  per-cell success multisets identical: True (23 cells)
+
+VERDICT: success is identical in every cell, so gain_fit is bit-identical BY CONSTRUCTION and is NOT independent cross-vehicle evidence; the vehicle did perturb trajectories (7/672 records changed steps_used/tool_calls_used, 0 of them fit-relevant). What this control can support: outcome robustness + a latency-profile comparison. What it cannot support: "the fitted gains replicate on new hardware".

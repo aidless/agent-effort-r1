@@ -1,0 +1,153 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[preprint]{tmlr}
+\usepackage{amsmath,amssymb,booktabs,natbib,microtype,float}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage{url}
+\usepackage{underscore}
+\title{Agent Effort under Resource Budgets:\\Conditional Allocation and Two Small-Model Case Studies}
+\author{Zewen Liu \\ Independent Researcher \\ \texttt{17353895263@163.com}}
+\date{}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+An optimal resource allocation under an assumed success function need not describe the behavior of a tool-using language model. We examine that gap using an illustrative five-axis allocation calculation and retained records from eight authored programming tasks. The allocation calculation searches 8,820 tuples and yields a modeled token-cost ratio of 3.44 against a fixed-middle setting at at least matched modeled success; its gains, token prices, and unconstrained action combinations are assumptions, not measured deployment benefits. In two Qwen3 AWQ case studies, each with 672 retained execution records, the same five coupled budget settings yield different success profiles: the 8B records peak at 0.9375 at the low budget and reach 0.7500 at the maximum, whereas the 14B records peak at 1.0000 in the middle and reach 0.8750 at the maximum. These are descriptive rates on eight tasks, with two nested menus and identical repeated outcomes, rather than independent samples establishing a general decline. A protocol audit identifies further interpretation limits: success requires an explicit passing test within budget, the supplied scaffold repeats the original starter and truncates history, and structural probes are not visual understanding. Missing generated code and an unresolved runtime-script fingerprint prevent a complete execution audit. The contribution is a reproducible accounting of the retained outcomes and the assumptions separating an allocation model from a bounded agent evaluation.
+\end{abstract}
+
+\section{Introduction}
+A tool-using agent spends resources on several activities: generating text, taking turns, invoking local tools, requesting external information, and inspecting observations. A resource model can assign prices and gains to those activities and then select the best allocation under a budget. That optimization is only as informative as its success function and feasibility constraints. More permitted actions also need not cause a particular agent to use them productively.
+
+This paper examines the distinction through a small case study. An illustrative allocation model assumes saturating gains along four agent-resource axes and borrows three reasoning-effort anchors from the DeepSeek-V4.1-Flash report\citep{v41flash2026}. Its grid optimum is compared with recorded execution outcomes from two Qwen3 AWQ configurations on eight authored programming tasks. We do not run DeepSeek-V4.1-Flash, transfer its measured capability curve to Qwen, or propose an evaluated online routing policy.
+
+The retained data support a narrower question: \emph{what do these budget-conditioned completion records measure, and which conclusions survive an audit of their units and protocol?} The two model configurations have different point-estimate profiles. Repeated records do not supply new task outcomes, and success is a test-passing event rather than a retrospective audit of every final program. The supplied scaffold also has memory and observation conventions that complicate a capability interpretation. These features matter before fitting marginal resource gains or asserting deployment savings.
+
+We contribute three bounded results. First, we independently recompute the conditional allocation comparisons and distinguish measured latency primitives from assumed success and token prices. Second, we report the model records at the task level, including the dependence between menus and repeated executions. Third, we audit the supplied harness and record provenance, identifying test-selection, context-accounting, and execution-binding limits. This is a descriptive study of retained records, not a new benchmark-scale evaluation or a general law of agent scaling.
+
+\section{Related work and positioning}
+Adaptive and controllable test-time computation are established research areas\citep{alomrani2025reasoningbudget}. Self-consistency allocates compute to sampling and aggregation\citep{wang2023selfconsistency}; CoBa considers generation, verification, and stopping\citep{zhou2026coba}; thought-level beam search explores partial reasoning trajectories\citep{yang2026gambit}. These approaches motivate explicit allocation decisions, but their evaluations do not validate our assumed success function.
+
+Budget-Aware Tool Use already provides a joint token-and-tool cost metric and studies budget-aware scaling\citep{liu2025budgettooluse}. EcoAgent-Bench evaluates economic decisions under priced actions and explicit budgets\citep{wu2026ecoagentbench}. We therefore make no claim to first unify agent costs or discover that budget awareness differs from economical behavior. Our distinct material is the accounting and protocol audit of this particular small task suite and its retained records.
+
+The DeepSeek-V4.1-Flash report conditions training on a requested effort level and discusses effort-dependent token penalties and empirical tradeoffs\citep{v41flash2026}. Importantly, its Appendix~B.2 already discusses non-monotonic performance under different scaffolds, and Appendix~C limits its theoretical approximation. Our case studies neither contradict a universal monotonicity claim from that report nor reproduce its model results. The programming setting is also much smaller than repository-level benchmarks such as SWE-bench\citep{jimenez2024swebench}: our tasks are hand-authored functions with a few tests, not real issue-resolution tasks.
+
+\section{Evidence and analysis design}
+\subsection{Evidence layers}
+We distinguish four evidence layers. E1/E1b contain host-local latency samples for 18 primitives. E2 is a deterministic numerical allocation calculation. E3 is a rule-based reference repairer that writes supplied correct code and executes a prescribed action schedule. H4 contains two sets of records labeled as real model-driven executions, using Qwen3-8B-AWQ and Qwen3-14B-AWQ with thinking disabled. Each H4 file has 672 records: 240 coupled-budget records and 432 single-axis-sweep records. The two H4 files contain environment metadata, full file fingerprints for 13 checkpoint files each, action summaries, timing, budgets, and success flags.
+
+The H4 metadata identify Python~3.10.12, vLLM~0.30.0, and PyTorch~2.13.0+cu130. Checkpoint fingerprints improve identification of the recorded model files, but the weights are not redistributed. The retained script fingerprint does not match the supplied harness snapshot; the exact runtime snapshot has not been recovered. Consequently, the protocol description below reports the supplied implementation, while the numerical results describe retained records. We do not claim that inspecting the current code completely verifies the historical executions.
+
+\subsection{Tasks, budgets, and menus}
+The same eight authored tasks are reused across budgets, menus, and model configurations: grouped sum, JSON round trip, stable deduplication, binary search, word frequency, matrix transpose, interval merging, and top-$k$. Each has a starter function, a reference solution, and three unit tests. The supplied H4 implementation presents a task specification derived from the test contract and the starter text. The tests are hidden through the ordinary action interface, not withheld from the experiment author or protected against arbitrary executed Python. Passing this small test suite does not establish correctness for all inputs or every part of the verbal contract.
+
+Table~\ref{tab:curves} lists the five coupled budgets. The historical field \texttt{max_context_chars} counts cumulative read/probe observation characters; it is not a full model-context or token limit. The probe is a structural summary consisting of four string lengths, including the test-script length. It neither presents an image nor measures visual reasoning. We call it a structural probe even though the historical field uses \texttt{vision}.
+
+H4 offers two menus: read/write/test, and read/probe/write/test. The model selects actions and their order. E3 instead forces either read/probe/write/test or probe/read/probe/write/test and writes the supplied reference solution. E3 shares tasks, budget values, and the grading function with H4, but its schedules and information differ. It is an accounting control, not a strictly matched policy-replacement experiment.
+
+\input{tables/curves.tex}
+
+\subsection{Units and recomputation}
+Our post hoc analysis uses the six retained result files listed in the ancillary bundle. The generator validates coverage, unique H4 task/arm/menu/repeat keys, declared budgets, real-versus-stub flags, and selected inherited aggregates. It rederives latency summaries, task rates, and E2 comparisons without invoking a model or network service.
+
+An H4 coupled-budget cell has 48 executions: eight tasks, two menus, and three repeats. Across all conditions within each model file, the three repeats have identical success outcomes and retained action summaries. They are repeated executions, not additional independent task draws. The two menus are nested within the same task. We average within task and then equally across eight tasks; because the design is balanced, this reproduces the pooled rates. E3 has the same multiplicities but does not retain repeat identifiers, so we validate three records per task/budget/schedule rather than inventing repeat IDs.
+
+The tasks were authored and reused, not sampled from a defined population. We therefore report descriptive differences and leave-one-task-out ranges, with no population $p$-values or confidence intervals. Those ranges diagnose sensitivity to task composition; they are not uncertainty intervals. Historical record-level intervals, task-menu independence tests, and fitted marginal-gain intervals are retained as history but are not adopted as inferential evidence in this revision. The analysis is not an external timestamped preregistration.
+
+\section{Conditional allocation calculation}
+\subsection{Assumptions and objective}
+An allocation is $a=(r,s,t,q,v)$: a reasoning-effort coordinate, steps, local calls, search calls, and probe operations. E2 assigns the modeled token cost
+\begin{equation}
+ C(a)=sL(r)+1000s+200(t+q)+400q+200v,
+ \qquad L(r)=1200\exp\!\left(\frac{\log 2.5}{75}(r-25)\right).
+\label{eq:cost}
+\end{equation}
+The extra 400 search tokens are in addition to the 200 per-call term. All absolute token prices, including $L(25)=1200$, are modeling assumptions; they are not measured Qwen token counts. The report provides mean Pass@1 anchors of 0.671 and 0.763 across eight reasoning-intensive benchmarks at requested effort 25 and 100, and an approximate output-token multiplier of 2.5. Borrowing these anchors does not validate the interpolation or transfer them to our agent tasks.
+
+With $s_0=5000$, define
+\begin{align}
+ w(r)&=\frac{\log(1+(r-1)/s_0)-\log(1+24/s_0)}
+ {\log(1+99/s_0)-\log(1+24/s_0)}, \\
+ A(r)&=0.671+(0.763-0.671)w(r), \\
+ G(a)&=1-\prod_{x\in\{s,t,q,v\}}[1-g_x(1-e^{-x/h_x})], \\
+ P(a)&=\min\{1,\;1-[1-A(r)G(a)](1-0.35)\}.
+\label{eq:success}
+\end{align}
+The gains are $(0.30,0.25,0.28,0.20)$ and references $(10,6,4,4)$ in step/tool/search/probe order. These quantities are declared assumptions, not estimated marginal benefits from the H4 records. The implementation's front-loading routine reaches its parameter boundary: $w(80)=0.7348$, rather than its intended target 0.76. We retain that actual calculation and do not call it an exact fitted source curve.
+
+The reasoning levels are 0, 25, 50, 75, and 100. Step levels are 1, 2, 4, 8, 12, 20, and 32; local-call levels are 0, 1, 2, 4, 8, 16, and 24. Search and probe levels are 0, 1, 2, 4, 8, and 16. Their product is 8,820 allocations. The zero reasoning coordinate is an extrapolation outside the report's advertised 1--100 interface, not a valid requested effort tier established by that report. The optimization computes
+\begin{equation}
+ P^*(B)=\max_{a\in\mathcal A:C(a)\le B}P(a),\qquad
+ C^*(u)=\min_{a\in\mathcal A:P(a)\ge u}C(a).
+\end{equation}
+This is exhaustive finite-grid optimization with known assumed outcomes. It does not learn a deployed controller.
+
+\subsection{Results and interpretation}
+\input{tables/allocation.tex}
+Table~\ref{tab:allocation} is independently recalculated from Equations~\ref{eq:cost}--\ref{eq:success}. The fixed-middle tuple is $(50,8,4,2,2)$. Reasoning maximum replaces its first coordinate with 100; agent-axes maximum replaces its remaining coordinates with their grid maxima. The 3.44, 4.52, and 2.05 ratios compare those settings with the cheapest grid point reaching at least their respective modeled success, not necessarily equal success. At the all-maximum success, the ratio is 1.00: no modeled cost saving is established at that endpoint.
+
+These comparisons have structural advantages for the optimizer. Every baseline belongs to its feasible grid, so selecting the optimum cannot do worse under the same assumed objective and budget. The success function increases with each coordinate by construction. Neither property is an empirical discovery about LLM agents. Furthermore, the grid treats coordinates as independently allocatable: it can assign many calls to a single step without an executable action-dependency constraint. For example, its 20,000-token optimum is $(100,1,16,16,16)$, with modeled success 0.6305. That tuple is not a feasible one-action-per-turn H4 trajectory. E2 is thus an illustrative resource relaxation, not a validated deployment frontier.
+
+E1/E1b contribute measurements only to the auxiliary latency accounting, not to the token-cost ratios in Table~\ref{tab:allocation}. On one host, a shell read/verify primitive averages 7.091~ms, an external HTTP GET averages 2233.753~ms, and PNG encoding/decoding averages 177.341~ms. The HTTP GET is not a measured search-agent operation, and the PNG codec is not a visual-model inference. All 30 screenshot-capture attempts fail on the headless host; all 40 deliberately unreachable network attempts fail. Table~\ref{tab:latency} reports every primitive, including failures. These local measurements do not establish portable latency ratios or actual agent end-to-end costs.
+
+We do not use the inherited latency bootstrap to certify success-function assumptions. Nor do we adopt its sensitivity summary as a matched robustness test: the original routine changes parameters for the optimized model while comparing with an unchanged reference baseline. A valid deployment claim would require recalibrated gains, feasible trajectories, measured token consumption, and a budget-matched evaluated controller.
+
+\section{Retained execution outcomes}
+\subsection{Coupled budgets and task composition}
+The E3 reference repairer reaches rates $0,0.5,1,1,1$ across L0--L4. Its low-budget split follows its prescribed schedules: the shorter schedule completes, while the probe-heavy schedule exhausts its permitted probes before writing and testing. This outcome demonstrates the known schedule/constraint interaction with supplied correct code; it does not estimate an LLM capability curve.
+
+The H4 8B rates are 0, 0.9375, 0.8750, 0.8125, and 0.7500. The corresponding 14B rates are 0, 0.8125, 1, 0.8750, and 0.8750 (Table~\ref{tab:curves}). These are finite-suite profiles. The L1-to-L4 change is $-0.1875$ for 8B and $+0.0625$ for 14B. The latter does not reproduce the former's low-to-max direction. Both have a lower maximum-budget rate than their own observed peak, but these data do not establish a population decline or refute a general scaling law.
+
+\input{tables/tasks.tex}
+Table~\ref{tab:tasks} makes the dependence visible. For 8B, two tasks worsen in the menu-averaged L1-to-L4 contrast, none improve, and six tie. For 14B, two improve, one worsens, and five tie. Removing one task at a time gives difference ranges $[-0.2143,-0.0714]$ for 8B and $[-0.0714,0.2143]$ for 14B. In particular, even the sign of the 14B average is sensitive to which task is omitted. Persistence across the 8B leave-one-out set is a description of these eight tasks, not independent evidence of a universal degradation effect.
+
+\subsection{Recorded actions and what success counts}
+At L4, all four failed 8B task-menu conditions in the first repeat have 32 retained actions: one read and 31 writes, with no test. Their three repeats have the same summaries. In contrast, the two failed 14B conditions both concern interval merging and include multiple test attempts: one has 17 writes, nine tests, and six reads; the other has 24 writes, five tests, and three reads. Across all coupled-budget executions, mean tests per episode change from 0.9375 to 0.7500 for 8B and from 1.1875 to 2.0000 for 14B between L1 and L4.
+
+These action counts do not prove a common verification-collapse mechanism. The supplied H4 implementation declares success when an explicit test returns a passing exit code within budget. It does not uniformly grade every final file after a budget failure. A correct but untested file can therefore fail this outcome variable, just as an incorrect file can. The failed 8B traces establish absence of a retained test event, not the correctness or incorrectness of their overwritten programs. Generated code and final files were not retained, so this distinction cannot be resolved retrospectively. Test invocation and success are also linked by the outcome definition; their association is not independent causal evidence.
+
+All L0 model records fail, but the two-step/one-tool cap is not a proof that no policy could pass: a policy could in principle write and test in two actions. The observed agents take a read/write path and exhaust steps without a test. This is a policy-and-protocol observation rather than a universal budget floor.
+
+\subsection{Single-axis sweeps}
+Table~\ref{tab:axis} reports every single-axis rate, without fitting marginal gains. The swept caps are steps, tool calls, and structural probes; the other caps remain at middle values and may still bind. Only the probe-enabled menu is used in these sweeps. No reasoning-effort coordinate or search action is varied, and the structural probe does not measure visual understanding. The present records therefore cannot identify five universal gains or validate the gains assumed in E2. Boundary-hitting fits and repeated outcomes in the historical analysis do not repair that measurement gap.
+
+\section{Protocol audit and reproducibility limits}
+\paragraph{Memory and budget visibility.}
+The supplied H4 code shows the budget to the model each turn. It also repeats the original starter, stores a write in history only as its character count, and truncates serialized history to its last 3000 characters without a truncation marker. Current code is available again only if the agent reads the file. A separate state field preserves action names, but it cannot reconstruct discarded code or observations. These conventions leave history drift, repeated-starter effects, budget-prompt effects, and hard resource limits as competing explanations. Budget visibility does not rule them out. The exported historical observation record incorrectly leaves history truncation as \texttt{null}; the source audit documents this discrepancy rather than treating it as evidence of no truncation.
+
+\paragraph{Counter and grading semantics.}
+In the supplied harness, the step counter increments before the next-step limit check. On a steps failure it can therefore equal the cap plus one even though that next model call did not execute. The retained list describes recorded action/attempt summaries; this sentinel count alone does not count completed actions. A write consumes a step but no tool-call count; read, probe, and test consume tool calls. The observation-character cap counts only read/probe strings and is checked after the action. It does not count the specification, original starter, serialized history, generated code, or actual tokenizer length.
+
+Tests run in a real Python subprocess and normal grading checks successful unit tests, but the outer record uses the process return code. Generated Python runs in the same directory as the test script. No operating-system isolation or tamper-resistant grading boundary is established. We do not claim that any retained run exploited that weakness; missing code prevents a complete grading-integrity audit. The outcome is most precisely a recorded budget-limited test-pass event.
+
+\paragraph{Runtime identity and missing traces.}
+Both retained H4 files report script SHA-256 \texttt{3326b513\ldots}, while the supplied snapshot hashes to \texttt{7e2d56e7\ldots}; full values and the search record are in the evidence note. The supplied source is useful for inspection but cannot be certified as the exact historical runtime. Model file hashes do not solve this script-version gap. Complete model responses, per-turn prompts, written code, stop reasons, and final workspaces are absent. Our recomputation verifies arithmetic and retained-grid consistency; it does not independently verify that every historical execution followed the supplied code.
+
+\paragraph{Scope and stronger follow-up.}
+Eight authored tasks with three tests each cannot establish repository-level effectiveness, general resource-scaling laws, or cross-model superiority. Both model configurations reuse the same tasks, and the coupled sweep simultaneously changes several caps and their prompt text. The study does not isolate a pure compute intervention. A stronger follow-up should freeze the actual runtime snapshot before execution, retain complete prompts/responses and programs, grade final files independently of the chosen test action, strengthen grader isolation, define executable allocation constraints, and evaluate a controller on held-out tasks with task-cluster uncertainty. Those are proposed repairs, not experiments completed by this revision.
+
+\paragraph{Recomputation package.}
+The ancillary archive \texttt{anc/agent-effort-records.zip} contains the six retained result files, supplied experiment code, the new standard-library recomputation script, provenance notes, and member hashes. Running \texttt{python3 scripts/recompute_arxiv_r1.py} regenerates the descriptive JSON and five tables without inference calls. The archive is intended to accompany the article upon public posting; no public identifier is yet available. Checkpoint weights and the third-party report are linked rather than redistributed. Re-executing the experiments requires appropriate model weights, a compatible runtime, and a newly frozen harness; it is distinct from recomputing these retained results.
+
+\section{Conclusion}
+An allocation optimum under assumed gains and a budget-conditioned agent completion rate answer different questions. The conditional calculation yields cost ratios within its algebra and unconstrained grid. The retained model records instead show task- and model-specific profiles, nested repeated measurements, and action-selection effects entangled with test-based scoring. The supplied scaffold and missing runtime snapshot further limit explanation. Reporting that separation permits reproducible descriptive analysis without turning simulation savings or a small-suite point estimate into a demonstrated deployment benefit.
+
+\section*{Broader impact}
+Resource accounting can help make agent evaluation more transparent, but interpreting proxy observations as capability or efficiency guarantees can mislead deployment decisions. This study uses authored programming tasks and retained experimental records, with no human-subject data. It establishes no production safety or cost-saving guarantee.
+
+\section*{Use of generative AI tools}
+Codex assisted with manuscript revision, recomputation code, and internal review. It is not an author. No new model experiment was conducted for this revision. Tool-assisted checks and internal reviewer agents do not constitute external peer review or verification of the missing historical execution traces.
+
+\bibliographystyle{tmlr}
+\bibliography{main}
+\clearpage
+\appendix
+\section{Complete host-local latency accounting}
+\input{tables/latency.tex}
+The complete primitive names in Table~\ref{tab:latency} preserve the historical identifiers for recomputation. The reachable-network primitive issues HTTP GET requests to known reachable pages; the unreachable case deliberately targets a reserved invalid domain. The loopback-search primitive queries a local index. The PNG primitive encodes and decodes a random RGB frame. None is a substitute for measuring an actual internet search agent or vision-language inference. Failure-attempt timings are included in the all-attempt mean and standard deviation.
+
+\clearpage
+\section{Complete single-axis sweep accounting}
+\input{tables/axis.tex}
+The controls are caps rather than realized expenditures. Zero permitted test tool calls structurally prevents the required test-pass event in the supplied H4 protocol, but increasing a cap does not force a productive action. The displayed profiles include all swept levels; no level is removed for poor fit or non-monotonicity.
+\end{document}

@@ -1,0 +1,486 @@
+{
+ "source_id": "V41FLASH_TechReport",
+ "source_path": "evidence/V41FLASH_TechReport.txt",
+ "source_resolved_via": "authoritative source tree",
+ "source_sha256": "ac24848a4dee30669b9caac6ca05b62d7186e4c546add099ccc906065288abf3",
+ "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
+ "line_convention": "split on \\n only; str.splitlines() banned",
+ "n_lines_lf": 3791,
+ "n_newlines_wc_l": 3790,
+ "n_lines_splitlines_banned": 3841,
+ "splitlines_line_shift": 50,
+ "n_page_breaks": 51,
+ "term_counts": {
+  "Controllable Reasoning Effort": 2,
+  "reasoning effort": 8,
+  "reasoning-effort": 8,
+  "scalar effort": 4,
+  "effort level": 17,
+  "Output tokens": 24,
+  "Terminal-Bench 2.1": 5,
+  "DeepSWE": 19,
+  "scaffold": 34,
+  "multi-turn agentic": 1
+ },
+ "quotes": [
+  {
+   "key": "abstract_checkpoint_url",
+   "line_start": 22,
+   "line_end": 24,
+   "text": "architecture and introduce several efficient architectural extensions. We pretrain DeepSeek-V4.1Flash on a multimodal corpus comprising 45T tokens and conduct comprehensive post-training,\nyielding strong performance across diverse text-based and multimodal agentic scenarios. Model\ncheckpoints are available at https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash.",
+   "required_substring": "checkpoints are available",
+   "substring_found": true
+  },
+  {
+   "key": "s514_heading",
+   "line_start": 2039,
+   "line_end": 2039,
+   "text": "5.1.4. Controllable Reasoning Effort in RL",
+   "required_substring": "Controllable Reasoning Effort in RL",
+   "substring_found": true
+  },
+  {
+   "key": "s514_scalar_b_definition_en",
+   "line_start": 2042,
+   "line_end": 2044,
+   "text": "applications. We therefore introduce a scalar effort level 𝑏 as an explicit conditioning signal\nduring reinforcement-learning. This mechanism is applied to both single-turn reasoning and\nmulti-turn agentic tasks. Specifically, we prepend the following instruction to the system prompt:",
+   "required_substring": "scalar effort level",
+   "substring_found": true
+  },
+  {
+   "key": "s514_system_prompt",
+   "line_start": 2046,
+   "line_end": 2049,
+   "text": "Reasoning Effort:\n\n{effort} (range 1–100; higher values request more\nthorough reasoning)",
+   "required_substring": "range 1",
+   "substring_found": true
+  },
+  {
+   "key": "s514_b_range_100",
+   "line_start": 2051,
+   "line_end": 2051,
+   "text": "Here, 𝑏 ∈ {1, . . . , 100} denotes the requested effort level.",
+   "required_substring": "requested effort level",
+   "substring_found": true
+  },
+  {
+   "key": "s514_sampling_Mb",
+   "line_start": 2052,
+   "line_end": 2052,
+   "text": "For each training prompt 𝑥 , we sample 𝑀𝑏 responses at each effort level 𝑏 ∈ B:",
+   "required_substring": "sample",
+   "substring_found": true
+  },
+  {
+   "key": "s514_subgroup_normalization",
+   "line_start": 2061,
+   "line_end": 2064,
+   "text": "Here, 𝑗 indexes the responses sampled at effort level 𝑏. Responses sharing the same ( 𝑥 , 𝑏) form\na subgroup, within which rewards are mean-centered to compute group-relative advantages.\nThus, responses from different effort levels are not directly compared. Instead, effort-dependent\nbehavior is induced within each subgroup by making the length component of the reward",
+   "required_substring": "subgroup",
+   "substring_found": true
+  },
+  {
+   "key": "s514_length_penalty_eq9",
+   "line_start": 2065,
+   "line_end": 2081,
+   "text": "depend on 𝑏. Specifically, we add the length-penalty term 𝑟𝑏len\n, 𝑗 to the reward of response 𝑧 𝑏, 𝑗 :\n𝑟𝑏len\n, 𝑗 = − min\n\n\u001a\n𝐶max , 𝑘 ( 𝑏)\n\nℓ𝑏, 𝑗\n𝐿norm\n\n\u001b\n,\n\n(9)\n\nwhere ℓ𝑏, 𝑗 is the number of reasoning tokens, 𝐿norm is a reference length, and 𝐶max caps the maximum deduction applied to a trajectory. The token-penalty coefficient decreases exponentially",
+   "required_substring": "length-penalty term",
+   "substring_found": true
+  },
+  {
+   "key": "s514_kb_exponential_eq10",
+   "line_start": 2081,
+   "line_end": 2094,
+   "text": "where ℓ𝑏, 𝑗 is the number of reasoning tokens, 𝐿norm is a reference length, and 𝐶max caps the maximum deduction applied to a trajectory. The token-penalty coefficient decreases exponentially\nwith the requested effort:\n\u0012\n\u0013\n𝑏 − 𝑏min\n𝑘 ( 𝑏) = 𝑘0 exp −\n(10)\n,\n𝜏 = 𝜆Δ𝑏,\n𝜏\n\nwhere 𝑘0 is the basic penalty coefficient at different effort levels, 𝑏𝑚𝑖𝑛 is the minimum value of\nB, Δ𝑏 is the average spacing between training effort levels, and 𝜆 controls the rate of penalty\ndecay. Increasing 𝑏 by 𝜏 multiplies the penalty coefficient by 𝑒−1 . The parameter 𝑘0 controls the",
+   "required_substring": "decreases exponentially",
+   "substring_found": true
+  },
+  {
+   "key": "s514_k0_bmin_Delta_lambda",
+   "line_start": 2092,
+   "line_end": 2096,
+   "text": "where 𝑘0 is the basic penalty coefficient at different effort levels, 𝑏𝑚𝑖𝑛 is the minimum value of\nB, Δ𝑏 is the average spacing between training effort levels, and 𝜆 controls the rate of penalty\ndecay. Increasing 𝑏 by 𝜏 multiplies the penalty coefficient by 𝑒−1 . The parameter 𝑘0 controls the\noverall pressure toward shorter reasoning, whereas a smaller 𝜏 causes the penalty to decay more\nrapidly and tends to produce greater behavioral separation between effort levels. Appendix C",
+   "required_substring": "basic penalty coefficient",
+   "substring_found": true
+  },
+  {
+   "key": "s514_deployment_interpolation",
+   "line_start": 2100,
+   "line_end": 2104,
+   "text": "\fAt deployment time, the scalar 𝑏 provides a flexible control interface over the model’s\nreasoning strength. By varying 𝑏, a single model checkpoint can move between different\noperating regimes along the learned cost–quality frontier, adapting to different latency, tokenbudget, and solution-quality requirements. Although training uses only a finite set of effort\nlevels, intermediate values can be used at deployment to elicit interpolated reasoning behaviors,\nproviding a fine-grained and efficient mechanism for test-time resource allocation.",
+   "required_substring": "interpolated reasoning behaviors",
+   "substring_found": true
+  },
+  {
+   "key": "s514_api_tiers_table2",
+   "line_start": 2105,
+   "line_end": 2111,
+   "text": "In our production deployment launched in September 2026, the public API exposes three\npreset reasoning-effort tiers—max, high, and low—which map directly onto this scalar interface.\nAs summarized in Table 2, the three tiers correspond to effort values of 𝑏 = 100, 𝑏 = 75, and\n𝑏 = 50, respectively, so that API users select an operating point on the learned cost–quality\nfrontier without any change to the model weights or decoding configuration.\nTable 2 | Mapping between the public API reasoning-effort tiers and the underlying scalar effort\nvalues 𝑏.",
+   "required_substring": "preset reasoning-effort tiers",
+   "substring_found": true
+  },
+  {
+   "key": "toc_5_3_3",
+   "line_start": 303,
+   "line_end": 303,
+   "text": "Performance across reasoning efforts . . . . . . . . . . . . . . . . . . . . .",
+   "required_substring": "Performance across reasoning efforts",
+   "substring_found": true
+  },
+  {
+   "key": "toc_appendixC",
+   "line_start": 343,
+   "line_end": 343,
+   "text": "C Exponential Token Penalty in Reasoning Effort Control",
+   "required_substring": "Exponential Token Penalty in Reasoning Effort Control",
+   "substring_found": true
+  },
+  {
+   "key": "toc_appendixB2",
+   "line_start": 335,
+   "line_end": 335,
+   "text": "B.2 Reasoning Efforts across Scaffolds . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+   "required_substring": "Reasoning Efforts across Scaffolds",
+   "substring_found": true
+  },
+  {
+   "key": "toc_appendixB3",
+   "line_start": 339,
+   "line_end": 339,
+   "text": "B.3 Detailed Results of Reasoning Benchmarks across Reasoning Efforts . . . . . . .",
+   "required_substring": "Detailed Results of Reasoning Benchmarks",
+   "substring_found": true
+  },
+  {
+   "key": "s532_frontloaded_gains",
+   "line_start": 2431,
+   "line_end": 2443,
+   "text": "Beyond peak performance, DeepSeek-V4.1-Flash exposes a reasoning-effort setting that\nallows users to trade inference cost for accuracy in a controllable manner. As illustrated in\nFigure 9, both accuracy and output length increase steadily with the effort level across reasoning\nand agentic benchmarks alike. Raising the effort from 25 to 100 improves the average Pass@1 on\neight reasoning-intensive benchmarks from 67.1% to 76.3%, on DeepSWE v1.1 from 66.0% to\n74.2%, and on Terminal-Bench 2.1 from 82.4% to 90.6%, at the cost of roughly 2.5× more output\ntokens. Notably, the effort control learned on single-response reasoning transfers faithfully\nto long-horizon agentic trajectories, where it governs the total amount of exploration and\nverification across turns. The gains are front-loaded: the 60–80 range already recovers most\nof the accuracy of the maximum setting at less than half of its token budget, whereas the final\nstep to effort 100 lengthens agent trajectories by 1.6–1.8× for only marginal improvements. The\nmaximum tier is thus best reserved for the most challenging tasks, while moderate effort levels\noffer a favorable cost–performance balance for everyday agentic use.",
+   "required_substring": "front-loaded",
+   "substring_found": true
+  },
+  {
+   "key": "s533_perf_across_efforts",
+   "line_start": 2444,
+   "line_end": 2455,
+   "text": "5.3.3. Performance across reasoning efforts\nFigure 9 reports performance and average response length across a range of budget values. As\nthe reasoning effort increases, the model produces progressively longer reasoning traces and\naccuracy improves monotonically on reasoning-intensive benchmarks and software engineering\ntasks, with the largest gains concentrated in the low-to-mid budget range and diminishing\nreturns beyond. Although our RL involves only a limited number of effort levels, the use of\nscalar efforts achieves flexible, interpolated control of response length within a specific range.\nThis allows practitioners to trade off quality against latency and token cost along a smooth\ncontinuum: latency-sensitive applications can operate at low effort with modest accuracy\ndegradation, while difficult tasks can invoke high effort to recover the model’s full reasoning\ncapability. In our public API service, we expose three preset effort levels that map onto this\nscale: low, high, and max correspond to effort values of 50, 75, and 100, respectively.",
+   "required_substring": "monotonically",
+   "substring_found": true
+  },
+  {
+   "key": "s534_scaffold_transfer",
+   "line_start": 2456,
+   "line_end": 2470,
+   "text": "5.3.4. Performance across agent scaffolds\nIn practice, a model is rarely deployed within a single fixed agent framework; different scaffolds\nvary in their system prompts, tool definitions, context management strategies, and interaction\nprotocols, and a model that overfits to one particular harness may degrade substantially when\nplaced in another. To assess the robustness of our model to such variation, our comparison covers\neight configurations from six scaffold families: Claude Code (Anthropic, 2026), Codex (OpenAI, 2026), OpenCode (Anomaly, 2026), Pi (Zechner, 2026), mini-SWE (Yang et al., 2024), and\nDeepSeek Harness (DSH) (DeepSeek-AI, 2026a) in Minimal, Standard, and PTC modes. For\neach scaffold, we keep the model checkpoint, decoding configuration, and task set identical, and\nonly the surrounding harness, including its native system prompt, tool schema, and turn-taking\nlogic, is changed. Table 4 reports performance at Max reasoning effort (100) on DeepSWE v1.1\nand Terminal-Bench v2.1.\nThe model’s agentic capabilities transfer well across scaffold families with different prompts\nand tool interfaces, rather than depending on conventions specific to a particular harness.\nIts performance remains robust as the surrounding interaction protocol and tool abstractions\n34",
+   "required_substring": "eight configurations from six scaffold families",
+   "substring_found": true
+  },
+  {
+   "key": "s535_multiagent_heading",
+   "line_start": 2656,
+   "line_end": 2663,
+   "text": "5.3.5. Multi-Agent\nTo explore multi-agent collaboration on complex tasks, we conduct preliminary experiments\nwith DeepSeek-V4.1-Flash using DeepSeek Harness’s Agent Team mode.\nMulti-Agent Harnesses. We use DeepSeek Harness in Agent Team mode, where a lead agent\ncan asynchronously create named, persistent teammates by default through spawn_teammate.\nEach receives a delegated task and starts in either fresh mode without lead history or fork\nmode with a one-time snapshot of the lead’s completed turns. All agents share one repository\ncheckout, making edits immediately visible to one another.",
+   "required_substring": "Multi-Agent",
+   "substring_found": true
+  },
+  {
+   "key": "s535_derived_latency_dag",
+   "line_start": 2740,
+   "line_end": 2744,
+   "text": "Training. We train Agent Team mode with an RL reward combining task performance, a\ncollaboration bonus that encourages delegation and inter-agent communication, and a derivedlatency penalty that promotes efficient coordination. Derived latency is computed by representing execution events and their collaboration dependencies as a directed acyclic graph (DAG),\nassigning costs from token counts at fixed prefill/decode rates plus measured tool-execution\ntime, and taking the length of the critical path. This encourages useful parallelism while penalizing unnecessary sequential work and synchronization, with reduced sensitivity to serving-side\nbatching and queuing delays.",
+   "required_substring": "measured tool-execution",
+   "substring_found": true
+  },
+  {
+   "key": "fig10_deadline_scaling",
+   "line_start": 2759,
+   "line_end": 2763,
+   "text": "As shown in Figure 10, multi-agent configurations outperform their single-agent counterparts at every deadline on both benchmarks. On ProgramBench, Almost@1 increases from\n13.59% at 1 hour to a peak of 30.04% at 8 hours for the multi-agent configuration, compared with\n12.79% and 20.39% for the single-agent configuration. On FrontierSWE v2, Mean@5 increases\nfrom 13.50% at 1 hour to 32.90% at 20 hours for the multi-agent configuration, compared with\nan increase from 10.50% to 28.20% for the single-agent configuration.",
+   "required_substring": "multi-agent configurations outperform",
+   "substring_found": true
+  },
+  {
+   "key": "fig10_caption",
+   "line_start": 2736,
+   "line_end": 2737,
+   "text": "Figure 10 | Test-time compute scaling for single-agent and multi-agent configurations on ProgramBench (Almost@1) and FrontierSWE v2 (Mean@5) as functions of the per-rollout wall-clock\ndeadline.",
+   "required_substring": "wall-clock",
+   "substring_found": true
+  },
+  {
+   "key": "fig9_caption",
+   "line_start": 2598,
+   "line_end": 2604,
+   "text": "Figure 9 | Performance and output length as a function of reasoning effort. Each panel plots\nPass@1 (solid, left axis) and mean output tokens per response (dashed, right axis) as the\nreasoning-effort value is varied from 25 to 100; The results of reasoning-intensive benchmarks\nare averaged over eight benchmarks (AIME 2026, Apex 2025 Shortlist, GPQA Diamond, HLE,\nIMO-AnswerBench, LiveCodeBench, MathArena-Apex, SimpleQA-Verified). DeepSWE v1.1\nis evaluated based on mini-SWE and Terminal-Bench v2.1 is evaluated based on DeepSeek\nHarness (Minimal).",
+   "required_substring": "Figure 9",
+   "substring_found": true
+  },
+  {
+   "key": "table4_scaffolds_max_effort",
+   "line_start": 2605,
+   "line_end": 2609,
+   "text": "Table 4 | Performance across agent scaffolds at Max reasoning effort.\nBenchmark (Metric)\nDeepSWE v1.1 (Resolved)\nTerminal-Bench v2.1 (Pass@1)\n",
+   "required_substring": "Table 4",
+   "substring_found": true
+  },
+  {
+   "key": "fig11_caption",
+   "line_start": 3476,
+   "line_end": 3482,
+   "text": "Figure 11 | Reasoning effort drives trajectory length consistently but correlates only weakly with\naccuracy across coding scaffolds. Each panel plots Pass@1 (%, solid, left axis) and mean output\ntokens per trajectory (k, dashed, right axis) against the reasoning-effort setting, for DeepSWE\nv1.1 (top row) and Terminal-Bench v2.1 (bottom row) under three agent scaffolds: Claude Code,\nDeepSeek Harness (Minimal) and mini-SWE. All panels come from the same checkpoint.\n+1.3, LiveCodeBench +2.6), and AIME 2026 reaches a full 100%. The model thus exposes a single,\nreliable knob that moves the cost–accuracy operating point in a controlled and predictable way,",
+   "required_substring": "Figure 11",
+   "substring_found": true
+  },
+  {
+   "key": "fig11_trajectory_length",
+   "line_start": 3258,
+   "line_end": 3268,
+   "text": "Across all six panels in Figure 11, raising the reasoning-effort setting lengthens the trajectories:\nmean output tokens per trajectory grow monotonically with effort in every scaffold–benchmark\npair. Pass@1 tracks this growth only loosely. It improves overall, but the response is not\nmonotone, with plateaus and dips at intermediate settings in most panels. The three scaffolds\nare also calibrated differently: on DeepSWE v1.1, Claude Code is the flattest curve and spends\ncomparatively few extra tokens, whereas DeepSeek Harness (Minimal) starts lowest and gains\nthe most at the largest token cost, with mini-SWE in between. On Terminal-Bench v2.1 the\nthree scaffolds are compressed into a narrow band, and the ordering at maximum effort favours\nDeepSeek Harness (Minimal), followed by mini-SWE and Claude Code: scaffold choice matters\nat least as much as the effort tier once the task is nearly saturated.\nB.3. Detailed Results of Reasoning Benchmarks across Reasoning Efforts",
+   "required_substring": "monotonically with effort",
+   "substring_found": true
+  },
+  {
+   "key": "fig12_smooth_control",
+   "line_start": 3269,
+   "line_end": 3278,
+   "text": "Figure 12 shows that the reasoning-effort setting gives smooth, well-behaved control over both\noutput length and accuracy, consistently across all eight benchmarks, which span competition\nmathematics, science QA, open-domain knowledge and code. On the length side, raising the\neffort from 25 to 100 scales the average response predictably on every benchmark – a uniform\n2.0–3.1× increase, from 4.6k to 11.4k tokens per response on AIME 2026 and from 29.1k to\n86.1k on MathArena Apex 2025 – with no runaway growth or anomalies, so the compute cost\nof any tier can be estimated in advance. Accuracy follows the same smooth trajectory and\nresponds in the right direction on every benchmark, with no benchmark ever degrading as\nthe effort increases: MathArena Apex 2025 gains +40.3 points (25.3%→65.6%) and Apex 2025\nShortlist +11.5, while even the already-saturated benchmarks remain stable (GPQA Diamond",
+   "required_substring": "smooth, well-behaved control",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_heading",
+   "line_start": 3486,
+   "line_end": 3486,
+   "text": "C. Exponential Token Penalty in Reasoning Effort Control",
+   "required_substring": "Exponential Token Penalty in Reasoning Effort Control",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_soft_budget",
+   "line_start": 3487,
+   "line_end": 3490,
+   "text": "The scalar effort variable provides a deployment-time control over the cost–quality trade-off\nwithout imposing a hard token budget. During reinforcement learning, lower effort levels apply\na stronger token penalty, whereas higher effort levels permit more computation. This section\ngives a simplified motivation for the exponential penalty schedule.",
+   "required_substring": "without imposing a hard token budget",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq11_deduction",
+   "line_start": 3491,
+   "line_end": 3501,
+   "text": "For a trajectory with ℓ reasoning tokens generated at effort level 𝑏, the length deduction is\n\u001b\n\u001a\nℓ\nlen\n𝑟 ( ℓ, 𝑏) = − min 𝐶max , 𝑘 ( 𝑏)\n,\n(11)\n𝐿norm\n\nwhere 𝐿norm is a reference length and 𝐶max caps the deduction. The effort-dependent tokenpenalty coefficient is",
+   "required_substring": "caps the deduction",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq12_kb",
+   "line_start": 3501,
+   "line_end": 3511,
+   "text": "where 𝐿norm is a reference length and 𝐶max caps the deduction. The effort-dependent tokenpenalty coefficient is\n\u0012\n\u0013\n𝑏 − 𝑏min\n𝑘 ( 𝑏) = 𝑘0 exp −\n,\n(12)\n𝜏\n\nwhere 𝑘0 is the penalty coefficient at the lowest effort level 𝑏min and 𝜏 controls the rate of penalty\ndecay.",
+   "required_substring": "penalty coefficient at the lowest effort level",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_marginal_utility",
+   "line_start": 3512,
+   "line_end": 3513,
+   "text": "To motivate this choice, consider a fixed problem 𝑥 . Let 𝑝𝑥 ( ℓ) denote its probability of being\nsolved after ℓ reasoning tokens. In the uncapped region, define the preferred reasoning length",
+   "required_substring": "probability of being",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq13_preferred_length",
+   "line_start": 3711,
+   "line_end": 3728,
+   "text": "ℓ𝑥∗ ( 𝑏) by\n\n\u0014\n\n∗\n\nℓ𝑥 ( 𝑏) ∈ arg max 𝑝𝑥 ( ℓ) − 𝑘 ( 𝑏)\nℓ⩾0\n\nℓ\n\n\u0015\n\n𝐿norm\n\n.\n\n(13)",
+   "required_substring": "arg max",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq14_foc",
+   "line_start": 3730,
+   "line_end": 3741,
+   "text": "For an interior optimum, the first-order condition is\n𝑝′𝑥 ℓ𝑥∗ ( 𝑏) =\n\n\u0001\n\n𝑘 ( 𝑏)\n,\n𝐿norm\n\n(14)\n\nwhere 𝑝′𝑥 ( ℓ) = 𝑑 𝑝𝑥 ( ℓ)/𝑑ℓ is the marginal improvement in solve probability from additional",
+   "required_substring": "first-order condition",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq15_exponential_marginal",
+   "line_start": 3743,
+   "line_end": 3755,
+   "text": "We assume that this marginal benefit decays approximately exponentially over the relevant\noperating range:\n\u0012\n\u0013\n𝑝′𝑥 ( ℓ) ≈ 𝑎𝑥 exp −\n\nℓ\n,\n𝑠𝑥\n\n(15)\n\nwhere 𝑎𝑥 > 0 is an instance-dependent scale and 𝑠𝑥 > 0 determines the decay rate. Substituting",
+   "required_substring": "marginal benefit decays approximately exponentially",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq16_affine",
+   "line_start": 3756,
+   "line_end": 3767,
+   "text": "Eqs. (12) and (15) into Eq. (14) gives\nℓ𝑥∗ ( 𝑏) ≈ 𝐶 𝑥 − 𝑠𝑥 log 𝑘0 +\n\n𝑠𝑥\n( 𝑏 − 𝑏min ),\n𝜏\n\n(16)\n\nwhere 𝐶 𝑥 = 𝑠𝑥 log( 𝑎𝑥 𝐿norm ) is independent of 𝑏. Thus, the exponential penalty schedule produces\na simple first-order affine trend between the requested effort and the preferred reasoning length\nunder this local model.",
+   "required_substring": "affine trend",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_eq17_sensitivity",
+   "line_start": 3768,
+   "line_end": 3778,
+   "text": "For two effort levels 𝑏2 > 𝑏1 , the corresponding predicted length difference is\nℓ𝑥∗ ( 𝑏2 ) − ℓ𝑥∗ ( 𝑏1 ) ≈\n\n𝑠𝑥\n( 𝑏2 − 𝑏1 ).\n𝜏\n\n(17)\n\nConsequently, 𝑘0 mainly controls the overall pressure toward shorter reasoning, while 𝜏 controls\nthe predicted sensitivity to effort.",
+   "required_substring": "predicted sensitivity to effort",
+   "substring_found": true
+  },
+  {
+   "key": "appxC_limitations",
+   "line_start": 3779,
+   "line_end": 3788,
+   "text": "This derivation is a local reward-level approximation, not a claim that measured average\nlengths must be linear or pointwise monotonic. Realized behavior may deviate because the\n50\n\n\feffort instruction can directly change the reasoning strategy, generation is stochastic, agent\ntrajectories contain different numbers of turns, and subgroup reward normalization changes\noptimization strength. The analysis also assumes an interior solution for which the penalty cap\nis inactive. Once the cap is reached, the marginal token penalty becomes zero and the capped\nregion must be considered separately.\n",
+   "required_substring": "local reward-level approximation",
+   "substring_found": true
+  },
+  {
+   "key": "s_deployment_cost_quality",
+   "line_start": 3487,
+   "line_end": 3487,
+   "text": "The scalar effort variable provides a deployment-time control over the cost–quality trade-off",
+   "required_substring": "deployment-time control over the cost",
+   "substring_found": true
+  }
+ ],
+ "numeric_facts": [
+  {
+   "key": "effort_range_low",
+   "value": 1,
+   "line": 2048,
+   "note": "system-prompt instruction declares effort range 1-100",
+   "line_text": "{effort} (range 1–100; higher values request more"
+  },
+  {
+   "key": "effort_range_high",
+   "value": 100,
+   "line": 2048,
+   "note": "system-prompt instruction declares effort range 1-100",
+   "line_text": "{effort} (range 1–100; higher values request more"
+  },
+  {
+   "key": "api_tier_max_b",
+   "value": 100,
+   "line": 2107,
+   "note": "Table 2: API tier max -> b = 100 (see also line 2455)",
+   "line_text": "As summarized in Table 2, the three tiers correspond to effort values of 𝑏 = 100, 𝑏 = 75, and"
+  },
+  {
+   "key": "api_tier_high_b",
+   "value": 75,
+   "line": 2107,
+   "note": "Table 2: API tier high -> b = 75",
+   "line_text": "As summarized in Table 2, the three tiers correspond to effort values of 𝑏 = 100, 𝑏 = 75, and"
+  },
+  {
+   "key": "api_tier_low_b",
+   "value": 50,
+   "line": 2455,
+   "note": "public API: low/high/max -> effort values 50/75/100",
+   "line_text": "scale: low, high, and max correspond to effort values of 50, 75, and 100, respectively."
+  },
+  {
+   "key": "avg_pass1_at_b25_eight_bench",
+   "value": 67.1,
+   "line": 2434,
+   "note": "eight reasoning-intensive benchmarks, effort 25",
+   "line_text": "and agentic benchmarks alike. Raising the effort from 25 to 100 improves the average Pass@1 on"
+  },
+  {
+   "key": "avg_pass1_at_b100_eight_bench",
+   "value": 76.3,
+   "line": 2434,
+   "note": "eight reasoning-intensive benchmarks, effort 100",
+   "line_text": "and agentic benchmarks alike. Raising the effort from 25 to 100 improves the average Pass@1 on"
+  },
+  {
+   "key": "deepswe_pass1_at_b25",
+   "value": 66.0,
+   "line": 2435,
+   "note": "DeepSWE v1.1, effort 25 -> 100",
+   "line_text": "eight reasoning-intensive benchmarks from 67.1% to 76.3%, on DeepSWE v1.1 from 66.0% to"
+  },
+  {
+   "key": "deepswe_pass1_at_b100",
+   "value": 74.2,
+   "line": 2435,
+   "note": "DeepSWE v1.1, effort 25 -> 100",
+   "line_text": "eight reasoning-intensive benchmarks from 67.1% to 76.3%, on DeepSWE v1.1 from 66.0% to"
+  },
+  {
+   "key": "tb21_pass1_at_b25",
+   "value": 82.4,
+   "line": 2436,
+   "note": "Terminal-Bench 2.1, effort 25 -> 100",
+   "line_text": "74.2%, and on Terminal-Bench 2.1 from 82.4% to 90.6%, at the cost of roughly 2.5× more output"
+  },
+  {
+   "key": "tb21_pass1_at_b100",
+   "value": 90.6,
+   "line": 2436,
+   "note": "Terminal-Bench 2.1, effort 25 -> 100",
+   "line_text": "74.2%, and on Terminal-Bench 2.1 from 82.4% to 90.6%, at the cost of roughly 2.5× more output"
+  },
+  {
+   "key": "token_multiplier_low_to_max",
+   "value": 2.5,
+   "line": 2436,
+   "note": "roughly 2.5x more output tokens (25 -> 100)",
+   "line_text": "74.2%, and on Terminal-Bench 2.1 from 82.4% to 90.6%, at the cost of roughly 2.5× more output"
+  },
+  {
+   "key": "final_step_len_multiplier_lo",
+   "value": 1.6,
+   "line": 2441,
+   "note": "final step to effort 100 lengthens agent trajectories 1.6-1.8x",
+   "line_text": "step to effort 100 lengthens agent trajectories by 1.6–1.8× for only marginal improvements. The"
+  },
+  {
+   "key": "final_step_len_multiplier_hi",
+   "value": 1.8,
+   "line": 2441,
+   "note": "final step to effort 100 lengthens agent trajectories 1.6-1.8x",
+   "line_text": "step to effort 100 lengthens agent trajectories by 1.6–1.8× for only marginal improvements. The"
+  },
+  {
+   "key": "frontload_band_lo",
+   "value": 60,
+   "line": 2439,
+   "note": "60-80 range recovers most of max accuracy at <half token budget",
+   "line_text": "verification across turns. The gains are front-loaded: the 60–80 range already recovers most"
+  },
+  {
+   "key": "frontload_band_hi",
+   "value": 80,
+   "line": 2439,
+   "note": "60-80 range recovers most of max accuracy at <half token budget",
+   "line_text": "verification across turns. The gains are front-loaded: the 60–80 range already recovers most"
+  },
+  {
+   "key": "n_scaffold_families",
+   "value": 6,
+   "line": 2461,
+   "note": "eight configurations from six scaffold families",
+   "line_text": "eight configurations from six scaffold families: Claude Code (Anthropic, 2026), Codex (OpenAI, 2026), OpenCode (Anomaly, 2026), Pi (Zechner, 2026), mini-SWE (Yang et al., 2024), and"
+  },
+  {
+   "key": "n_scaffold_configs",
+   "value": 8,
+   "line": 2461,
+   "note": "eight configurations from six scaffold families",
+   "line_text": "eight configurations from six scaffold families: Claude Code (Anthropic, 2026), Codex (OpenAI, 2026), OpenCode (Anomaly, 2026), Pi (Zechner, 2026), mini-SWE (Yang et al., 2024), and"
+  },
+  {
+   "key": "matharena_apex_gain_pt",
+   "value": 40.3,
+   "line": 3277,
+   "note": "+40.3 points (25.3%->65.6%) as effort increases, Fig 12 discussion",
+   "line_text": "the effort increases: MathArena Apex 2025 gains +40.3 points (25.3%→65.6%) and Apex 2025"
+  }
+ ],
+ "provenance": {
+  "generator": "experiments/extract_v41_effort_evidence.py",
+  "wrong_source_excluded": "excluded: an unrelated third-party report, identified by SHA-256"
+ }
+}

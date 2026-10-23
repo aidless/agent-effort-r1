@@ -1,0 +1,53 @@
+{
+ "generated_by": "experiments/h4_derived_stats.py (axis-only branch)",
+ "source_result": "/home/liuzewen/F:\\deepseek/papers/agent_effort/results/h4_real_llm_gx_qwen3_8b_a9_repl12.json",
+ "source_sha256": "4e6b86a4519b872dfed910a2e0b62d61f86e8cc5165ef20299dc7d9e00a60931",
+ "n_records": 1728,
+ "arms_present": [
+  "axis_steps",
+  "axis_tools",
+  "axis_vision"
+ ],
+ "iso_curve": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "mcnemar_pairs": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "logistic_lr_all_levels": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "logistic_lr_excluding_structurally_floored_level": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "non_monotonicity_verdict": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "actions_per_episode": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "representative_failing_high_budget_trajectory": {
+  "note": "no iso arm in this artifact: the arm was run as an axis-only replication (protocol A9), so these descriptive iso statistics were not produced here -- read them from the registered repeats=3 product"
+ },
+ "identifiability_max_ci_width": 0.3,
+ "gain_identifiability": {
+  "steps": {
+   "point_estimate": 0.9128117082427981,
+   "ci95_width": 0.9999999999999831,
+   "n_interior_cells": 4,
+   "withheld": true
+  },
+  "tools": {
+   "point_estimate": 0.4961456509083028,
+   "ci95_width": 0.9999999999999999,
+   "n_interior_cells": 5,
+   "withheld": true
+  },
+  "vision": {
+   "point_estimate": 0.04127290461449953,
+   "ci95_width": 0.5800805865846114,
+   "n_interior_cells": 6,
+   "withheld": true
+  }
+ }
+}

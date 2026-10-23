@@ -1,0 +1,101 @@
+{
+ "source": "results/e3_agent_loop.json",
+ "policy": "deterministic rule-based repairer (NO LLM; see declared limits)",
+ "repeats": 3,
+ "n_records": 240,
+ "independent_units": 80,
+ "units_varying_across_repeats": 0,
+ "method_of_interval_now": "Clopper-Pearson exact binomial, on independent units",
+ "rows": [
+  {
+   "budget": "L0_minimal",
+   "successes_units": 0,
+   "n_units": 16,
+   "rate": 0.0,
+   "cp95_units": [
+    0.0,
+    0.2059
+   ],
+   "cp95_records": [
+    0.0,
+    0.074
+   ],
+   "wald_records": [
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "budget": "L1_low",
+   "successes_units": 8,
+   "n_units": 16,
+   "rate": 0.5,
+   "cp95_units": [
+    0.2465,
+    0.7535
+   ],
+   "cp95_records": [
+    0.3523,
+    0.6477
+   ],
+   "wald_records": [
+    0.3586,
+    0.6414
+   ]
+  },
+  {
+   "budget": "L2_mid",
+   "successes_units": 16,
+   "n_units": 16,
+   "rate": 1.0,
+   "cp95_units": [
+    0.7941,
+    1.0
+   ],
+   "cp95_records": [
+    0.926,
+    1.0
+   ],
+   "wald_records": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "budget": "L3_high",
+   "successes_units": 16,
+   "n_units": 16,
+   "rate": 1.0,
+   "cp95_units": [
+    0.7941,
+    1.0
+   ],
+   "cp95_records": [
+    0.926,
+    1.0
+   ],
+   "wald_records": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "budget": "L4_max",
+   "successes_units": 16,
+   "n_units": 16,
+   "rate": 1.0,
+   "cp95_units": [
+    0.7941,
+    1.0
+   ],
+   "cp95_records": [
+    0.926,
+    1.0
+   ],
+   "wald_records": [
+    1.0,
+    1.0
+   ]
+  }
+ ]
+}

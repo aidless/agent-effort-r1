@@ -1,0 +1,8 @@
+E3 unit-level recomputation (from results/e3_agent_loop.json)
+policy: deterministic rule-based repairer (NO LLM; see declared limits)
+240 records / repeats=3 -> 80 independent (task,schedule) units; units whose outcome varies across repeats: 0
+  L0_minimal  0/16 rate=0.000 CP_units=(0.0, 0.2059) CP_records=(0.0, 0.074) Wald_shipped=(0.0, 0.0)
+  L1_low      8/16 rate=0.500 CP_units=(0.2465, 0.7535) CP_records=(0.3523, 0.6477) Wald_shipped=(0.3586, 0.6414)
+  L2_mid     16/16 rate=1.000 CP_units=(0.7941, 1.0) CP_records=(0.926, 1.0) Wald_shipped=(1.0, 1.0)
+  L3_high    16/16 rate=1.000 CP_units=(0.7941, 1.0) CP_records=(0.926, 1.0) Wald_shipped=(1.0, 1.0)
+  L4_max     16/16 rate=1.000 CP_units=(0.7941, 1.0) CP_records=(0.926, 1.0) Wald_shipped=(1.0, 1.0)

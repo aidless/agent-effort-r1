@@ -1,0 +1,53 @@
+=== (ii) SHAPE, and the ceiling evidence next to it ===
+run            iso curve L0..L4                           saturated cells (=1.0)       mcnemar L1->L4
+8B old card    0.0000 0.9375 0.8750 0.8125 0.7500         none                         9/0/39 p=0.0039
+                 excl-floor quadratic: chi2=0.1905 p=0.6625 coef=+0.1168 -> not significant
+8B new card    0.0000 0.9375 0.8750 0.8125 0.7500         none                         9/0/39 p=0.0039
+                 excl-floor quadratic: chi2=0.1905 p=0.6625 coef=+0.1168 -> not significant
+8B persist     0.0000 0.9375 0.8750 0.8125 0.7500         none                         9/0/39 p=0.0039
+                 excl-floor quadratic: chi2=0.1905 p=0.6625 coef=+0.1168 -> not significant
+14B persist    0.0000 0.8125 1.0000 0.8750 0.8750         L2_mid                       6/9/33 p=0.6072
+                 excl-floor quadratic: chi2=4.4378 p=0.0352 coef=-0.6375 -> significant (concave, interior optimum)
+
+=== (i) MECHANISM: writes vs tests per episode, low -> max budget ===
+   (this is what C39 claims; a ceiling on success cannot fake it)
+8B old card    write 1.69 -> 13.81 (x8.19)   test 0.94 -> 0.75 (-20.0%)  DEFERS verification
+8B new card    write 1.69 -> 13.81 (x8.19)   test 0.94 -> 0.75 (-20.0%)  DEFERS verification
+8B persist     write 1.69 -> 13.81 (x8.19)   test 0.94 -> 0.75 (-20.0%)  DEFERS verification
+14B persist    write 1.00 -> 3.44 (x3.44)   test 1.19 -> 2.00 (+68.4%)  pattern NOT reproduced
+
+=== failure reason at the top budget (is it still step exhaustion?) ===
+  8B old card    L4_max: {'tests_passed': 36, 'budget:steps': 12}
+  8B new card    L4_max: {'tests_passed': 36, 'budget:steps': 12}
+  8B persist     L4_max: {'tests_passed': 36, 'budget:steps': 12}
+  14B persist    L4_max: {'tests_passed': 42, 'budget:steps': 6}
+
+=== (iii) POWER and an independent check of the producer p-value ===
+  8B old card    worsened=9  improved=0  ties=39  P(>=9 worse)=0.00195  P(>=0 better)=1.00000  two-sided=0.003906  AGREES with producer (d=0.00e+00)
+  8B new card    worsened=9  improved=0  ties=39  P(>=9 worse)=0.00195  P(>=0 better)=1.00000  two-sided=0.003906  AGREES with producer (d=0.00e+00)
+  8B persist     worsened=9  improved=0  ties=39  P(>=9 worse)=0.00195  P(>=0 better)=1.00000  two-sided=0.003906  AGREES with producer (d=0.00e+00)
+  14B persist    worsened=6  improved=9  ties=33  P(>=6 worse)=0.84912  P(>=9 better)=0.30362  two-sided=0.607239  AGREES with producer (d=0.00e+00)
+
+  headroom above the peak, which is what a "no decline" reading turns on:
+     8B old card    peak=0.9375  drop peak->L4=0.1875  cells at 1.0: none
+     8B new card    peak=0.9375  drop peak->L4=0.1875  cells at 1.0: none
+     8B persist     peak=0.9375  drop peak->L4=0.1875  cells at 1.0: none
+     14B persist    peak=1.0000  drop peak->L4=0.1250  cells at 1.0: ['L2_mid']
+
+=== identity caveats that must travel with any claim ===
+  8B old card    harness=d35f6d0392d7  gpu=NVIDIA GeForce RTX 3090, 49152 MiB  n_records=672  seed=20260911  max_model_len={"sweeps": {"axis_steps": {"field": "max
+  8B new card    harness=3326b513fa89  gpu=NVIDIA GeForce RTX 4080, 32760 MiB  n_records=672  seed=20260911  max_model_len={"sweeps": {"axis_steps": {"field": "max
+  8B persist     harness=3326b513fa89  gpu=NVIDIA GeForce RTX 4080, 32760 MiB  n_records=672  seed=20260911  max_model_len={"sweeps": {"axis_steps": {"field": "max
+  14B persist    harness=3326b513fa89  gpu=NVIDIA GeForce RTX 4080, 32760 MiB  n_records=672  seed=20260911  max_model_len={"sweeps": {"axis_steps": {"field": "max
+  -> SAME-CODE PAIRING CLOSED.
+     Both *_persist arms record script_sha256 = 3326b513fa891cbd99e8c1ffcd986bd27d9dac73fd75dc7a3a31c0993db3f9e8
+     and the same device (NVIDIA GeForce RTX 4080, 32760 MiB),
+     so this contrast varies only the model: same seed list, same task set,
+     same two menus, same 672-episode plan.
+     design identity measured here: 672/672 records, 224/224 (task,menu,level) cells identical, 24/24 seeds identical
+     The two d35f6d03 8B artifacts are the vehicle leg (old vs new card at one
+     code revision), NOT the scale-leg partner.
+     Caveat on the field itself: script_sha256 is computed at write time from the
+     disk file, so it can misreport which code ran; see
+     evidence/H4_SELFHASH_DEFECT.md. For these two arms the file did not change
+     mid-run, so the value is sound.

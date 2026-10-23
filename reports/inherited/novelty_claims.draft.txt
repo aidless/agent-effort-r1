@@ -1,0 +1,12 @@
+# novelty_claims 草稿 —— 由 extract_novelty_claims.py 抽取
+# 每行一条。删任何一条都必须在 novelty_claims.rejected.txt 写明理由：
+#	<候选ID>	<理由>
+# 抽取器按句式工作，认不出「这句其实不算新颖性主张」，所以删除权在你，
+# 但删除必须留痕 —— 否则又回到「手挑软柿子」且不可审计。
+
+Re-anchoring and promotion surface  ().
+A measured cost model  ().
+A joint allocation frontier  ().
+An end-to-end check  ().
+A real-model test of the gain assumption, at two scales    ().
+No prior work we are aware of routes   all five  axes jointly under a single scalar budget, nor reports how the optimal   mix  moves as that budget changes.

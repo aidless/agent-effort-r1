@@ -1,0 +1,17 @@
+patched   rc=0 bytes=393131
+prepatch  rc=0 bytes=393127
+
+compared keys: doc=['iso_success_curve', 'gain_fit', 'floor_cells_excluded_from_fit', 'stub_gain_recovery', 'ref_sensitivity'] + per-record ['task_id', 'arm', 'budget', 'success', 'reason', 'steps_used', 'tool_calls_used', 'vision_probes_used', 'parse_errors', 'steps_remaining']
+not compared (wall clock by construction): mean/elapsed_ms, generation_ms,
+  run_seconds, gpu/VRAM details, paths, and the raw-dump side effects.
+
+  CASE 1 patched vs pre-patch, same seed               IDENTICAL
+CASE 2 the fit actually ran in both (not an empty-equality pass):
+  both gain_fit.fitted == True : True (params=True)
+CASE 3 injection: perturb one outcome field, comparator must go red:
+  injected single-field change                         DIFFERS
+      record 0 differs: {'success': (False, 1), 'steps_used': (3, 999)}
+  injection caught  : True
+
+INERT: no paper-facing number moved, and the comparator can see a move
+sha patched = 3326b513fa891cbd99e8c1ffcd986bd27d9dac73fd75dc7a3a31c0993db3f9e8

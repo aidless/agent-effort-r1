@@ -1,0 +1,2803 @@
+{
+ "experiment": "H4_real_llm_agent_axis_gains",
+ "hypothesis": "H4 (HYPOTHESES.md): measure g_x under a real LLM policy",
+ "seed": 20260911,
+ "generated_by": "experiments/h4_real_llm_gx.py",
+ "backend": "vllm",
+ "is_real_llm": true,
+ "dry_run": false,
+ "model_path": "/root/autodl-tmp/models/Qwen3-8B-AWQ",
+ "model_fingerprint": {
+  "path": "/root/autodl-tmp/models/Qwen3-8B-AWQ",
+  "exists": true,
+  "n_files": 13,
+  "total_bytes": 6114568840,
+  "full_hash": true,
+  "files": [
+   {
+    "file": ".gitattributes",
+    "size": 2127,
+    "sha256": "088e25d6bceaa8943f4f292006210358292349cc36e7578f80c62fce75535f46",
+    "symlink_to": null
+   },
+   {
+    "file": "LICENSE",
+    "size": 11544,
+    "sha256": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd",
+    "symlink_to": null
+   },
+   {
+    "file": "README.md",
+    "size": 16875,
+    "sha256": "5c397e99916138e00686567882ea1308524c95c2962f05d0ef57ebfa0d2c81fb",
+    "symlink_to": null
+   },
+   {
+    "file": "config.json",
+    "size": 1042,
+    "sha256": "7457674d8044143cd4159e47deecf28fd6698a9826569094b60d7bead8f351ee",
+    "symlink_to": null
+   },
+   {
+    "file": "configuration.json",
+    "size": 48,
+    "sha256": "a78221ae93dd8977b26fcd1d106fa5ad7e7f1fd3a7d93bfd9d6fba5ed00ec4d2",
+    "symlink_to": null
+   },
+   {
+    "file": "generation_config.json",
+    "size": 239,
+    "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+    "symlink_to": null
+   },
+   {
+    "file": "merges.txt",
+    "size": 1671853,
+    "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+    "symlink_to": null
+   },
+   {
+    "file": "model-00001-of-00002.safetensors",
+    "size": 4853922024,
+    "sha256": "6e112429856bc65e3837a9f38d6f6b71ffdda832cb46299a12f4fa8f6352516e",
+    "symlink_to": null
+   },
+   {
+    "file": "model-00002-of-00002.safetensors",
+    "size": 1244659840,
+    "sha256": "20c2d6366ab85c90786ccdd829cd2b9e7d30ef3b2ebbb998280e7e4014b542ff",
+    "symlink_to": null
+   },
+   {
+    "file": "model.safetensors.index.json",
+    "size": 74029,
+    "sha256": "ad18bc45a440aea0a3298ddfd41d01c48eb9afbd94345f6176c4290e1b524175",
+    "symlink_to": null
+   },
+   {
+    "file": "tokenizer.json",
+    "size": 11422654,
+    "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "symlink_to": null
+   },
+   {
+    "file": "tokenizer_config.json",
+    "size": 9732,
+    "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+    "symlink_to": null
+   },
+   {
+    "file": "vocab.json",
+    "size": 2776833,
+    "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+    "symlink_to": null
+   }
+  ]
+ },
+ "script_sha256": "92dd673b664e3348516e4518011e9c8cd97e2a31fcc979f64c91bbd4085eba22",
+ "lock_mode": "external (flock held by the caller)",
+ "gpu_lock_path": "/root/autodl-tmp/gpu.lock",
+ "min_free_mib": 25600,
+ "gpu_memory_utilization_detail": {
+  "mode": "adaptive",
+  "requested": 0.9,
+  "total_mib": 49152,
+  "free_mib": 43272,
+  "reserve_mib": 2048,
+  "usable_mib": 41224,
+  "util": 0.8387,
+  "note": "util = min(requested, (free - reserve)/total)"
+ },
+ "gpu_state_at_load": {
+  "total_mib": 49152,
+  "free_mib": 7150
+ },
+ "environment": {
+  "python": "3.10.12",
+  "vllm": "0.27.1",
+  "torch": "2.13.0+cu130",
+  "gpu": "NVIDIA GeForce RTX 3090, 49152 MiB"
+ },
+ "iso_with_e3": {
+  "source": "experiments/e3_agent_loop.py (imported at run time)",
+  "tasks": [
+   "t01_csv_group_sum",
+   "t02_json_roundtrip",
+   "t03_dedupe_stable",
+   "t04_binary_search",
+   "t05_word_freq",
+   "t06_matrix_transpose",
+   "t07_interval_merge",
+   "t08_topk"
+  ],
+  "budget_levels": [
+   {
+    "label": "L0_minimal",
+    "max_steps": 2,
+    "max_tool_calls": 1,
+    "max_context_chars": 200,
+    "max_vision_probes": 0
+   },
+   {
+    "label": "L1_low",
+    "max_steps": 4,
+    "max_tool_calls": 3,
+    "max_context_chars": 600,
+    "max_vision_probes": 1
+   },
+   {
+    "label": "L2_mid",
+    "max_steps": 8,
+    "max_tool_calls": 6,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   {
+    "label": "L3_high",
+    "max_steps": 16,
+    "max_tool_calls": 12,
+    "max_context_chars": 4000,
+    "max_vision_probes": 4
+   },
+   {
+    "label": "L4_max",
+    "max_steps": 32,
+    "max_tool_calls": 24,
+    "max_context_chars": 12000,
+    "max_vision_probes": 8
+   }
+  ],
+  "schedules_as_menus": {
+   "read_then_write": [
+    "read",
+    "write",
+    "test"
+   ],
+   "probe_heavy": [
+    "read",
+    "probe",
+    "write",
+    "test"
+   ]
+  },
+  "grader": "e3_agent_loop.run_hidden_tests (identical call)"
+ },
+ "axis_arms": {
+  "sweeps": {
+   "axis_steps": {
+    "field": "max_steps",
+    "values": [
+     2,
+     4,
+     8,
+     16,
+     32
+    ]
+   },
+   "axis_tools": {
+    "field": "max_tool_calls",
+    "values": [
+     0,
+     1,
+     2,
+     4,
+     8,
+     16,
+     24
+    ]
+   },
+   "axis_vision": {
+    "field": "max_vision_probes",
+    "values": [
+     0,
+     1,
+     2,
+     4,
+     8,
+     16
+    ]
+   }
+  },
+  "permissive_other_axes": {
+   "max_steps": 8,
+   "max_tool_calls": 4,
+   "max_context_chars": 1500,
+   "max_vision_probes": 2
+  },
+  "why": "the iso budgets move together and cannot separate the gains; the axis arms vary one axis with the others non-binding"
+ },
+ "declared_limits": [
+  "g_reason is not swept; it is absorbed into the fitted p0",
+  "g_search is not exercised by this task set and is left UNMEASURED, not fitted",
+  "ref_x are E2 assumptions carried over, not measured here (see ref_sensitivity)",
+  "task SPEC is derived from the hidden suite; the assertions stay hidden",
+  "clients receive only the hidden-suite exit code, never a traceback",
+  "temperature 0 with a per-request seed; GPU sampling determinism is not exact"
+ ],
+ "timing": {
+  "wall_clock_s_total": 1862.231,
+  "wall_clock_s_episodes": 1784.651,
+  "generation_ms_total": 1783987.457,
+  "episodes": 40,
+  "mean_episode_ms": 44616.282,
+  "episodes_per_minute": 1.289,
+  "note": "wall-clock is measured per episode (time.perf_counter) and summed; it is NEVER reconstructed as mean x count"
+ },
+ "n_records": 40,
+ "repeats": 1,
+ "summary_by_cell": {
+  "axis_steps|max_steps=2|probe_heavy": {
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "n": 8,
+   "n_success": 0,
+   "success": 0.0,
+   "success_ci95_wilson": {
+    "lo95": 0.0,
+    "hi95": 0.32440756488388023
+   },
+   "mean_steps": 3.0,
+   "mean_tool_calls": 0.25,
+   "mean_vision_probes": 0.0,
+   "mean_elapsed_ms": 14698.45166662708,
+   "mean_generation_ms": 14695.805945899338,
+   "parse_errors": 8,
+   "budget_hits": [
+    "budget:steps"
+   ],
+   "failure_reasons": {
+    "budget:steps": 8
+   }
+  },
+  "axis_steps|max_steps=4|probe_heavy": {
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "n": 8,
+   "n_success": 0,
+   "success": 0.0,
+   "success_ci95_wilson": {
+    "lo95": 0.0,
+    "hi95": 0.32440756488388023
+   },
+   "mean_steps": 4.75,
+   "mean_tool_calls": 0.25,
+   "mean_vision_probes": 0.0,
+   "mean_elapsed_ms": 24215.917290654033,
+   "mean_generation_ms": 24210.02914989367,
+   "parse_errors": 10,
+   "budget_hits": [
+    "budget:steps"
+   ],
+   "failure_reasons": {
+    "budget:steps": 7,
+    "parse_failures": 1
+   }
+  },
+  "axis_steps|max_steps=8|probe_heavy": {
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "n": 8,
+   "n_success": 0,
+   "success": 0.0,
+   "success_ci95_wilson": {
+    "lo95": 0.0,
+    "hi95": 0.32440756488388023
+   },
+   "mean_steps": 7.875,
+   "mean_tool_calls": 0.25,
+   "mean_vision_probes": 0.0,
+   "mean_elapsed_ms": 43344.80705531314,
+   "mean_generation_ms": 43333.667487837374,
+   "parse_errors": 13,
+   "budget_hits": [
+    "budget:steps"
+   ],
+   "failure_reasons": {
+    "budget:steps": 5,
+    "parse_failures": 3
+   }
+  },
+  "axis_steps|max_steps=16|probe_heavy": {
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "n": 8,
+   "n_success": 2,
+   "success": 0.25,
+   "success_ci95_wilson": {
+    "lo95": 0.071479212752109,
+    "hi95": 0.5907245696898311
+   },
+   "mean_steps": 11.25,
+   "mean_tool_calls": 0.75,
+   "mean_vision_probes": 0.0,
+   "mean_elapsed_ms": 58687.11451161653,
+   "mean_generation_ms": 58659.36019597575,
+   "parse_errors": 14,
+   "budget_hits": [
+    "budget:steps"
+   ],
+   "failure_reasons": {
+    "tests_passed": 2,
+    "budget:steps": 4,
+    "parse_failures": 2
+   }
+  },
+  "axis_steps|max_steps=32|probe_heavy": {
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "n": 8,
+   "n_success": 2,
+   "success": 0.25,
+   "success_ci95_wilson": {
+    "lo95": 0.071479212752109,
+    "hi95": 0.5907245696898311
+   },
+   "mean_steps": 15.0,
+   "mean_tool_calls": 0.625,
+   "mean_vision_probes": 0.0,
+   "mean_elapsed_ms": 82135.11948520318,
+   "mean_generation_ms": 82099.56930484623,
+   "parse_errors": 17,
+   "budget_hits": [
+    "budget:steps"
+   ],
+   "failure_reasons": {
+    "tests_passed": 2,
+    "parse_failures": 4,
+    "budget:steps": 2
+   }
+  }
+ },
+ "iso_success_curve": {},
+ "gain_fit": {
+  "fitted": true,
+  "form": "1 - p = (1 - p0) * prod_x (1 - g_x * (1 - exp(-b_x / ref_x)))",
+  "refs_used": {
+   "steps": 10.0,
+   "tools": 6.0,
+   "vision": 4.0
+  },
+  "refs_source": "E2 assumptions (REF_ASSUMED), not measured by H4",
+  "params": {
+   "p0": 4.360086085523014e-19,
+   "g_steps": 0.21946001578511465,
+   "g_tools": 2.17967535936364e-19,
+   "g_vision": 1.7443980576366051e-19
+  },
+  "params_ci95": {
+   "p0": {
+    "lo95": 3.482385202879617e-23,
+    "hi95": 8.837618983295651e-14,
+    "n_boot": 400
+   },
+   "g_steps": {
+    "lo95": 1.3394776343322273e-05,
+    "hi95": 0.2827078907645803,
+    "n_boot": 400
+   },
+   "g_tools": {
+    "lo95": 3.289428448900277e-23,
+    "hi95": 4.3045705250675396e-14,
+    "n_boot": 400
+   },
+   "g_vision": {
+    "lo95": 3.774833156471486e-23,
+    "hi95": 3.501980647307765e-14,
+    "n_boot": 400
+   }
+  },
+  "r_squared_on_cells": 0.6188871474921694,
+  "n_cells": 5,
+  "identifiability": {
+   "steps": {
+    "n_cells": 5,
+    "n_interior_cells": 2,
+    "distinct_success_rates": [
+     0.0,
+     0.25
+    ],
+    "identified": true,
+    "why": "sweep has >=2 cells strictly inside (0,1)"
+   },
+   "tools": {
+    "n_cells": 0,
+    "n_interior_cells": 0,
+    "distinct_success_rates": [],
+    "identified": false,
+    "why": "sweep saturated or floored: no information about this axis' gain"
+   },
+   "vision": {
+    "n_cells": 0,
+    "n_interior_cells": 0,
+    "distinct_success_rates": [],
+    "identified": false,
+    "why": "sweep saturated or floored: no information about this axis' gain"
+   }
+  },
+  "unidentified_axes": [
+   "tools",
+   "vision"
+  ],
+  "point_estimates_withheld_for": [
+   "tools",
+   "vision"
+  ],
+  "note": "g_* are identified only for axes the sweep actually moved out of saturation; unidentified axes are reported as such and their point estimates must not be quoted."
+ },
+ "floor_cells_excluded_from_fit": [],
+ "stub_gain_recovery": null,
+ "ref_sensitivity": null,
+ "records": [
+  {
+   "task": "t01_csv_group_sum",
+   "family": "data-wrangling",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 31,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 23956.536795943975,
+   "generation_ms": 23953.429043293,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20329125
+  },
+  {
+   "task": "t02_json_roundtrip",
+   "family": "serialisation",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 2,
+   "elapsed_ms": 15877.192068845034,
+   "generation_ms": 15874.583397060633,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20320916
+  },
+  {
+   "task": "t03_dedupe_stable",
+   "family": "list-algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 0,
+   "elapsed_ms": 10677.1159209311,
+   "generation_ms": 10674.65852573514,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20356029
+  },
+  {
+   "task": "t04_binary_search",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 15583.852984011173,
+   "generation_ms": 15580.39665222168,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20333124
+  },
+  {
+   "task": "t05_word_freq",
+   "family": "text",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 31,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 11512.067750096321,
+   "generation_ms": 11509.836465120316,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20299142
+  },
+  {
+   "task": "t06_matrix_transpose",
+   "family": "numerics",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 0,
+   "elapsed_ms": 9331.57728239894,
+   "generation_ms": 9328.85729148984,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20305526
+  },
+  {
+   "task": "t07_interval_merge",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 14751.75779312849,
+   "generation_ms": 14749.291326850653,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20312266
+  },
+  {
+   "task": "t08_topk",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=2",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 2,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 2,
+   "elapsed_ms": 15897.5127376616,
+   "generation_ms": 15895.394865423441,
+   "n_history": 2,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20302182
+  },
+  {
+   "task": "t01_csv_group_sum",
+   "family": "data-wrangling",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 31,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 24515.874069184065,
+   "generation_ms": 24509.193282574415,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20329125
+  },
+  {
+   "task": "t02_json_roundtrip",
+   "family": "serialisation",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 29156.58075362444,
+   "generation_ms": 29149.104200303555,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20320916
+  },
+  {
+   "task": "t03_dedupe_stable",
+   "family": "list-algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 40,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 0,
+   "elapsed_ms": 17658.997282385826,
+   "generation_ms": 17653.7242308259,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20356029
+  },
+  {
+   "task": "t04_binary_search",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 25788.960941135883,
+   "generation_ms": 25782.227382063866,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20333124
+  },
+  {
+   "task": "t05_word_freq",
+   "family": "text",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 2,
+   "elapsed_ms": 22429.29568886757,
+   "generation_ms": 22423.5946983099,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20299142
+  },
+  {
+   "task": "t06_matrix_transpose",
+   "family": "numerics",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 24649.63384717703,
+   "generation_ms": 24644.403982907534,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20305526
+  },
+  {
+   "task": "t07_interval_merge",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 23891.827523708344,
+   "generation_ms": 23887.772761285305,
+   "n_history": 3,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20312266
+  },
+  {
+   "task": "t08_topk",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=4",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 4,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 5,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 25636.168219149113,
+   "generation_ms": 25630.212660878897,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20302182
+  },
+  {
+   "task": "t01_csv_group_sum",
+   "family": "data-wrangling",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 9,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 31,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 44742.16905608773,
+   "generation_ms": 44728.63410785794,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20329125
+  },
+  {
+   "task": "t02_json_roundtrip",
+   "family": "serialisation",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 9,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 51033.90009328723,
+   "generation_ms": 51022.21818268299,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20320916
+  },
+  {
+   "task": "t03_dedupe_stable",
+   "family": "list-algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 9,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 0,
+   "elapsed_ms": 33666.56446456909,
+   "generation_ms": 33654.49084714055,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20356029
+  },
+  {
+   "task": "t04_binary_search",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 9,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 54269.91305872798,
+   "generation_ms": 54258.115239441395,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20333124
+  },
+  {
+   "task": "t05_word_freq",
+   "family": "text",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 7,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 31,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 41689.43252041936,
+   "generation_ms": 41680.10721355677,
+   "n_history": 7,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20299142
+  },
+  {
+   "task": "t06_matrix_transpose",
+   "family": "numerics",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 9,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 44188.35749104619,
+   "generation_ms": 44174.362782388926,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20305526
+  },
+  {
+   "task": "t07_interval_merge",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 23877.40372866392,
+   "generation_ms": 23873.516406863928,
+   "n_history": 3,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20312266
+  },
+  {
+   "task": "t08_topk",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=8",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 8,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 8,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 53290.71602970362,
+   "generation_ms": 53277.895122766495,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20302182
+  },
+  {
+   "task": "t01_csv_group_sum",
+   "family": "data-wrangling",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 6,
+   "tool_calls_used": 3,
+   "vision_probes_used": 0,
+   "context_chars_used": 240,
+   "success": true,
+   "reason": "tests_passed",
+   "parse_errors": 2,
+   "elapsed_ms": 30340.87986126542,
+   "generation_ms": 30291.27489030361,
+   "n_history": 6,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "test",
+     "rc": 0
+    }
+   ],
+   "repeat": 0,
+   "seed": 20329125
+  },
+  {
+   "task": "t02_json_roundtrip",
+   "family": "serialisation",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 17,
+   "tool_calls_used": 1,
+   "vision_probes_used": 0,
+   "context_chars_used": 66,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 93549.64596405625,
+   "generation_ms": 93523.14417809248,
+   "n_history": 16,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "read",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20320916
+  },
+  {
+   "task": "t03_dedupe_stable",
+   "family": "list-algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 17,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 69826.56866684556,
+   "generation_ms": 69804.9747608602,
+   "n_history": 16,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20356029
+  },
+  {
+   "task": "t04_binary_search",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 8,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 56681.2899261713,
+   "generation_ms": 56669.39475759864,
+   "n_history": 8,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20333124
+  },
+  {
+   "task": "t05_word_freq",
+   "family": "text",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 4,
+   "tool_calls_used": 2,
+   "vision_probes_used": 0,
+   "context_chars_used": 135,
+   "success": true,
+   "reason": "tests_passed",
+   "parse_errors": 1,
+   "elapsed_ms": 17775.797091424465,
+   "generation_ms": 17718.215100467205,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "test",
+     "rc": 0
+    }
+   ],
+   "repeat": 0,
+   "seed": 20299142
+  },
+  {
+   "task": "t06_matrix_transpose",
+   "family": "numerics",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 17,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 83440.57884067297,
+   "generation_ms": 83416.75879433751,
+   "n_history": 16,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20305526
+  },
+  {
+   "task": "t07_interval_merge",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 4,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 30716.505154967308,
+   "generation_ms": 30711.084991693497,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20312266
+  },
+  {
+   "task": "t08_topk",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=16",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 16,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 17,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 2,
+   "elapsed_ms": 87165.65058752894,
+   "generation_ms": 87140.03409445286,
+   "n_history": 16,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20302182
+  },
+  {
+   "task": "t01_csv_group_sum",
+   "family": "data-wrangling",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 7,
+   "tool_calls_used": 3,
+   "vision_probes_used": 0,
+   "context_chars_used": 240,
+   "success": true,
+   "reason": "tests_passed",
+   "parse_errors": 1,
+   "elapsed_ms": 44332.644902169704,
+   "generation_ms": 44269.37806606293,
+   "n_history": 7,
+   "model_turns": [
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "test",
+     "rc": 0
+    }
+   ],
+   "repeat": 0,
+   "seed": 20329125
+  },
+  {
+   "task": "t02_json_roundtrip",
+   "family": "serialisation",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 11,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 71089.95965495706,
+   "generation_ms": 71073.297444731,
+   "n_history": 11,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20320916
+  },
+  {
+   "task": "t03_dedupe_stable",
+   "family": "list-algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 33,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 1,
+   "elapsed_ms": 137161.19785234332,
+   "generation_ms": 137114.0390150249,
+   "n_history": 32,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20356029
+  },
+  {
+   "task": "t04_binary_search",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 7,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 52335.441667586565,
+   "generation_ms": 52324.084267020226,
+   "n_history": 7,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20333124
+  },
+  {
+   "task": "t05_word_freq",
+   "family": "text",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 3,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 23894.90081369877,
+   "generation_ms": 23890.63362032175,
+   "n_history": 3,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20299142
+  },
+  {
+   "task": "t06_matrix_transpose",
+   "family": "numerics",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 33,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "budget:steps",
+   "parse_errors": 2,
+   "elapsed_ms": 166103.23859006166,
+   "generation_ms": 166058.59856680036,
+   "n_history": 32,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20305526
+  },
+  {
+   "task": "t07_interval_merge",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 4,
+   "tool_calls_used": 2,
+   "vision_probes_used": 0,
+   "context_chars_used": 297,
+   "success": true,
+   "reason": "tests_passed",
+   "parse_errors": 1,
+   "elapsed_ms": 24986.336931586266,
+   "generation_ms": 24924.334708601236,
+   "n_history": 4,
+   "model_turns": [
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "read",
+     "rc": null
+    },
+    {
+     "action": "test",
+     "rc": 0
+    }
+   ],
+   "repeat": 0,
+   "seed": 20312266
+  },
+  {
+   "task": "t08_topk",
+   "family": "algorithms",
+   "arm": "axis_steps",
+   "level": "max_steps=32",
+   "menu": "probe_heavy",
+   "budget": {
+    "max_steps": 32,
+    "max_tool_calls": 4,
+    "max_context_chars": 1500,
+    "max_vision_probes": 2
+   },
+   "steps_used": 22,
+   "tool_calls_used": 0,
+   "vision_probes_used": 0,
+   "context_chars_used": 0,
+   "success": false,
+   "reason": "parse_failures",
+   "parse_errors": 3,
+   "elapsed_ms": 137177.23546922207,
+   "generation_ms": 137142.18875020742,
+   "n_history": 22,
+   "model_turns": [
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "write",
+     "rc": null
+    },
+    {
+     "action": "invalid",
+     "rc": null
+    }
+   ],
+   "repeat": 0,
+   "seed": 20302182
+  }
+ ]
+}

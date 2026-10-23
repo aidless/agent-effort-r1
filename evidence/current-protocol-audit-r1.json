@@ -1,0 +1,16 @@
+{
+  "audit_date": "2026-10-13",
+  "scope": "Current supplied implementation inspected; exact historical runtime unbound.",
+  "reported_h4_script_sha256": "3326b513fa891cbd99e8c1ffcd986bd27d9dac73fd75dc7a3a31c0993db3f9e8",
+  "supplied_h4_script_sha256": "7e2d56e7195074ab7c856d18054f59bf8e8557e1e89f90d39be879667adec157",
+  "runtime_binding": "unresolved",
+  "history_tail_characters_in_supplied_code": 3000,
+  "historical_export_history_truncation_chars": null,
+  "erratum": "Historical null is a regex-export defect, not evidence of no truncation. Original export preserved unchanged.",
+  "character_budget": "Cumulative read/probe observations only; not full context or token budget.",
+  "probe": "Lengths of task id, original starter, test script, task family; not images.",
+  "success": "Recorded passing test event; final untested programs not uniformly graded.",
+  "steps": "Counter includes rejected next-step attempt at steps budget exhaustion.",
+  "source_report_url": "https://arxiv.org/abs/2609.19969v1",
+  "source_report_pdf_sha256": "ba68e2e40408125ae6d2f63a9a241b61c73910691c74ec1a2a7023c851eac08d"
+}

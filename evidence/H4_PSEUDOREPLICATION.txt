@@ -1,0 +1,35 @@
+h4_real_llm_gx_qwen3_8b_persist.json
+  sha256 0a3cfece47e3f8d2   records 672 (iso 240, axis 432)   repeats field 3
+  units (level,task,menu): iso 80, of which success VARIES across repeats 0
+  units (level,task,menu): axis 144, of which success VARIES across repeats 0
+  comparison         as-run (records)             on units                     verdict
+  0_minimal->1_low   n=48  w=0  i=45 p=5.6843e-14 n=16  w=0  i=15 p=6.1035e-05 unchanged
+  1_low->4_max       n=48  w=9  i=0  p=0.0039062 n=16  w=3  i=0  p=0.25      SIGNIFICANCE LOST ON UNITS
+  2_mid->3_high      n=48  w=3  i=0  p=0.25      n=16  w=1  i=0  p=1         unchanged
+  3_high->4_max      n=48  w=3  i=0  p=0.25      n=16  w=1  i=0  p=1         unchanged
+  logistic LR all levels chi2=67.2     p=2.482e-16      chi2=22.4     p=2.223e-06 unchanged
+  logistic LR excl. floored chi2=0.191    p=0.6625         chi2=0.0635   p=0.801     unchanged
+h4_real_llm_gx_qwen3_8b.json
+  sha256 a0643029750c7bae   records 672 (iso 240, axis 432)   repeats field 3
+  units (level,task,menu): iso 80, of which success VARIES across repeats 0
+  units (level,task,menu): axis 144, of which success VARIES across repeats 0
+  comparison         as-run (records)             on units                     verdict
+  0_minimal->1_low   n=48  w=0  i=45 p=5.6843e-14 n=16  w=0  i=15 p=6.1035e-05 unchanged
+  1_low->4_max       n=48  w=9  i=0  p=0.0039062 n=16  w=3  i=0  p=0.25      SIGNIFICANCE LOST ON UNITS
+  2_mid->3_high      n=48  w=3  i=0  p=0.25      n=16  w=1  i=0  p=1         unchanged
+  3_high->4_max      n=48  w=3  i=0  p=0.25      n=16  w=1  i=0  p=1         unchanged
+  logistic LR all levels chi2=67.2     p=2.482e-16      chi2=22.4     p=2.223e-06 unchanged
+  logistic LR excl. floored chi2=0.191    p=0.6625         chi2=0.0635   p=0.801     unchanged
+h4_real_llm_gx_qwen3_8b_newcard.json
+  sha256 c66e4801394265ef   records 672 (iso 240, axis 432)   repeats field 3
+  units (level,task,menu): iso 80, of which success VARIES across repeats 0
+  units (level,task,menu): axis 144, of which success VARIES across repeats 0
+  comparison         as-run (records)             on units                     verdict
+  0_minimal->1_low   n=48  w=0  i=45 p=5.6843e-14 n=16  w=0  i=15 p=6.1035e-05 unchanged
+  1_low->4_max       n=48  w=9  i=0  p=0.0039062 n=16  w=3  i=0  p=0.25      SIGNIFICANCE LOST ON UNITS
+  2_mid->3_high      n=48  w=3  i=0  p=0.25      n=16  w=1  i=0  p=1         unchanged
+  3_high->4_max      n=48  w=3  i=0  p=0.25      n=16  w=1  i=0  p=1         unchanged
+  logistic LR all levels chi2=67.2     p=2.482e-16      chi2=22.4     p=2.223e-06 unchanged
+  logistic LR excl. floored chi2=0.191    p=0.6625         chi2=0.0635   p=0.801     unchanged
+
+A flag means: significant when every record is counted, not significant when each (level, task, menu) unit is counted once. With temperature 0 and identical trajectories across repeats, the unit count is the one a reader can defend.

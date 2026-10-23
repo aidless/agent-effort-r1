@@ -1,0 +1,16 @@
+# V41FLASH_TechReport.txt (pointer stub)
+
+The byte-identical source report lives in the shared evidence directory so that
+every paper in the queue cites ONE file (cross-paper line numbers must stay
+consistent, and duplicated copies would silently drift).
+
+    real file : papers/_shared/evidence/V41FLASH_TechReport.txt
+    sha256    : ac24848a4dee30669b9caac6ca05b62d7186e4c546add099ccc906065288abf3
+    length    : 3791 lines (split on LF only; 51 form feeds; str.splitlines() gives
+                3841 lines and is BANNED)
+    regenerate: this stub is written by ROUND_R1 tooling; the extractor
+                experiments/extract_v41_effort_evidence.py reads the shared file
+                directly and refuses to run if the SHA-256 drifts.
+
+This stub exists only so that file references resolve and scanners do not treat
+the shared path as a missing artifact.
