@@ -38,3 +38,11 @@ python3 analysis.py        # retained-data recomputation, six input files
 Evidence chain: `CLAIM_LEDGER.md` + `evidence_manifest.json` (SHA-256).
 `STATE_SNAPSHOT.md` records the current revision state, including what could
 not be resolved.
+
+## Environment
+
+`requirements.txt` is a pinned environment lock (numpy 2.2.6, scipy 1.15.3,
+Pillow 11.1.0, ...); its header records the remote execution host that
+produced the retained records (Python 3.10.12, 96 vCPU). `python3
+analysis.py` recomputes every table from the six retained input files with
+no network access and no LLM calls.
