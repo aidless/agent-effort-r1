@@ -1,0 +1,82 @@
+name: static-checks
+
+# Deterministic, offline checks: Python syntax across the tree + JSON well-formedness.
+# Deliberately does not install third-party dependencies, so it cannot fail for
+# environment reasons — it only catches broken source or corrupted data files.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax-and-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile Python sources
+        run: |
+          python - <<'PY'
+          import os
+          import sys
+
+          SKIP = {".git", "node_modules", "__pycache__", ".venv", "venv", ".mypy_cache"}
+          bad, n = [], 0
+          for dp, dns, fns in os.walk("."):
+              dns[:] = [d for d in dns if d not in SKIP]
+              for fn in fns:
+                  if not fn.endswith(".py"):
+                      continue
+                  p = os.path.join(dp, fn)
+                  n += 1
+                  try:
+                      src = open(p, encoding="utf-8-sig", errors="strict").read()
+                  except UnicodeDecodeError:
+                      src = open(p, encoding="utf-8-sig", errors="replace").read()
+                  try:
+                      compile(src, p, "exec")
+                  except SyntaxError as exc:
+                      bad.append(f"{p}: {exc.msg} (line {exc.lineno})")
+                  except Exception as exc:  # noqa: BLE001
+                      bad.append(f"{p}: {exc}")
+          print(f"checked {n} python files")
+          for b in bad:
+              print("SYNTAX", b)
+          sys.exit(1 if bad else 0)
+          PY
+      - name: Validate JSON artefacts
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+
+          SKIP = {".git", "node_modules", "__pycache__"}
+          bad, n, bom = [], 0, 0
+          for dp, dns, fns in os.walk("."):
+              dns[:] = [d for d in dns if d not in SKIP]
+              for fn in fns:
+                  if not fn.endswith(".json"):
+                      continue
+                  p = os.path.join(dp, fn)
+                  if os.path.getsize(p) > 50 * 1024 * 1024:
+                      continue
+                  n += 1
+                  if open(p, "rb").read(3) == b"\xef\xbb\xbf":
+                      bom += 1
+                  try:
+                      with open(p, encoding="utf-8-sig") as fh:
+                          json.load(fh)
+                  except Exception as exc:  # noqa: BLE001
+                      bad.append(f"{p}: {exc}")
+          print(f"checked {n} json files ({bom} with BOM)")
+          for b in bad:
+              print("JSON", b)
+          sys.exit(1 if bad else 0)
+          PY
