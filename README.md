@@ -41,9 +41,10 @@ Evidence chain: `CLAIM_LEDGER.md` + `evidence_manifest.json` (SHA-256).
 not be resolved.
 
 The tests are deterministic and offline. They do not rerun model episodes;
-they require the canonical recomputation to reproduce `results/stats.json`
-byte-for-byte and bind the README's 3.44 ratio to the published descriptive
-JSON rather than to an intermediate allocation file.
+they require the canonical recomputation to reproduce the same parsed
+`results/stats.json` content across supported Python versions and bind the
+README's 3.44 ratio to the published descriptive JSON rather than to an
+intermediate allocation file.
 
 ## Environment
 

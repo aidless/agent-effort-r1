@@ -1,4 +1,3 @@
-import hashlib
 import json
 import subprocess
 import sys
@@ -9,12 +8,8 @@ ROOT = Path(__file__).resolve().parents[1]
 STATS = ROOT / "results" / "stats.json"
 
 
-def digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def test_canonical_recompute_matches_committed_stats():
-    before = digest(STATS)
+    before = json.loads(STATS.read_text(encoding="utf-8"))
     result = subprocess.run(
         [sys.executable, "analysis.py", "."],
         cwd=ROOT,
@@ -23,8 +18,8 @@ def test_canonical_recompute_matches_committed_stats():
         text=True,
     )
     assert "recompute checks passed: True" in result.stdout
-    assert digest(STATS) == before
     payload = json.loads(STATS.read_text(encoding="utf-8"))
+    assert payload == before
     assert payload["recompute_checks_passed"] is True
 
 
