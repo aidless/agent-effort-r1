@@ -80,3 +80,7 @@ jobs:
               print("JSON", b)
           sys.exit(1 if bad else 0)
           PY
+      - name: Verify canonical offline recomputation
+        run: |
+          python -m pip install numpy==2.2.6 scipy==1.15.3 pytest
+          pytest -q tests

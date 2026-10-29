@@ -33,11 +33,17 @@ external submission claimed.
 
 ```bash
 python3 analysis.py        # retained-data recomputation, six input files
+pytest -q tests            # byte-match recomputation + headline contract
 ```
 
 Evidence chain: `CLAIM_LEDGER.md` + `evidence_manifest.json` (SHA-256).
 `STATE_SNAPSHOT.md` records the current revision state, including what could
 not be resolved.
+
+The tests are deterministic and offline. They do not rerun model episodes;
+they require the canonical recomputation to reproduce `results/stats.json`
+byte-for-byte and bind the README's 3.44 ratio to the published descriptive
+JSON rather than to an intermediate allocation file.
 
 ## Environment
 
