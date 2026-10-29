@@ -42,7 +42,8 @@ not be resolved.
 
 The tests are deterministic and offline. They do not rerun model episodes;
 they require the canonical recomputation to reproduce the same parsed
-`results/stats.json` content across supported Python versions and bind the
+`results/stats.json` content to 12 decimal places across supported Python and
+SciPy versions and bind the
 README's 3.44 ratio to the published descriptive JSON rather than to an
 intermediate allocation file.
 
