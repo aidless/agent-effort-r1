@@ -29,6 +29,17 @@ outcomes — **not** independent samples establishing a general decline. The
 manuscript (11 pages, `paper/`) is a preprint, not peer reviewed, with no
 external submission claimed.
 
+## Quick start
+
+```bash
+python3 -m pip install -r requirements.txt   # numpy 2.2.6 / scipy 1.15.3 (pin)
+python3 analysis.py                          # recompute every table (offline, no LLM)
+pytest -q tests                              # 2 deterministic recompute checks
+```
+
+No network and no model calls are needed to recompute the reported numbers —
+all inputs are retained in `results/`.
+
 ## Recompute
 
 ```bash
@@ -54,3 +65,17 @@ Pillow 11.1.0, ...); its header records the remote execution host that
 produced the retained records (Python 3.10.12, 96 vCPU). `python3
 analysis.py` recomputes every table from the six retained input files with
 no network access and no LLM calls.
+
+## Repository layout
+
+```
+analysis.py             retained-data recomputation (six input files → results/stats.json)
+results/stats.json      canonical recomputed tables (incl. the 3.4402 cost ratio)
+experiments/            E1..E3 + H4 measurement/analysis scripts (the runs that produced the records)
+scripts/                gates, scanners, claim-ledger verification (submission hardening)
+tests/test_recompute.py byte-match recomputation + headline contract (deterministic, offline)
+CLAIM_LEDGER.md         every reported number → evidence/ claim (SHA-256 anchored)
+evidence_manifest.json  SHA-256 of every evidence file (self excluded)
+paper/                  11-page manuscript (preprint, not peer reviewed)
+STATE_SNAPSHOT.md       current revision state incl. what could not be resolved
+```
