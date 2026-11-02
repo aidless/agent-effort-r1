@@ -29,6 +29,26 @@ outcomes — **not** independent samples establishing a general decline. The
 manuscript (11 pages, `paper/`) is a preprint, not peer reviewed, with no
 external submission claimed.
 
+## Measured results (retained records)
+
+Real measured/recomputed values (all from `results/stats.json`, offline recompute):
+
+- Tool latency samples: `T1_shell_simple` 120 runs mean **1.305 ms** (p95 **1.422 ms**),
+  `T2_shell_command` 90 runs mean **7.129 ms** (p95 **8.109 ms**);
+  `P2_screenshot_capture` 30 runs with **n_ok = 0** (all failed, recorded, not fabricated).
+- E2 allocation grid: **8,820** tuples; baseline modeled success B1_all_max **0.6906**,
+  B2_fixed_mid **0.5320**, B3_reason_only_max **0.5478**, B4_agent_only_max **0.6633**.
+- Cost ratio (vs fixed-middle, at matched modeled success): **3.44**.
+- Qwen3 peaks: 8B **0.9375** (low budget) / **0.7500** (max); 14B **1.0000** (middle) / **0.8750** (max).
+
+**Fail-closed (real):** the retained H4 runtime-script fingerprint **does not match**
+the supplied harness snapshot, and the exact runtime snapshot **was not recovered** —
+so the protocol reports the supplied implementation while the numbers describe
+retained records. This is **recorded, not fabricated**: missing generated code and an
+unresolved runtime-script fingerprint are explicitly listed (`STATE_SNAPSHOT.md`) rather
+than silently treated as verified. Evidence is SHA-256-anchored in `CLAIM_LEDGER.md` +
+`evidence_manifest.json`; `pytest -q tests` binds the 3.44 ratio to the published JSON.
+
 ## Quick start
 
 ```bash
