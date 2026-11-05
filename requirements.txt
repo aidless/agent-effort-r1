@@ -4,4 +4,7 @@ numpy==2.2.6
 scipy==1.15.3
 Pillow==11.1.0
 # Local recomputation + LaTeX host: Python 3.12.3, numpy 2.5.2, scipy 1.18.1
-# (analysis.py uses only stdlib + numpy; scipy/Pillow are not needed to recompute)
+# analysis.py imports numpy and scipy (exact binomial intervals). It refuses to run without scipy.
+# scripts/recompute_arxiv_r1.py uses only the standard library.
+# Pillow is pinned because the remote host had it; neither recompute command imports it.
+# pytest is not part of this lock. CI installs it to run `pytest -q tests`.

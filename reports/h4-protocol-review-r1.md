@@ -1,6 +1,6 @@
 # E3 / H4 闭环协议独立审查 R1
 
-日期：2026-10-13。审查根目录：`/home/liuzewen/arxiv-publication/papers/agent-effort-r1`。只读源码、protocol 和既存 JSON；未运行模型、隐藏测试、统计分析或重新计算成功率，未改正文。文内行号指本轮读取的源码字节。
+日期：2026-10-13。审查根目录：本仓库工作副本。只读源码、protocol 和既存 JSON；未运行模型、隐藏测试、统计分析或重新计算成功率，未改正文。文内行号指本轮读取的源码字节。作者主目录前缀已从这条记录删去。
 
 ## 结论与证据绑定边界
 
@@ -8,7 +8,7 @@
 
 **重大溯源限制：** 两条 persist raw 的 `script_sha256`（两 JSON 第 97 行）均是 `3326b513fa891cbd99e8c1ffcd986bd27d9dac73fd75dc7a3a31c0993db3f9e8`。当前 `experiments/h4_real_llm_gx.py` 与 `anc/experiments/h4_real_llm_gx.py` 的 hash 都是 `7e2d56e7195074ab7c856d18054f59bf8e8557e1e89f90d39be879667adec157`。
 
-本轮仅在本稿和原 `/home/liuzewen/F:\deepseek/papers/agent_effort` 内寻找：活动 experiments、anc、submission/repo 的同名脚本及两个 submission ZIP 内同名脚本，全部为 7e2d56…；未找到 3326b5… 的完整快照。`h4_gx_measure.py` 另为 0c5671…，且是不同单轮设计，不能充当匹配快照。`evidence/H4_SELFHASH_DEFECT.md` 还记录了历史自哈希在写出时才计算的问题，某次新卡运行的自报 hash 已被证明不能绑定起跑代码。
+本轮仅在本稿和原先的 agent_effort 工作副本内寻找：活动 experiments、anc、submission/repo 的同名脚本及两个 submission ZIP 内同名脚本，全部为 7e2d56…；未找到 3326b5… 的完整快照。`h4_gx_measure.py` 另为 0c5671…，且是不同单轮设计，不能充当匹配快照。`evidence/H4_SELFHASH_DEFECT.md` 还记录了历史自哈希在写出时才计算的问题，某次新卡运行的自报 hash 已被证明不能绑定起跑代码。
 
 因此下面的代码语义是**当前归档源码的静态检查**，与 raw 样例吻合不等于恢复了原运行的完整代码身份。正文必须写“当前提供的 harness 实现……；执行时的精确快照尚未恢复”，不能称所有旧结果已与本地脚本逐字节绑定。本轮没有扩大到其他磁盘或云端检索。
 

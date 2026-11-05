@@ -64,15 +64,9 @@ cd paper && SOURCE_DATE_EPOCH=1767225600 pdflatex main.tex   # 11 页，0 overfu
 
 ### W1：`write` 给 `F:\` 风格路径可能落到错误位置（不是"没写"）
 
-本工作区路径**自身含反斜杠**（`/home/liuzewen/F:\deepseek` 是一个真实目录名），
-而 bash 工具的 cwd 是 `/home/liuzewen`。`write` 拿到
-`/home/liuzewen/F:\deepseek/papers/agent_effort/ROUND_R2.md` 时，**可能把
-`F:\deepseek\papers\agent_effort\ROUND_R2.md` 整段当成一个文件名**，于是在 `$HOME`
-下写出一个名字含反斜杠的**普通文件**——**文件写成了，只是位置错**。
+本工作区目录名**自身含反斜杠**，而 bash 工具的 cwd 是用户家目录。作者主目录前缀已从本仓库删去。`write` 拿到一条把反斜杠目录嵌进绝对路径的目标时，**可能把反斜杠之后的整段当成一个文件名**，于是在 `$HOME` 下写出一个名字含反斜杠的**普通文件**——**文件写成了，只是位置错**。
 
-实证：`$HOME/F:\deepseek\papers\agent_effort\ROUND_R2.md`（19090 B, 23:14）vs
-工作区 `ROUND_R2.md`（18967→19027 B, 23:16）。**旁证：其它会话同样中招**
-（见下：另一会话的 scripts/ 下两个文件与 results/smoke/ 下一条产物，以及若干**以盘符/反斜杠为名的目录**——具体名字不在本文件复述，以免把本机布局写进发布包）。
+实证：家目录下的错误落点（19090 B, 23:14）对比工作区 `ROUND_R2.md`（18967→19027 B, 23:16）。**旁证：其它会话同样中招**（另一会话的 scripts/ 下两个文件与 results/smoke/ 下一条产物，以及若干**以盘符/反斜杠为名的目录**。具体绝对路径不写入本仓库）。
 
 > 我最初的诊断是"报成功但静默不落盘"——**那是错的**，文件一直在，只是落错了地方。
 
@@ -91,13 +85,12 @@ cd paper && SOURCE_DATE_EPOCH=1767225600 pdflatex main.tex   # 11 页，0 overfu
 落在已解析到的那一级目录里。即 `/A/B/C\D\E.py` → 目录 `A/B/` 下出现**单个文件** `C\D\E.py`。
 
 因此错误落点**不只在 `$HOME`**：
-- `/home/liuzewen/` 下：一条本论文的 ROUND 报告（19090 B，整条路径入名）；
+- 家目录下：一条本论文的 ROUND 报告（19090 B，整条路径入名）；
 - **`papers/` 内**（跨会话都有）：一条本轮的 `agent_effort\...` 分析脚本（7744 B，我的）、
   **一条别的会话的 `papers/<另一篇>/...` 控制分析脚本**。
 
-**推论（重要）**：写文件路径里**除了工作区根那个 `F:\` 之外，任何位置都不得再出现反斜杠**。
-本会话的成功写入全都长这样：`/home/liuzewen/F:\deepseek/papers/agent_effort/<文件>`——
-`F:\deepseek` 之后**一律正斜杠**。凡在 `agent_effort` 之后又写 `\`（如
+**推论（重要）**：写文件路径里**除了工作区根那个反斜杠目录名之外，任何位置都不得再出现反斜杠**。
+本会话成功写入的路径，在那个反斜杠目录名之后**一律正斜杠**。凡在 `agent_effort` 之后又写 `\`（如
 `agent_effort\experiments\x.py`）的，必落错位置。
 **恢复办法**：从错误落点 **copyfile 到正确路径**（不是移动、不删除原残留）。
 

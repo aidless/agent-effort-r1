@@ -22,7 +22,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-PROJECTS_ROOT = Path(r"F:\deepseek\papers") if Path(r"F:\deepseek\papers").exists() else Path("papers")
+PROJECTS_ROOT = Path("papers")
 STATE = PROJECTS_ROOT / ".active_project.json"
 
 

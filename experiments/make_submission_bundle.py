@@ -57,8 +57,8 @@ DROP_GLOBS = [
 ]
 # host-specific absolute paths that must never ship
 # The Windows branch used to be `[A-Z]:\\\\`, which inside a raw string demands TWO literal
-# backslashes -- so it never matched the paths that actually occur in this tree (`F:\deepseek\...`,
-# written with one).  The detector reported "absolute-path hits: 0" on a package that contained
+# backslashes -- so it never matched a one-backslash drive path that was actually in the tree.
+# The detector reported "absolute-path hits: 0" on a package that contained
 # several, which is worse than no check: it read as a clean result.  `[\\]{1,2}` takes either, and
 # the drive-letter branch requires a following path segment so a bare `x:` in prose is not a hit.
 ABS_PATH_RE = re.compile(r"(?:/root/aut[o]dl-tmp[^\s\"']*|/hom[e]/[^\s\"']*|[A-Z]:[\\]{1,2}[^\s\"']*|[A-Z]:/[^\s\"']*)")

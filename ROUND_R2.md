@@ -61,7 +61,7 @@ python3 scripts/check_literature_freshness.py . --max-age-days 30 \
 
 ### 4.1 本轮发现并修复的真实泄漏（前轮已随包出货）
 
-`make_submission_bundle.py` 原只审计**绝对路径**（`/root/...`、`/home/...`、`C:\...`），
+`make_submission_bundle.py` 原只审计**绝对路径**（租用主机前缀、家目录前缀、盘符路径），
 不审计**内部队列结构**；`check_submission_package.py` 的 C3 只查作者/机构串，同样不覆盖。
 结果：上一个包**带着下列内部引用出货**，本轮全部拦截：
 
@@ -241,7 +241,7 @@ MODEL=/root/autodl-tmp/models/Qwen3-14B-AWQ TAG=qwen3_14b bash experiments/h4_ru
 | **H4 与前一 agent 的工作重叠** | 前 agent 22:12–22:13 已写 `h4_gx_measure.py` / `h4_queue_step.sh`（被中断）。本 agent 先写了自己的 `h4_real_llm_gx.py` 后才发现，**存在重复劳动**（接手信息未含这两个文件）。两份均保留在盘上（删除属保护层，未获授权） |
 | dry-run 不能当测量 | stub 产物显式标 `dry_run/is_real_llm`，不进论文、不出货 |
 | 新鲜度门语义 | 只证明综述未被搁置，不提高 novelty 断言强度（§3） |
-| `ROUND_R2.md` 首次写入**落到错误位置**（原诊断"未落盘"已按实证修正，见 §7.2、§7.3） | 首次 `write` **确实写成功了**，但落成 `$HOME` 下**名字含反斜杠的单文件** `/home/liuzewen/F:\deepseek\papers\agent_effort\ROUND_R2.md`（19090 B，23:14），而非工作区路径。**教训：工具报成功 ≠ 写到目标位置；必须以绝对路径回读确认** |
+| `ROUND_R2.md` 首次写入**落到错误位置**（原诊断"未落盘"已按实证修正，见 §7.2、§7.3） | 首次 `write` **确实写成功了**，但落成家目录下**名字含反斜杠的单文件**（19090 B，23:14），而非工作区路径。作者主目录前缀已从本仓库删去。**教训：工具报成功 ≠ 写到目标位置；必须以目标路径回读确认** |
 | 未修复、仅披露 | 远端起跑仍受 GPU 排队阻塞；`g_search` 在本任务集上无法测量；`QUEUE.md`/`csa2_robust` 在本轮期间有**并发 agent** 的 mtime 变动（非本 agent 所为，本 agent 未触碰） |
 
 ### 7.1 两份 H4 harness 的差异（供决策，本轮不擅自删）
@@ -266,30 +266,16 @@ MODEL=/root/autodl-tmp/models/Qwen3-14B-AWQ TAG=qwen3_14b bash experiments/h4_ru
 初审时我在工作区找不到 `ROUND_R2.md`，据此写成"报成功但未落盘"。主会话在 `$HOME` 下发现残留后，
 该诊断**已被实证推翻**，正确机制如下。
 
-**工作区路径本身含反斜杠**（关键背景）：
+**工作区目录名本身含反斜杠**（关键背景）：当时的检出目录名里带一个反斜杠，而 bash 工具的 cwd 是用户家目录。作者主目录前缀已从本仓库删去，不改变下面的机制。
 
-```
-/home/liuzewen/F:\deepseek          <- 真实目录，名字里带一个反斜杠
-cwd（bash 工具）                     = /home/liuzewen
-```
-
-`write` 拿到 `/home/liuzewen/F:\deepseek/papers/agent_effort/ROUND_R2.md` 时，若把
-`F:\deepseek\papers\agent_effort\ROUND_R2.md` 整段当成**一个文件名**，就会在 `cwd`（即 `$HOME`）
-下写出一个名字含反斜杠的**普通文件**——文件写成了，只是**位置错**：
+`write` 拿到一条把反斜杠目录嵌进绝对路径的目标时，若把反斜杠之后的整段当成**一个文件名**，就会在家目录下写出一个名字含反斜杠的**普通文件**——文件写成了，只是**位置错**：
 
 | 位置 | 大小 | mtime |
 |---|---|---|
-| `$HOME/F:\deepseek\papers\agent_effort\ROUND_R2.md`（错误落点，单文件） | **19090 B** | 23:14 |
+| 家目录下、文件名含反斜杠的错误落点（单文件） | **19090 B** | 23:14 |
 | `papers/agent_effort/ROUND_R2.md`（正确落点，工作区） | 18967→19027 B | 23:16 |
 
-**旁证：不是本 agent 独有**。`$HOME` 下同类残留（均为名字含反斜杠的单文件/目录）：
-
-```
-F:\deepseek\papers\<另一会话>\scripts\ 下 1 条（引用核验脚本，6127 B）
-F:\deepseek\papers\<另一会话>\scripts\ 下 1 条（候选 JSON，6935 B）
-F:\deepseek\papers\<另一会话>\results\smoke\ 下 1 条（smoke 产物，1565 B）
-目录：F:  E:\  F:\deepseek  F:\\deepseek
-```
+**旁证：不是本 agent 独有**。家目录下还有同类残留（名字含反斜杠的单文件或目录）：另一会话的 scripts 下两条（6127 B、6935 B）和 results/smoke 下一条（1565 B），以及若干以盘符或反斜杠为名的目录。具体绝对路径不写入本仓库。
 
 **对应排查**：工作区 `papers/agent_effort/` 下**没有**任何含反斜杠/盘符的条目（本 agent 未在工作区制造残留）；
 四个对应产物的**工作区副本均存在且内容完整**，故**没有证据断链，无需重做任何实验或产物**。
@@ -307,19 +293,7 @@ F:\deepseek\papers\<另一会话>\results\smoke\ 下 1 条（smoke 产物，1565
 **该失效在 R2 期间**仍在发生（活体复现，非历史遗留）。用 `os.listdir` 复核，
 `$HOME` 下含反斜杠/盘符的条目**权威计数为 9**：
 
-```
-E:\                                                  dir
-F:                                                   dir
-F:\\deepseek                                         dir
-F:\deepseek                                          dir
-F:\deepseek\.agent-memory\ledger\lessons.md     2650 B   23:32:43  <- 与我的 evolve_add 调用同刻
-F:\deepseek\papers\agent_effort\ROUND_R2.md    19090 B   23:14
-F:\deepseek\papers\<另一会话>\scripts\ 下 1 条（候选 JSON，6935 B）
-F:\deepseek\papers\<另一会话>\scripts\ 下 1 条（引用核验脚本，6127 B）
-F:\deepseek\papers\<另一会话>\results\smoke\ 下 1 条（smoke 产物，1565 B）
-```
-
-（前四点为我发现、主会话独立复核一致的实测结果；主会话扫得同为 9 个。）
+九条残留都在家目录下，名字含反斜杠或盘符：四个目录、五个文件。其中一条 lessons 笔记 2650 B（23:32:43，与 evolve_add 同时），一条错误落点的 ROUND 笔记 19090 B（23:14），另有其它会话的候选 JSON（6935 B）、引用核验脚本（6127 B）和 smoke 产物（1565 B）。具体绝对路径不写入本仓库。主会话独立复核的计数同为 9。
 
 即**记忆/进化工具也走同一条错误路径**，不只是 `write`。两点后果必须记清：
 
@@ -521,7 +495,7 @@ E1/E1b/E2/E3 结果与 `stats.json`。
 
 | 编号 | 文件 | 改动 | 触发/理由 | 状态 |
 |---|---|---|---|---|
-| CHG22 | `experiments/make_submission_bundle.py:64` | `ABS_PATH_RE` 的 Windows 分支由 `[A-Z]:\\\\`（raw 串里＝要求**两个**反斜杠）改成 `[A-Z]:[\\]{1,2}` 并加 `[A-Z]:/` 一支 | R1 R-AE-03：包里明明写着 `F:\deepseek\papers\…`，而 `ANON_REPO.md` 报 "absolute-path hits: 0"。验证用文件自己那行字面量重编译：单/双反斜杠、`/home/…`、`/root/autodl-tmp`、`C:/Users/…` 五种全中；负控（比例 `x:y`、`section 3:10`、单字母 `q:`）保持安静。**注意这只修了检测器**：该正则只统计不改写，泄漏本身要另做（加进 `DROP_GLOBS` 或写替换），而 arXiv 目标包经 `package_leak_gate.py` 实测 11/11 干净 | done |
+| CHG22 | `experiments/make_submission_bundle.py:64` | `ABS_PATH_RE` 的 Windows 分支由 `[A-Z]:\\\\`（raw 串里＝要求**两个**反斜杠）改成 `[A-Z]:[\\]{1,2}` 并加 `[A-Z]:/` 一支 | R1 R-AE-03：包里写着一条作者机盘符路径，而 `ANON_REPO.md` 报 "absolute-path hits: 0"。验证用文件自己那行字面量重编译：单反斜杠、双反斜杠、家目录前缀、租用主机前缀、Users 目录前缀五种全中；负控（比例 `x:y`、`section 3:10`、单字母 `q:`）保持安静。**注意这只修了检测器**：该正则只统计不改写，泄漏本身要另做（加进 `DROP_GLOBS` 或写替换），而 arXiv 目标包经 `package_leak_gate.py` 实测 11/11 干净 | done |
 
 ## 追加：伦理小节标题对 venue 闸不可见（登记 2026-09-25T04:19:17Z）
 
