@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -52,8 +53,9 @@ def main() -> int:
     # 2. data hash (CIFAR-10 batches — data version)
     import hashlib as _h
     data_hashes = {}
-    data_dir = Path(r"F:\deepseek\.datasets\cifar-10-batches-py")
-    if data_dir.exists():
+    data_dir_env = os.environ.get("CIFAR10_DIR")
+    data_dir = Path(data_dir_env) if data_dir_env else None
+    if data_dir is not None and data_dir.exists():
         for bf in sorted(data_dir.glob("data_batch_*"))[:3]:
             data_hashes[bf.name] = _h.md5(bf.read_bytes()).hexdigest()
 

@@ -3,16 +3,34 @@
   "created": "2026-10-13T11:56:22+00:00",
   "files": [
     {
+      "path": ".github/workflows/static-checks.yml",
+      "size": 3054,
+      "sha256": "99582478acb43e49f1fa1cbefbff06568fce872b290c7f3ac43665d993d31293",
+      "modified": "2026-11-05T14:27:37+00:00"
+    },
+    {
       "path": "CLAIM_LEDGER.md",
       "size": 251736,
       "sha256": "5cf8be1c8df47470699a70a86363fc46b60804d457e7801c62176ec1ae992b4f",
       "modified": "2026-10-13T11:07:34+00:00"
     },
     {
+      "path": "FAILURE_MODES.md",
+      "size": 1548,
+      "sha256": "66840a88bc31e477031cbcacc98f1bf6e1a3654de48e9d46f273fb1d5a49794f",
+      "modified": "2026-11-05T14:27:37+00:00"
+    },
+    {
       "path": "LITERATURE_REVIEW.md",
       "size": 4815,
       "sha256": "932fd036b5bc315fd06c61f6a04d004d619ca8c0145ca5e50757762dcaf0fd08",
       "modified": "2026-09-11T13:59:43+00:00"
+    },
+    {
+      "path": "README.md",
+      "size": 4222,
+      "sha256": "4a089bf266a9e93a8f8a58b2b39794c44921aa47cc2c4cf788b6100500c9418b",
+      "modified": "2026-11-05T14:30:26+00:00"
     },
     {
       "path": "ROUND_R0.md",
@@ -28,9 +46,9 @@
     },
     {
       "path": "ROUND_R2.md",
-      "size": 44063,
-      "sha256": "275d5ee88cd309607b2c72bcfddd4b73f0f22e9e13cfe8e3c5e7edba9f9be2b1",
-      "modified": "2026-09-25T10:07:01+00:00"
+      "size": 43561,
+      "sha256": "671a57fb13674fc0de845993f925a6fe30fefac460c59bcbadeca620407590a0",
+      "modified": "2026-11-05T14:29:33+00:00"
     },
     {
       "path": "STATE_SNAPSHOT.md",
@@ -40,9 +58,9 @@
     },
     {
       "path": "WORKING_NOTES.md",
-      "size": 9955,
-      "sha256": "571ffec3cb5874c575c4739bbe2cbdddc391779fd80692290989bfac7eac87f0",
-      "modified": "2026-09-12T15:52:38+00:00"
+      "size": 9773,
+      "sha256": "a23d7f7f1ff4cb315dff00f0b5dd01f80bcc455abb765ea5db397e46debd7c1d",
+      "modified": "2026-11-05T14:28:09+00:00"
     },
     {
       "path": "WORKING_NOTES_ARXIV.md",
@@ -64,9 +82,9 @@
     },
     {
       "path": "anc/README.md",
-      "size": 3253,
-      "sha256": "28b23f8b0a4337bde3f9167d22c73f3286d575da64b7139f108e63e224dc4f46",
-      "modified": "2026-09-25T10:07:01+00:00"
+      "size": 3198,
+      "sha256": "9fb404a98910390b99b07c3c99d823ac914bb6c43020baa76d7c47880f7eead4",
+      "modified": "2026-11-05T14:28:30+00:00"
     },
     {
       "path": "anc/evidence/E3_UNIT_LEVEL.json",
@@ -160,9 +178,9 @@
     },
     {
       "path": "anc/results/h4_derived_stats.json",
-      "size": 4121,
-      "sha256": "f1f7c6c09936fb35021a296728e68f7021e825d329f61ad2be32654ef5ad3899",
-      "modified": "2026-09-24T04:53:45+00:00"
+      "size": 4209,
+      "sha256": "68cec996a7b824b3747993938d4f9f85474193b7521f63403a1956e6658a35f3",
+      "modified": "2026-11-05T14:28:20+00:00"
     },
     {
       "path": "anc/results/h4_derived_stats_14b.json",
@@ -424,15 +442,15 @@
     },
     {
       "path": "experiments/make_submission_bundle.py",
-      "size": 22085,
-      "sha256": "da7571ac3c04b3a5e87f18f89ba40f182d3733ee90f558132c003e14acbbe45f",
-      "modified": "2026-09-25T04:12:51+00:00"
+      "size": 22060,
+      "sha256": "80d54d2ddf0edf74d5c2ec0804b8e6ca39d09ece92552c6bca0c3b078f01b3a7",
+      "modified": "2026-11-05T14:27:55+00:00"
     },
     {
       "path": "gates_config.json",
-      "size": 7687,
-      "sha256": "c53778707bfeeeb39b4076eb5dfaa741b89f2bcc263aa4daa07fc0b5592cfb7b",
-      "modified": "2026-10-01T16:05:08+00:00"
+      "size": 8296,
+      "sha256": "88da1309c2cc4746ec4c337819f9073416ca3197feb945e1800cbb38ce986732",
+      "modified": "2026-11-05T14:28:30+00:00"
     },
     {
       "path": "h4_newcard_diff_proof.txt",
@@ -472,15 +490,15 @@
     },
     {
       "path": "paper/main.fdb_latexmk",
-      "size": 16087,
-      "sha256": "6e022717240272198ca9d44fe8c2051fe6d53e9104086ae66743fd25fe44134d",
-      "modified": "2026-10-13T11:45:08+00:00"
+      "size": 15254,
+      "sha256": "22865738a55d95efd60a7dcc81799b31e4378f8e473c60531144d09d004cb415",
+      "modified": "2026-11-05T14:29:14+00:00"
     },
     {
       "path": "paper/main.fls",
-      "size": 16787,
-      "sha256": "3d6a931e96304b834a13f86348622200e8dd41fa0147707095101fb21d48b68c",
-      "modified": "2026-10-13T11:45:08+00:00"
+      "size": 15247,
+      "sha256": "49b24adb60406d6a8d47d1b7b848c2a596b03e900da89e2313d74a18c5c769cf",
+      "modified": "2026-11-05T14:29:14+00:00"
     },
     {
       "path": "paper/main.log",
@@ -556,9 +574,9 @@
     },
     {
       "path": "requirements.txt",
-      "size": 385,
-      "sha256": "3a2655e4fbd3fd1d7c3b142c6af5a1d9a13f94c4f08f5583b01055e1e66b36ec",
-      "modified": "2026-09-11T13:53:27+00:00"
+      "size": 630,
+      "sha256": "595ae1b3fadd9fd22911438221b1182ae4f79a83c369efea9c5d7e7d5c2b9a64",
+      "modified": "2026-11-05T14:27:38+00:00"
     },
     {
       "path": "results/arxiv_r1_descriptive.json",
@@ -610,9 +628,9 @@
     },
     {
       "path": "results/h4_derived_stats_a9_repl12.json",
-      "size": 2590,
-      "sha256": "f825eaf28604c860540a537f7441641a3ce7368f7a8b13765a9a20fb7a16ce90",
-      "modified": "2026-09-24T05:10:45+00:00"
+      "size": 2678,
+      "sha256": "4cd0bef72c2048da66c95b9b832a65886f8fd1820b425fdcfd781ec5da419d53",
+      "modified": "2026-11-05T14:28:20+00:00"
     },
     {
       "path": "results/h4_derived_stats_newcard.json",
@@ -678,7 +696,7 @@
       "path": "results/stats.json",
       "size": 24892,
       "sha256": "60388d9b98ff531839e26bf38c916c25202c27839523084a7f779d3584366ee9",
-      "modified": "2026-10-09T14:23:41+00:00"
+      "modified": "2026-11-05T14:30:28+00:00"
     },
     {
       "path": "scripts/build_evidence_manifest.py",
@@ -748,9 +766,9 @@
     },
     {
       "path": "scripts/gate_citations.py",
-      "size": 14517,
-      "sha256": "b4d86a204e491c3e42007768715a59c8bbc946bd2069c753cadcc2be4f1dceac",
-      "modified": "2026-09-11T04:52:43+00:00"
+      "size": 14501,
+      "sha256": "6653b18020090a2518140407d374ffc231914419cfc6f0acd498d78bff289f28",
+      "modified": "2026-11-05T14:27:54+00:00"
     },
     {
       "path": "scripts/h4_unit_recount.py",
@@ -772,9 +790,9 @@
     },
     {
       "path": "scripts/make_run_record.py",
-      "size": 4670,
-      "sha256": "a788fb409d5de553da869860a0ae9b82792ea0c86b5fe947e078820c8c3a295c",
-      "modified": "2026-09-11T04:52:43+00:00"
+      "size": 4748,
+      "sha256": "161274c41a980d39b998af1f3f64d4f3b69759ebb793b047aca215f5fc09b084",
+      "modified": "2026-11-05T14:27:55+00:00"
     },
     {
       "path": "scripts/power_analysis.py",
@@ -862,9 +880,9 @@
     },
     {
       "path": "scripts/switch_project.py",
-      "size": 4313,
-      "sha256": "a898c45b74604848ad13ed7c5e6a46bdddf5d817163979e96e4e2cc0a0432086",
-      "modified": "2026-09-11T04:52:43+00:00"
+      "size": 4240,
+      "sha256": "a5b818e60e5208ff57a9c6d4d8bbc195bf593af728e8b45b6885bbc42fef5530",
+      "modified": "2026-11-05T14:27:54+00:00"
     },
     {
       "path": "scripts/test_evidence_protection.py",
@@ -874,9 +892,9 @@
     },
     {
       "path": "scripts/test_pyramid.py",
-      "size": 7467,
-      "sha256": "dcb46e860faad50498fcecf9b4c00b6d3d80a2d3c98d13375c6f999a1221bdb8",
-      "modified": "2026-09-11T04:52:43+00:00"
+      "size": 7675,
+      "sha256": "9ea5e0c011c84e15f2a45993f108a634a3ced7838fcfff731dcd22f6630e4463",
+      "modified": "2026-11-05T14:27:55+00:00"
     },
     {
       "path": "scripts/validate_judge_output.py",
@@ -907,6 +925,12 @@
       "size": 3054,
       "sha256": "d2e7bf071a35a829bc84e1547bb62897c54b366cf89ea9f180c092eb48611e5f",
       "modified": "2026-09-11T04:52:43+00:00"
+    },
+    {
+      "path": "tests/test_recompute.py",
+      "size": 6812,
+      "sha256": "cf5cd3092756d7809d7ea46cc7f6923cef873b5220ca724b4669bfd357586d1a",
+      "modified": "2026-11-05T14:30:25+00:00"
     }
   ]
 }

@@ -12,6 +12,7 @@
 from __future__ import annotations
 import ast
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -75,7 +76,12 @@ def _train_check(paper_dir: Path, epochs: int = 3, inject_no_norm: bool = False)
         tc.CIFAR_NORM = T.Lambda(lambda x: x)
     try:
         dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        d = tc.CifarData(Path(r"F:\deepseek\.datasets"), 1000, dev)
+        data_root = os.environ.get("CIFAR10_DIR")
+        if not data_root:
+            raise FileNotFoundError(
+                "CIFAR10_DIR is unset; this repository does not include that dataset"
+            )
+        d = tc.CifarData(Path(data_root), 1000, dev)
         loader = d.tst_loader(128)
         results = {}
         for mode in ["base", "ours", "no_ts", "no_ent"]:

@@ -1,6 +1,7 @@
 {
  "generated_by": "experiments/h4_derived_stats.py (axis-only branch)",
- "source_result": "/home/liuzewen/F:\\deepseek/papers/agent_effort/results/h4_real_llm_gx_qwen3_8b_a9_repl12.json",
+ "source_result": "results/h4_real_llm_gx_qwen3_8b_a9_repl12.json",
+ "source_result_note": "Author-home prefix removed. source_sha256 still binds this relative path. Numeric fields were not recomputed.",
  "source_sha256": "4e6b86a4519b872dfed910a2e0b62d61f86e8cc5165ef20299dc7d9e00a60931",
  "n_records": 1728,
  "arms_present": [

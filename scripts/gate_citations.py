@@ -55,7 +55,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-DEFAULT_VERIFIER = Path(r"F:\deepseek\research-kit\citation-verifier\verify_citations.py")
+DEFAULT_VERIFIER = Path("scripts") / "not_shipped" / "verify_citations.py"
 PROBE_HOSTS = [
     "https://api.crossref.org",
     "https://api.semanticscholar.org",

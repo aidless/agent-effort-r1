@@ -1,8 +1,10 @@
 name: static-checks
 
-# Deterministic, offline checks: Python syntax across the tree + JSON well-formedness.
-# Deliberately does not install third-party dependencies, so it cannot fail for
-# environment reasons — it only catches broken source or corrupted data files.
+# Deterministic offline checks.
+# Syntax and JSON steps use the standard library only.
+# The pytest step installs the pinned numpy and scipy that analysis.py imports,
+# plus pytest, then runs the README command: pytest -q tests.
+# That command is the offline recompute check. It does not rerun model episodes.
 on:
   push:
     branches: ["main"]
