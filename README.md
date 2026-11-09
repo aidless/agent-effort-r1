@@ -1,5 +1,7 @@
 # Agent Effort R1 — an allocation model vs a bounded agent evaluation
 
+[![CI](https://github.com/aidless/agent-effort-r1/actions/workflows/static-checks.yml/badge.svg)](https://github.com/aidless/agent-effort-r1/actions/workflows/static-checks.yml)
+
 An optimal resource allocation under an assumed success function need not
 describe the behavior of a tool-using language model. This package examines
 that gap with an illustrative five-axis allocation calculation (8,820 tuples
