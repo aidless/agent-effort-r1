@@ -404,7 +404,6 @@ def main() -> int:
     res["gate_rule"] = "Methods must state alpha, power, effect size, and N; "
     res["methods_note"] = _methods_note(res)
     if args.out:
-        import os
         from pathlib import Path
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out).write_text(json.dumps(res, indent=2, ensure_ascii=False), encoding="utf-8")

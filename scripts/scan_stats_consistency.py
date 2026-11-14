@@ -603,7 +603,7 @@ def main() -> int:
         counts[fd.section] += 1
         by_section[fd.section].append(fd)
 
-    lines = [f"# Statistical consistency scan report"]
+    lines = ["# Statistical consistency scan report"]
     lines.append(f"\nTarget: `{target_name}`  |  text files: {len(targets)}  |  stat-p pairs checked: {pairs_checked}  |  unverifiable pairs: {pairs_unverifiable}")
     for name, title in sections:
         lines.append(f"\n## {title}: {counts[name]}")

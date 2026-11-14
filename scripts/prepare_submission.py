@@ -25,9 +25,7 @@ Exit 0 = package built (checklist may still have TODOs); exit 2 = fatal
 from __future__ import annotations
 
 import argparse
-import json
 import re
-import shutil
 import sys
 import zipfile
 from pathlib import Path
@@ -157,7 +155,7 @@ def main() -> int:
         "> 上传动作本身保留人工（保护层：账号、最终确认、不可逆）。",
         "",
         "## 稿件",
-        f"- [ ] 确认 main.pdf 为最终匿名版（见 anonym_check.md）",
+        "- [ ] 确认 main.pdf 为最终匿名版（见 anonym_check.md）",
         f"- [ ] 确认 zip（{size_mb:.1f} MB）包含 evidence 包（清单见下）",
         "",
         "## 表单字段",
@@ -187,7 +185,7 @@ def main() -> int:
     (out_dir / "openreview_checklist.md").write_text(checklist, encoding="utf-8")
     (out_dir / "anonym_check.md").write_text(anonym, encoding="utf-8")
 
-    print(f"# Submission package ready")
+    print("# Submission package ready")
     print(f"zip: {zip_path} ({size_mb:.1f} MB, {len(included)} files)")
     print(f"checklist: {out_dir / 'openreview_checklist.md'}")
     print(f"anonymity: {out_dir / 'anonym_check.md'} ({len(hits)} hits)")

@@ -133,7 +133,7 @@ def main() -> int:
             missing = None
         if missing is not None:
             checks.append(("C4", "PASS" if not missing else "FAIL",
-                           f"manifest ok" if not missing else f"{len(missing)} manifest files missing: {missing[:5]}"))
+                           "manifest ok" if not missing else f"{len(missing)} manifest files missing: {missing[:5]}"))
     else:
         checks.append(("C4", "FAIL", "evidence_manifest.json missing"))
 

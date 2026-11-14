@@ -41,7 +41,6 @@ import platform
 import random
 import shutil
 import socket
-import statistics
 import subprocess
 import sys
 import tempfile

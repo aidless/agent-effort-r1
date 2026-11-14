@@ -239,7 +239,6 @@ def render(static: dict, dynamic: dict | None, skipped: bool, fail_on_warning: b
 
 def selftest() -> bool:
     """静态解析层自检(不编译): 解析函数对已知输入的输出正确。"""
-    import io
     class _F:
         def __init__(self, text):
             self._t = text

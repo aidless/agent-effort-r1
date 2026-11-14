@@ -9,10 +9,8 @@
 用法: python test_evidence_protection.py <paper_dir>
 """
 from __future__ import annotations
-import json
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 

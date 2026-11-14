@@ -85,7 +85,7 @@ def main() -> int:
     flip_rate = len(flips) / n
     n_exact = sum(1 for r in rows if exact_match(str(r.get("predicted_label", "")), str(r.get("gold_answer", ""))))
     n_tol = sum(1 for r in rows if tolerant_match(str(r.get("predicted_label", "")), str(r.get("gold_answer", ""))))
-    lines = [f"# 标签判定器验证报告(G006)", "",
+    lines = ["# 标签判定器验证报告(G006)", "",
              f"- 数据: {p}  |  行数: {n}",
              f"- exact-match 准确率: {n_exact}/{n}",
              f"- tolerant-match 准确率: {n_tol}/{n}",

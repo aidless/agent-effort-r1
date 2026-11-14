@@ -19,7 +19,6 @@ Saturating affects (ii); it does not affect (i); (iii) is arithmetic.
 import json
 import math
 import os
-import sys
 
 # the paper root, not experiments/ -- a RES of experiments/results silently
 # made every lookup miss and the whole script printed 'missing'
