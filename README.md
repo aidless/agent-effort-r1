@@ -118,3 +118,28 @@ evidence_manifest.json  SHA-256 of every evidence file (self excluded)
 paper/                  11-page manuscript (preprint, not peer reviewed)
 STATE_SNAPSHOT.md       current revision state incl. what could not be resolved
 ```
+
+## 验收题库与复算
+
+`eval/cases.jsonl` 是 20 条可执行验收题，覆盖七个口径（E1/E1b 工具延迟聚合、E2 分配网格与
+成本比、H4 Qwen3 曲线与配对比较、`scripts/stats.py` 统计协议、`analysis.py` 单位级重算与
+Clopper-Pearson 区间、`results/stats.json` 的可复算性/哈希锁、`gates_config.json` 闸配置与
+文档口径）。大部分题目的期望值不是抄 README，而是**真调本仓 API 或真解析 `results/*.json` 现算**：
+17 条走 `expr`/`raises`（其中 1 条断言 `analysis.load()` 对缺失文件抛 `FileNotFoundError`
+的 fail-closed 契约），3 条 `doc` 题把 CLAIM_LEDGER / `paper/main.tex` / README 的对外数字钉住。
+
+```bash
+python3 eval/run_cases.py            # 20/20 cases passed
+python3 eval/run_cases.py --save     # 顺带把结果写进 eval/run-report.json
+python3 eval/run_cases.py --selftest # 篡改一条期望值，必须变红（19/20，证明这套题会失败）
+```
+
+**数字如何复算**：`eval/run-report.json` 里每条 case 都带 `id` / `axis` / `detail`，
+把 `detail` 与 `cases.jsonl` 的 `verify` 代码一起看，就能从源码复现该数字；`verify` 里的
+路径都是仓内真实文件（`results/e1_tool_latency.json`、`results/e2_allocation.json`、
+`results/h4_real_llm_gx_qwen3_8b.json` 的 672 条 `records`、`results/stats.json` 的输入
+SHA-256 等），`--save` 重跑一次即可重建整份报告，不需要手工抄数。
+
+**失败归因**：`run_cases.py` 不只报通过率，失败时按 `axis` 汇总（例如
+`e1-latency: 1 条 —— E1-01`），直接指出是哪个模块的哪个口径坏了；同一 axis 最多 3 条，
+所以归因粒度落在「一个可复算口径」而不是「一个文件」。

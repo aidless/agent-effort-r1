@@ -1,0 +1,129 @@
+{
+ "total": 20,
+ "passed": 20,
+ "failed": 0,
+ "selftest": false,
+ "failed_by_axis": {},
+ "results": [
+  {
+   "id": "E1-01",
+   "axis": "e1-latency",
+   "ok": true,
+   "detail": "1.304863"
+  },
+  {
+   "id": "E1-03",
+   "axis": "e1b-primitives",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "id": "E2-01",
+   "axis": "e2-allocation",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "id": "E2-02",
+   "axis": "e2-allocation",
+   "ok": true,
+   "detail": "3.44"
+  },
+  {
+   "id": "E2-03",
+   "axis": "e2-allocation",
+   "ok": true,
+   "detail": "0.532"
+  },
+  {
+   "id": "H4-01",
+   "axis": "h4-qwen3",
+   "ok": true,
+   "detail": "9"
+  },
+  {
+   "id": "H4-02",
+   "axis": "h4-qwen3",
+   "ok": true,
+   "detail": "0.9375"
+  },
+  {
+   "id": "H4-03",
+   "axis": "h4-qwen3",
+   "ok": true,
+   "detail": "L2_mid"
+  },
+  {
+   "id": "SP-01",
+   "axis": "stats-protocol",
+   "ok": true,
+   "detail": "True"
+  },
+  {
+   "id": "SP-02",
+   "axis": "stats-protocol",
+   "ok": true,
+   "detail": "*"
+  },
+  {
+   "id": "SP-03",
+   "axis": "stats-protocol",
+   "ok": true,
+   "detail": "7.111111"
+  },
+  {
+   "id": "RU-01",
+   "axis": "recompute-unit",
+   "ok": true,
+   "detail": "True"
+  },
+  {
+   "id": "RU-02",
+   "axis": "recompute-unit",
+   "ok": true,
+   "detail": "0.4762"
+  },
+  {
+   "id": "RS-01",
+   "axis": "error-contract",
+   "ok": true,
+   "detail": "raised FileNotFoundError"
+  },
+  {
+   "id": "RP-01",
+   "axis": "reproducibility",
+   "ok": true,
+   "detail": "True"
+  },
+  {
+   "id": "RP-02",
+   "axis": "reproducibility",
+   "ok": true,
+   "detail": "True"
+  },
+  {
+   "id": "GT-01",
+   "axis": "gates",
+   "ok": true,
+   "detail": "31"
+  },
+  {
+   "id": "DOC-01",
+   "axis": "docs-claim",
+   "ok": true,
+   "detail": "| C0001 | latency.P1_image_codec_png.mea"
+  },
+  {
+   "id": "DOC-02",
+   "axis": "docs-paper",
+   "ok": true,
+   "detail": "yields a modeled token-cost ratio of 3.4"
+  },
+  {
+   "id": "DOC-03",
+   "axis": "docs-readme",
+   "ok": true,
+   "detail": "**3.44**"
+  }
+ ]
+}
